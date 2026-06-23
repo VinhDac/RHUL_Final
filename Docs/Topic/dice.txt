@@ -1,0 +1,123 @@
+AI Research Projects in Collaboration with
+Sony Interactive Entertainment (SIE)
+and the DICE Lab at Royal Holloway
+Ben Wilkins (SIE, London, UK)
+Kostas Stathis∗(DICE Lab, Royal Holloway, UK)
+Introduction
+The following projects investigate cutting-edge applications of machine learning and AI to video
+game development workﬂows, with a particular focus on assisting Quality Assurance (QA) en-
+gineers. Students participating in these projects will have opportunities to interact with experi-
+enced ML researchers at SIE, and some may be considered for placements or internships. Please
+note that both projects include an additional application step involving a short interview with
+SIE researchers.
+Project 1: VLMs for Video Game QA – Relationships between
+Code and Intended Behaviour
+Aims
+This project aims to explore the capabilities of (Large) Vision Language Models (VLMs) in
+understanding the relationship between the behaviour of a game as the player sees it, and the
+code that implements this behaviour. Speciﬁcally, it investigates whether VLMs can identify
+“regression” bugs, where code or asset changes unintentionally alter game behaviour between
+versions.
+Background
+Quality Assurance (QA) is a vital part of video game development. With recent developments
+in AI, there is growing interest in tools that assist QA engineers with the testing process. Video
+games present a particularly challenging domain for test automation due to the complexity of
+interactions between player inputs and audiovisual output, the numerous subsystems involved
+(physics, graphics, AI, networking, etc.), and the subjective nature of “intended behaviour”.
+Recent work applying VLMs to game testing has shown promising, though limited, results—
+for example, detecting simple bugs such as clipping issues (Taesiri 2025). This project extends
+such work by introducing game code as an additional input signal, enabling investigation into
+whether VLMs can explain behavioural changes and help identify potential regression bugs.
+∗Email: kostas.stathis@rhul.ac.uk
+1
+
+The project is conducted in collaboration with Sony Interactive Entertainment (SIE), oﬀering
+students opportunities to engage with industry researchers and potentially secure placement
+opportunities.
+Early Deliverables
+• Literature review on the use of VLMs and related models in video game testing and
+automated bug detection.
+• Construction of an evaluation dataset containing code/asset diﬀs and gameplay images or
+videos, generated from an open-source 3D game engine project, including both intended
+and unintended changes.
+• Initial evaluation of a chosen VLM’s ability to caption or describe the generated scenes.
+Final Deliverables
+• Evaluation of whether VLMs can make eﬀective use of code diﬀs to identify behavioural
+changes in scenes.
+• Evaluation of VLMs’ ability to detect regression bugs with and without code context.
+• A report detailing the literature review, design decisions (e.g., prompt engineering), ex-
+perimental methodology, and results.
+Possible Extensions
+• Comparative study of open- and closed-source VLMs applied to this task.
+Indicative Reading
+• Taesiri, Mohammad Reza et al.
+“VideoGameQA-Bench: Evaluating Vision-Language
+Models for Video Game Quality Assurance”. arXiv, 2025.
+https://doi.org/10.48550/ARXIV.2505.15952
+• Cheng, An-Chieh et al. “SpatialRGPT: Grounded Spatial Reasoning in Vision-Language
+Models”. NeurIPS 2024.
+https://openreview.net/forum?id=JKEIYQUSUc
+• Zhang, Boran et al. “Human-AI Collaborative Game Testing with Vision Language Mod-
+els”. arXiv:2501.11782, 2025.
+https://doi.org/10.48550/arXiv.2501.11782
+Prerequisites
+• Strong understanding of machine learning fundamentals.
+• Experience with generative AI, including API usage and prompt engineering; familiarity
+with local model execution and ﬁne-tuning is beneﬁcial.
+2
+
+• Strong Python skills and experience with scripting in at least one 3D game engine (Unity,
+Unreal, Godot, etc.).
+• Experience with git.
+• Ability to work independently and solve complex problems.
+• Interest in video games.
+Project 2: Detecting Technical Requirement Violations in Video
+Games with (Large) Language Models
+Aims
+The aim of this project is to develop a machine-learning-based pipeline to assist QA engineers
+in ensuring that video games adhere to platform-speciﬁc technical requirements documents.
+Background
+Gaming platforms impose strict requirements on published titles to ensure a consistent player
+experience and compliance with legal obligations. Requirements include correct terminology for
+platform features, copyright and trademark compliance, and safeguarding player privacy and
+safety. Currently, evaluation against Technical Requirements Checklists (TRCs) is performed
+manually, making the process slow and costly.
+With recent advances in NLP, particularly LLMs and contextual embedding models, auto-
+mated approaches to compliance checking have begun to show promise in other domains such as
+legal text analysis (Hassani 2024). This project explores similar approaches for analysing text
+extracted from video game screenshots to identify TRC violations.
+As with the previous project, this work is conducted in collaboration with SIE, and involves
+an additional interview stage for applicants.
+Early Deliverables
+• Literature review of LLM/RAG approaches to software and video game requirement check-
+ing.
+• Evaluation of existing embedding models or open-source LLMs on TRC-related tasks.
+• A trained or ﬁne-tuned model capable of reliably detecting a subset of TRC violations
+from text extracted from real game screenshots.
+Final Deliverables
+• A pipeline that ingests a screenshot, extracts text, and identiﬁes a subset of TRC violations
+across major world languages.
+• Robust evaluation of the pipeline, including ablation studies where appropriate and com-
+parison to alternative methods.
+• A report presenting the literature review, design rationale, and detailed experimental
+results.
+3
+
+Possible Extensions
+• A model capable of detecting nuanced TRC violations requiring reasoning or broader
+contextual understanding, such as those relating to player safety or privacy.
+Indicative Reading
+• Hassani, Shabnam et al. “Rethinking Legal Compliance Automation: Opportunities with
+Large Language Models”. arXiv:2404.14356, 2024.
+• Nie, Zhijie et al. “When Text Embedding Meets Large Language Model: A Comprehensive
+Survey”. arXiv:2412.09165, 2025.
+• Zhang, Xin et al. “mGTE: Generalized Long-Context Text Representation and Reranking
+Models for Multilingual Text Retrieval”. arXiv:2407.19669, 2024.
+See also: https://huggingface.co/Alibaba-NLP/gte-large-en-v1.5
+Prerequisites
+• Strong Python programming skills.
+• Proven experience with PyTorch and the wider ML ecosystem (e.g. Hugging Face).
+• Working knowledge of embedding models and LLMs.
+• Understanding of machine learning and deep learning fundamentals.
+• Interest in video games.
+4

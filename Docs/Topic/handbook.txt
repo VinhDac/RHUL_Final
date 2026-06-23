@@ -1,0 +1,538 @@
+1 
+Royal Holloway, University of London 
+Department of Computer Science MSc Programmes 
+Individual Project — Rules and Guidelines  
+For students who started in September 2025 and in September 
+previous years 
+ 
+1  Introduction 
+This booklet concerns individual projects for Department of Computer Science MSc programmes. It 
+contains all the information that you will need, from choosing a project title to writing up, submitting 
+and being assessed. 
+Your project is a piece of individual work done under the supervision of an academic member of 
+staff. It includes the preparation of a dissertation, which will be assessed by the examiners together 
+with any software that you will have produced. 
+The project is worth 60 credits, which corresponds to 12 weeks of full-time work. The total working 
+time associated with the project (including the choice of the project, project meetings and all 
+independent work) should be about 600 hours. 
+1.1  Types of project 
+Different projects may stress theoretical, methodological, or programming (implementation) 
+aspects of a problem or case study. It is important that you discuss the specific requirements of your 
+chosen project with your supervisor. 
+1.2  Why is the project so important?  
+Doing a project is an opportunity to demonstrate your ability to develop, individually, a substantial 
+piece of work. Success in your individual project will provide evidence of your skills to any future 
+employer, and students often use their project supervisors to provide job references after 
+completing their degree. 
+Your project should be an enjoyable part of your studies: you get to choose a topic of personal 
+interest and to study it in depth. 
+ 
+
+2 
+2  Choosing a project and finding a supervisor 
+2.1  Choosing a project title 
+A list of titles will be made available on the Moodle page of the Individual Project by the date set in 
+section 3. You will be invited to complete (electronically) a project ballot form by choosing from 
+the list those projects you may be interested in doing. 
+You can return the completed ballot form any time after Ballot start date, but you must return your 
+completed ballot form by the ballot close date; otherwise a project will be chosen for you. 
+Please note that by choosing a title you are not choosing a supervisor. This is because each 
+academic member of staff has a limited capacity for supervising project students. Therefore, it is 
+essential that you choose as wide a range of titles as possible on your ballot form. 
+2.2  Proposing your own project title 
+You may propose your own project, especially if you are registered for a ‘Year in Industry’ degree 
+so that you can build on the experience that you will have gained during your placement. If you 
+decide to do this, your proposal will have to be accepted by the Project Committee as a valid 
+project (the Project Committee consists of the academics in charge of the postgraduate projects, 
+MSc programme directors, and the departmental PGT lead). This is to ensure that all projects have 
+sufficient academic content, and that they can be completed in the available timeframe.  
+In order to propose your own project, you need to submit a one-page description to the Project 
+Committee before the closing date for the ballot. The description should outline the aims of the 
+project, give the background of the proposed work, and specify the deliverables. The deliverables 
+should be worded as clearly as possible – the success of your project will be assessed against them. 
+Some deliverables should be marked as early; you will aim to achieve them within a month of 
+starting the project. Prototype programs and proof-of-concept results are good candidates for 
+early deliverables. Late deliverables will be achieved towards the end of the project. 
+If you plan to use any data supplied by your placement provider (or another company), you must 
+obtain their permission before proposing your own project. The company may impose some 
+restrictions, e.g., ask you to withhold some sensitive information or refer to “company X” or 
+“customer 123456” in your project report. If you need advice on your particular case, please 
+contact the Project Committee. A self-sourced project may require special submission 
+arrangements for reasons of data protection or intellectual property. The student proposing the 
+project will need to notify the Project Committee of any such requirements as early as possible and 
+work with the department to find an acceptable solution. This should be done before the start of 
+the project. 
+You are welcome to contact a potential supervisor or supervisors to discuss your proposal, but you 
+must remember that academic members of staff will not have the final word in the allocation of 
+projects. The Project Committee will consider the academic merit of your proposal and endeavour 
+to assign you a suitable supervisor. 
+In any event, it is essential that you complete a ballot form by the deadline so that, in case we 
+cannot find a supervisor for the project that you proposed, you may be allocated one of the 
+projects from the general list. 
+
+3 
+2.3  Prerequisites 
+Some titles have prerequisites associated with them. Typically, this means that you must have taken 
+(or be taking) certain modules in order to do the project. It is also possible that certain titles on the 
+project list may not be available for the degree for which you are registered. All such prerequisites 
+will be clearly indicated on the Moodle site. 
+If you are doing ‘Computational Finance’ or ‘Computational Finance with a Year in Industry’, you 
+will need to choose at least two titles offered by the Department of Computer Science and two 
+titles offered by the Department of Economics.  
+2.4  The allocation process 
+The allocation of a project and supervisor will be made on the date specified in Section 3. Please 
+note that, if we have not had a ballot paper from you by the ballot close date, we will make an 
+allocation on your behalf. 
+2.5  Projects for Year-in-Industry students 
+If you are on a Year-in-Industry programme, you enter the project ballot at the same time as all 
+other students. This is so that, if for some reason you do not go on a placement, you do the project 
+according to the same timetable as the other students. If you do go on a placement, you will be 
+given a chance to revise your topic towards the end of the placement in order to be able to 
+capitalise on the experience that you will have gained. You will need to enter the ballot again. 
+2.6  Projects for part-time students 
+Part-time students enter the project ballot during the final year of their studies. The timeframe and 
+deadline of non Year in Industry students applies to them. 
+3  Important dates 
+Project Allocation: 
+Project list available  Monday, 12 January 2026 
+Project ballot form program available Monday, 26 January, 2026 
+Deadline for completing the ballot form Friday, 30 January, 2026 
+Final allocation Monday, 9 March 2026 
+Non Year in Industry Students (**): 
+Project plan agreed (*) Friday, 19 June 2026  
+Draft dissertation ready (*) Friday, 14 August 2026 
+Submission deadline  Tuesday, 1 September 2026/14:00 
+ 
+
+4 
+Year in Industry Students coming back from placements (2024 entry cohort)  
+Project plan agreed (*) Friday, 3 July 2026  
+Draft dissertation ready (*) Friday, 28 August 2026 
+Submission deadline  Tuesday, 15 September 2026/14:00 
+ 
+(*) The project plan and draft dissertation are not formally submitted or graded. The plan should 
+be agreed between you and your supervisor in whatever form you both find convenient. You 
+give the draft dissertation to your supervisor so that he or she could provide you with 
+feedback before the actual submission. Not keeping with these deadlines is an indication 
+that your project is not on the right track and you must catch up on the work. 
+(**) The Year in Industry dates apply to students who went on year in industry in 2024-25 and 
+have come back to do the project. The 2025-entry students who started on a year in industry 
+programme but do not go on a placement must adhere to the dates for non-year in industry 
+students. All repeat 2024 and earlier start students must adhere to the dates for non-year in 
+industry students, even though they may have started their studies on a year in industry 
+programme. 
+4  Organisation of the project 
+This section describes the process of doing an individual project. The basic structure is that students 
+meet with their supervisors on a regular basis. 
+4.1  Student’s responsibilities 
+Titles and supervisors are allocated during Term 2 to give you enough time to start thinking about 
+what precisely you will do in your project. You should contact your supervisor after the project 
+allocation is published. The supervisor will give you some initial guidance, such as background 
+reading material or topics to think over before the project officially starts. He or she may not be 
+available immediately for meetings though. Part-time students, who have a lighter exam load, may 
+engage in more intensive project work. In some cases, for example, for students doing the project 
+at the department of Economics, the initial stage may require producing a formal project proposal 
+on the allocated topic. 
+You are encouraged to discuss the aims and objectives of the project with the supervisor. If your 
+supervisor agrees, you may make some changes to the topic that you were initially allocated. If 
+you are on a Year-in-Industry degree, you should arrange a meeting with your supervisor a month 
+before the end of your placement to discuss any changes that you would like to make to your 
+topic or plan to build on the experience that you will have gained. 
+You must have the minimum of three meetings with your supervisor, in June, July, and August. These 
+meetings will be logged and attendance information used for visa purposes. These meetings may 
+happen in person or on Teams, Zoom or a similar communication system by agreement with the 
+supervisor.  
+You must start working formally on your project after your exams have finished or, if you are on a 
+Year-in-Industry degree, at the end of your placement. Contact your supervisor and organise the 
+
+5 
+June meeting. It is recommended (but not required) that the first meeting should be in person. By 
+the deadline given above you and your supervisor should finalise the detailed work plan including 
+aims, objectives, methodology, preliminary background research, milestones and weekly schedule 
+of work. The plan is not formally submitted or graded, but you will receive feedback from your 
+supervisor. The role of the deadline is to make sure all students get a clear idea of their project 
+structure. 
+Make sure to have meetings with your supervisor in July to discuss your progress and in August to 
+get feedback on your dissertation draft. 
+4.2 Other attendance requirements 
+All students are required to complete three check-ins. You need to physically come to the EPMS 
+office and present your student ID and be checked of the register. The dates for these check-ins will 
+be published on the projects moodle page. 
+ 
+Over the summer, there will be sessions aimed at helping you with dissertation writing. The sessions 
+are compulsory and the dates will be published on the projects moodle page.  
+4.3  Your project meetings 
+The typical duration of a meeting is 30 minutes. The purpose of the meetings is to discuss your 
+project work. You should plan these meetings ahead of time.  
+It is essential that you do not miss agreed meeting dates/times, so let your supervisor know in 
+advance if you would like a meeting to be rescheduled. 
+It is up to you to make use of your supervisor. It is not the supervisor’s role to chase you on your 
+progress. 
+It is vital that you keep records of all project meetings. In particular you must record any deadlines 
+given to you and any deliverables required of you. Please take a note book with you to all 
+meetings. 
+4.4  Backup 
+It is very important that you keep all reports, programs, notes etc. backed up.  
+You are advised to back up the code you have developed and dissertation drafts on 
+https://gitlab.cim.rhul.ac.uk Alternatively, you can keep a copy of the code and dissertation drafts 
+on linux.cim.rhul.ac.uk, where the files are regularly backed up. To restore lost files from backup, 
+please contact Support on cimhelpdesk@rhul.ac.uk  
+4.5  Project milestones 
+Your project plan will need to include all important milestones and the dates by which they should 
+be completed. Each milestone is associated with a deliverable that you should discuss with your 
+supervisor.  
+It is clear that the milestones will be specific to your project and reflect the nature of the work that 
+you will do. The following is a general example of milestones associated with a programming-
+oriented project: 
+
+6 
+• Review of Current Theory/State of the Art Completed  
+• Requirements Analysis  
+• High-Level Design  
+• Prototype Program  
+• Specification of Testing Procedures  
+• Outline of Dissertation  
+• Final Draft of Dissertation  
+4.6  Project diary 
+It is also important that you keep a diary or workbook log of your project work. This will be 
+invaluable when you come to write the dissertation as it will help you remember problems that you 
+found and dead ends that you investigated. You should also use your diary as a basis for 
+discussions with your supervisor about problems and progress. 
+The gitlub site https://gitlab.cim.rhul.ac.uk may be used to keep a diary. If your gitlab project is 
+shared with the supervisor, he or she can use gitlab to monitor your progress. You should make diary 
+notes at least on a weekly basis. 
+4.7  Supervisor’s responsibilities 
+Your supervisor is there to monitor and advise you on your progress, not to teach you on any aspect 
+of your project. Your supervisor should supply references to new, relevant material and be willing to 
+discuss any questions that you may have after studying it. 
+It is your supervisor’s responsibility to attend each meeting previously agreed with you, or to re-
+organise the meetings if this is not possible. Your supervisor will keep an attendance register of your 
+meetings and a milestone record. The register is important as evidence of your level of 
+engagement with the project. The milestone record is important as evidence of how progress was 
+made during the project. These records may be kept electronically. 
+ 
+5  Documenting the project 
+Your dissertation is the culmination of your project and will be the final record of your 
+achievements. However, as you work on your project, you should keep together all the documents 
+that you produce, including early ideas that you will not necessarily pursue or fragments of code. 
+These will all be essential for assessing your progress. 
+You should read the section on project marking in order to better understand the criteria used in 
+assessing a project. 
+
+7 
+5.1  Writing the dissertation 
+You should aim to agree on the outline of your dissertation with your supervisor as early as possible. 
+This will allow you to write up your work as you go along and thus avoid panic in the approach to 
+the submission deadline.  
+Your supervisor must see a complete draft of your dissertation by the date set in section 3 so 
+that their feedback can help you write the final version to the highest standards. 
+You should discuss with your supervisor what other deliverables will be required in addition to the 
+dissertation. For example:  
+• any test results referred to in the dissertation;  
+• examples showing the use of any software produced during the project;  
+• a working program with instructions on how to execute it;  
+• copies of papers or other reference material used for the project.  
+5.2  Dissertation format 
+The dissertation must follow an approved template. Templates for Word and LaTeX are provided on 
+Moodle. 
+5.3  What your dissertation must contain 
+Your dissertation must contain a section motivating the project and giving the original project aims. 
+In this section, you should also explain how you think that the work developed in the project will 
+help in your future career. 
+You must also write an assessment section that includes an appraisal (self-evaluation) of your effort: 
+How did the project go?  What did you do right or wrong?  What have you learnt about planning 
+and executing a project?  Where next?   
+5.4  What your dissertation should contain 
+Because all projects differ, it is hard to prescribe a particular structure for any dissertation. The 
+following is only a general guideline but points to elements that any dissertation must contain. 
+1. Your dissertation must contain a short abstract summarising the work that you developed.  
+2. It must also contain an introduction including the motivation, aims and objectives of your 
+project. You should also explain how you think that the work developed in the project will 
+help your in your future career.  
+3. It must also contain a background research section. This might include a survey of relevant 
+literature, programming methods or techniques, as well as any relevant discussion on 
+different options that were available to you and a justification for any decisions that you will 
+have made.  
+
+8 
+4. If a key part of your project is the development of a software product, then you will need to 
+include sections describing the software engineering method that you followed and detailing 
+the results obtained during the different development phases such as requirements analysis, 
+design, implementation and testing. Remember that you need to include a user or 
+installation manual.  
+5. If your project is mostly theoretical, then you should include sections detailing the 
+development of your theory. This might include small programs to investigate certain aspects, 
+explanations of algorithms, or descriptions of any particularly hard bits of theory. A 
+theoretical project will probably have a section on results and some sections on their 
+analysis.  
+6. If your project involves computational experiments with real-world data, you will need a 
+section or sections on experimental results, analysis, and conclusions derived from the 
+experiments.  
+7. Every dissertation needs some kind of self-assessment section including an appraisal of your 
+effort: How did the project go?  What did you do right/wrong?  What have you learnt about 
+planning and executing a project?  Where might you go next?   
+8. For Year-in-Industry students, the self-assessment section should also include a reflection on 
+how the placement has contributed to the project.  
+9. A bibliography of all work that you consulted to understand and develop the project must 
+be included and properly referenced in the text.  
+10. If any code has been written for the project (whether the project is development or 
+experimental), you should have a section on How to Use My Project that tells the markers 
+what programs have been written, what examples they might look at, or demonstrations that 
+they might run, or simply where to find any software sources.  
+11. You may want to include several extras such as a program listing (using, for example, psify), 
+sample output, or layout diagrams. It is not required to include all code you have written as 
+part of your dissertation; you can submit it in separate folders. 
+ 
+5.5  The size of your dissertation 
+Your dissertation should be up to 50 pages and formatted using the approved Word or LaTeX 
+template (you should not change page layout or font in the template). The limit includes the 
+bibliography, tables, pictures, etc but does not include appendices. The dissertations exceeding 
+the limit are subject to the College policy on over-length work. 
+While 50 pages amount to approximately 15000 words, there is no limit in terms of the number of 
+words because of the ambiguity of the word count in a mathematical text. 
+Please note that this limit is an upper bound and not the suggested length. A successful dissertation 
+may well be shorter as long as it adequately covers all the required material. If in doubt, please 
+contact your supervisor for advice specific to your dissertation topic. For example, for dissertations 
+done at the department of Economics the typical size of a dissertation is usually in the range of 
+10000-12000 words. 
+
+9 
+Any material (such as code that you may have written) that is not essential, can be included in an 
+Appendix at the end of the dissertation, outside of the page limit. Please note that examiners will 
+not necessarily read the Appendices. 
+5.6  Anonymisation 
+Your dissertation submission should be anonymous. Do not put your name or your student number 
+on the front page and avoid including any details (such as your username or email address) that 
+can lead to easy identification. In particular, should you want to thank your supervisor, please do 
+not mention him or her by name. Allthough full anonymisation may not be possible, please make 
+an effort to achieve anonymity.  
+You may want to make a version of the dissertation with the name on the front page to show to 
+prospective employers or to use in similar situations. 
+6  Information sources 
+6.1  Plagiarism and acknowledgement of sources 
+Your project and dissertation must be your own work. Plagiarism (the unacknowledged use of other 
+people’s work) is a very serious offence and will be severely penalised. 
+Nonetheless, it is in the nature of an individual project that part of the material included in the 
+dissertation will not be original. You will have researched around your subject and discovered many 
+sources of information. It is vital that any quote made from any source (including the web) should 
+be properly acknowledged, both where it is used within the dissertation text, and at the end of the 
+dissertation in the bibliography. For example: 
+Henry Smith [1] states that ‘The problem of wild animals on campus can only be solved 
+by the introduction of even wilder animals which will eat them.’ However, the results 
+obtained in this project seem to contradict him.  
+In this case, the citation [1] would refer to a bibliography entry such as 
+1. Smith, H. Modern University Life. Wombat Press, 1997.  
+If you express someone else’s idea in your own words, then you must also acknowledge their 
+original expression of the idea. For example: 
+Smith [1] believes that an infestation of wild animals in a university can only be cured by 
+introducing suitable predators. However, the obviously recursive nature of his proposal 
+led me to consider more feasible alternatives.  
+If you use examples from a lecture course or a book to illustrate your background theory, then you 
+must acknowledge the original source; similarly if you follow a book or lecture notes when 
+presenting background theory. For example: 
+The following sequence of definitions is based on [1], with simplifications due to the 
+fact that we are only considering finite widgets.  
+Whereas it is perfectly acceptable that any program that you develop includes pieces of code 
+that you did not write yourself, you must identify them and say where they came from. For 
+
+10 
+example, if you copy an implementation of a particular algorithm from a book, you must make it 
+clear that you did not write those lines of code. 
+Note that there is no outright ban on the use of imported code: sometimes you have no alternative 
+but to use a freely available library or a clever hack from stackoverflow to do a particular task. You 
+should discuss all such cases with your supervisor to make sure that the use of the borrowed code is 
+consistent with the purpose of the project and you must acknowledge all such cases in the 
+dissertation. 
+A general rule is that if you are in doubt about needing to acknowledge a source, you probably 
+should. Do ask your supervisor for advice. 
+The use of generative Artificial Intelligence tools (such as ChatGPT or Google Bard) for the project is 
+prohibited in accordance with Royal Holloway regulations. Using generative AI tools may constitute 
+an assessment offence. 
+If your project involves research on generative AI, please discuss this with your supervisor and get 
+express guidance on the use of the tools to make sure you do not violate the regulations. On no 
+account you can present the content (such as programs or text) generated by AI tools as your 
+own; this content must be explicitly labelled as AI-generated.  
+Finally, under no circumstances should copyright material be included in a project dissertation 
+without the proper permissions having been obtained, and any such inclusion should be agreed 
+with your supervisor. 
+6.2  Ethics and intellectual property 
+While working on your project you may be approaching companies and other (state, charitable 
+etc) organisations and asking them for information and data. It is your responsibility to check with 
+the information provider whether and to what extent you can use that information in your research 
+and to strictly adhere to all conditions stipulated by the information provider. For example, some 
+companies and organisations may allow limited use of information in research but strictly prohibit 
+further unauthorised dissemination of information; make sure you follow the conditions precisely. 
+As a general rule, if any information remotely appears sensitive, check with the information source 
+whether you are allowed to include it in your dissertation. If a matter is complicated, discuss it with 
+your supervisor. 
+This is particularly important if you have been on an industrial placement and want to use the 
+information you acquired during the placement in you project. Always check with the company if 
+you are allowed to use that information and to what extent. 
+On the Internet there are public repositories of datasets (such as UCI Machine Learning Repository 
+at http://archive.ics.uci.edu/ml/ ) widely used by researchers. If you use information or data from 
+such sources, it is your responsibility to check their distribution policy (e.g., citation requirements) 
+and adhere to it. 
+7  Submitting the dissertation 
+This section tells you how to produce and submit the dissertation. It also defines the circumstances 
+in which the submission deadline can be extended. 
+
+11 
+You must submit an electronic copy of the dissertation, software, and any other relevant material in 
+using the departmental anonymous submission mechanism. 
+7.1  Electronic Submission 
+The project submission should be done on the moodle page CS5821/5822 Individual Projects for 
+Computer Science MSc programmes. 
+You must make sure that it is possible for your project markers to run any programs that you have 
+produced as part of your project. You need to submit the following: 
+• the report in the pdf format; 
+• source files for any programs you have written; 
+• any makefiles; 
+• essential results files, graphs, diagrams etc (see below for a discussion of what you should not 
+submit); 
+• other files specific to your project. 
+In the submission directory you should include instructions for building any programs included from 
+the source code. If your program was not built on the departmental computer system then you 
+must say how it was built on whatever system you used. 
+Remember that your dissertation must include full instructions on running any programs that you 
+submit: 
+• It is your responsibility to make sure that the examiners are able to run your program. 
+• Your dissertation must say where your program is located (relative to your submission 
+directory). 
+• If you have used your own computer, then you must say where all relevant files are located 
+relative to your submission directory, and how to install the files needed to run your project.  
+It is also important that your submission should be of a manageable size. It is no use submitting 
+gigabytes of intermediate results, for example: the marker will not be able to go through them 
+anyway and the large submissions may overload the system. Therefore an upper limit of 100 
+megabytes is set. 
+As a basic rule, if a file has been written by you, you must submit it; if a file has been downloaded or 
+generated by one of your programs, think twice about submitting it. Here are guidelines on what 
+not to submit: 
+• large datasets: if a dataset is available from the web, include a reference with a url in your 
+project report; if the dataset is uploaded on the departmental cluster, just leave it there (making 
+sure the file has read permissions) and quote the path in your report; 
+• raw output, log files, and intermediate files: submit only the essential files or a small 
+representative selection; the examiner should be able to ascertain you carried out the work but 
+
+12 
+does not need to (and cannot) see everything; instead of raw output, submit graphs or 
+visualisations. 
+If you cannot fit your submission under the 100 megabytes limit, speak to your supervisor first and 
+then the project committee. 
+7.2  Student Feedback Form 
+Students should fill in the project feedback form. Instructions on how to obtain and submitted will be 
+provided before the dissertation submission date.  
+7.3  Extensions 
+The project is covered by the College extensions system. If you require an extension, apply at 
+https://intranet.royalholloway.ac.uk/students/study/exams/extensions-and-extenuating-
+circumstances/ext.aspx  
+8  Assessment 
+This section is concerned with the overall assessment of a project. Every project will be marked by 
+at least two independent markers (with more markers invited if there is a dispute). Marks are then 
+checked by the external examiner and ratified by the departmental and school assessment 
+boards. 
+8.1  The criteria 
+Examiners should mark from 0%–100%. 
+Because every project is different, it is impossible to give a universal marking scheme. However, the 
+following guidelines specify the features which a project must have in order to be awarded a mark 
+in each class range. 
+1. A distinction project (70%-100%) should be outstanding in most respects. It should show a 
+mature, accurate grasp of the issues raised by the topic and should conduct a sustained, 
+coherent argument in a style that is fluent. It should demonstrate an excellent knowledge of 
+appropriate reference material, techniques and relevant theoretical perspectives. It should 
+also demonstrate excellent technical/practical skills where these are needed. So that 
+distinction marks may make their proper contribution to the final average, it is important that 
+they should not be limited to the low 70s. Examiners should use the full band analogously to 
+others and be prepared to give marks above 80% for outstanding work. 
+A mark between 70% and 79% should clearly be a distinction project. 
+A mark of 80% or more should only be given for projects with excellent dissertations and 
+where the student has achieved one of the following:  
+• The achievement of the student would be a very good basis for continuing research in 
+the area.  
+• The practical work is of such a high professional standard that it could be distributed 
+without significant extra effort.  
+
+13 
+• The student has worked independently, exceeded expectations, and clearly 
+demonstrated a very deep understanding of their results.  
+Exceptional projects may occasionally be awarded a mark in excess of 90%. 
+2. A clear merit project (60%-69%) should have many of the features characteristic of a 
+distinction project. Creativity and originality or breadth and depth of response could 
+compensate for some weakness in style or some incoherence of argument. Alternatively, a 
+well-written thoughtful dissertation could compensate for a narrowness in the range of issues 
+addressed. Projects in this class should contain little or no irrelevant material and should be 
+generally well constructed.  
+3. A borderline pass-merit project (55%-59%) would show that the candidate has grasped the 
+basic issues raised by the topic, but has not achieved the qualities listed for a distinction or 
+clear merit grade. There should be some theoretical analysis and/or experimentation and 
+implementation. This grade might alternatively be awarded where the quality of argument is 
+mitigated by clear weaknesses, e.g., a detailed dissertation with considerable insights, 
+marred by a lack of background material, poor organisation of material or incomplete work 
+or errors. 
+4. A bare pass project (50%-54%) gives some evidence that the main part of the topic is 
+understood. However, recognition of issues is incomplete, and analysis and discussion is 
+restricted. Evidence may be unbalanced or of dubious relevance with a tendency to 
+excessive generalisation or unsupported assertions of a subjective nature.  
+5. A mark just above the pass/fail boundary represents a failure to approach the topic. The 
+project may show some evidence of study but a failure to mobilise it as an implementation or 
+with background theory, with a tendency towards incoherence. 
+6. A mark up to 49% should be used where the report has serious errors, or where there is little 
+evidence of the candidate having studied, or where the report is poorly constructed, or 
+where the report is not relevant to the topic. 
+7. Where only a few lines of work have been submitted, the candidate is not deemed to have 
+made a serious attempt at the project and a mark of zero will be recorded.  
+8.2  What the markers mark 
+The above list is enough to classify each project submitted. Within these (wide) classification bands, 
+markers will use many different criteria for assessing a project.  
+1. Difficulty. Each project title has the scope for an ambitious attempt, or a straightforward 
+progression. Marks may be awarded for making an intelligent try at a more difficult goal. 
+2. Presentation. Presentation of the material and arguments in a way that makes their 
+development clear to a computer scientist who is not a specialist in the project topic. 
+3. The Journey. Any project that required many new topics to be assimilated during the process 
+should get credit for this. 
+4. Content. Has a minimum of ground been covered?  Most projects should contain an 
+exposition of an area of theory, as well as some practise. 
+
+14 
+5. Scale. Does the project represent work worthy of 60 credits?  
+6. Results. Obviously we are interested in results. However, a good grade can be obtained for a 
+project that is incomplete. This includes non fully working programs, theories that are 
+incomplete, etc. The work can still be judged against all of the other criteria above. 
+7. Review. The critical review or assessment section will be of most importance to the second 
+marker. It demonstrates the student’s appreciation of the difficulty and relevance of the 
+work involved in the project. 
+8. Background. Evidence of a good understanding of the background theory or current state of 
+the art. 
+9. Objectives. Clarity of statement of objectives. 
+8.3  The marking process 
+1. All projects will be marked by two independent markers, one of whom will be the project 
+supervisor.  
+2. In the event of a small discrepancy (less than 10%), the marks will be averaged with equal 
+weighting.  
+3. In the event of a larger discrepancy, a third independent marker will mark the project, and 
+the projects committee shall seek agreement amongst all markers as the final outcome.  
+4. Markers will mark according to the marking criteria supplied and will justify marks with a short 
+paragraph on the marking form.  
+5. No marking penalty will apply to a project submitted by a student on time or within the limits 
+of an agreed extension.  
+6. The project is covered by the College extensions system just like other assignments. Unless an 
+extension has been granted by the College, the marking penalty for a late submission is 10 
+marks for a project submitted within 24 hours of project deadline. After 24 hours no project 
+will be accepted and the mark of zero will be given.  
+8.4  Grievances 
+1. Students may complain only on grounds of insufficient monitoring, or inappropriate demands 
+made by their supervisor.  
+2. In the first instance, a student should bring complaints to their supervisor.  
+3. If, after bringing a complaint to the supervisor, the student still has a grievance, then they 
+should bring it to a member of the Project Committee.  
+4. If the Committee feels that the complaint is justified, and the student so wishes, the Project 
+Committee will make representations to the supervisor.  
+5. If the Committee feels that a complaint is justified, then they will minute this and the 
+grievance will be considered when assessing the project.  
+
+15 
+6. A student who believes the complaint has not been handled satisfactorily may take the 
+matter further and consult the Student Complaints Procedure at 
+https://intranet.royalholloway.ac.uk/students/study/complaints/complaints/student-
+complaints.aspx Please note that submitting a formal complaint through the College 
+procedure would not resolve an issue immediately; the process may take considerable time. 
+It is therefore strongly recommended to raise the issue with the department first. 
