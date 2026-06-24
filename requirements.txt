@@ -1,0 +1,10 @@
+numpy
+scikit-learn
+matplotlib
+pandas
+jupyter
+ipywidgets
+
+# real-world layer (add when we get there):
+# yfinance
+# ucimlrepo

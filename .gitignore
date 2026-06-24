@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.DS_Store
+.venv/
+venv/
+
+# generated artifacts (keep the folders via .gitkeep, ignore the contents)
+results/*.csv
+figures/*.png
