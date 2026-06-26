@@ -134,6 +134,10 @@ The synthetic experiment does **not** assume its own answer: I fix the *truth* a
 ## 3. Method — the one machine
 ✅
 
+**In plain words.** Picture a *bag of model configurations* — a handful of kNN, tree, logistic-regression and SVM settings. You try each on a *small* validation set and keep the one that scored best; that best score is the number you would proudly report (the *apparent* score). Then you open a *huge* sealed test set — so large it tells the truth — and read that model's *true* score. The apparent score sits above the truth, and that inflation is the **gap**. The more configurations you try, the more chances you have to get lucky, so the gap grows with N. The rest of this section makes this precise.
+
+![The core in one picture: try N configurations, keep the best on the small validation set, then reveal the truth on the huge sealed test — the gap is the inflation, and it widens as N grows.](figures/core_idea.svg)
+
 Every experiment in this report — gate and after — runs the *same* procedure. Fixing the procedure and varying only one input at a time is what lets a change in the gap be attributed to that input rather than to an accident of wiring.
 
 **The one machine.** On a freshly generated dataset:
