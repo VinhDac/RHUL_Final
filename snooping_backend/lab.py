@@ -41,3 +41,11 @@ Functions to implement (contract - bodies are yours):
       re-sample fresh on every call.
 ------------------------------------------------------------------------------
 """
+
+import numpy as np
+
+def make_X(n, d, rng):
+    """Make a Gaussian dataset of shape (n,d) with i.i.d. N(0,1) entries"""
+    X = rng.standard_normal((n, d))
+    return X
+
