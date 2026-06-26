@@ -25,7 +25,7 @@
 
 **Central hypothesis.** `gap = best-validation score − true performance` is **positive** and **grows with N**. We **measure** it — we do not predict it with a formula — using a sealed test set opened exactly once.
 
-> Sources: core principle (`Plan/PROJECT_SPEC.md`); selection bias — `CT2010`.
+> Sources: the approved plan (`Plan/Plan_2.docx`); selection bias — `CT2010`.
 
 ## 2. Why a synthetic laboratory
 *To write — only generated data gives exact true labels, so the gap is measured exactly and known noise can be injected. On real data the "true" performance is itself only an estimate.*

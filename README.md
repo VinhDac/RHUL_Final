@@ -17,11 +17,12 @@ gap = best_validation_score − sealed_test_score
 
 | Path | Purpose |
 |------|---------|
-| `snooping/lab.py` | synthetic lab: Gaussian X, 3 labelling cases, isometry, noise, splits |
-| `snooping/models.py` | the model zoo (sklearn; from-scratch MLP later) |
-| `snooping/pipeline.py` | the machine: search → keep best on validation → reveal on sealed test → gap |
+| `Core.md` | the core report (reasoning first → PDF for the supervisor) |
+| `snooping_backend/lab.py` | synthetic lab: Gaussian X, 3 labelling cases, isometry, noise, splits |
+| `snooping_backend/models.py` | the model zoo (sklearn; from-scratch MLP later) |
+| `snooping_backend/pipeline.py` | the machine: search → keep best on validation → reveal on sealed test → gap |
 | `tests/test_lab.py` | sanity checks (incl. the isometry insight, proven by numbers) |
-| `notebooks/` | the story + figures |
+| `notebooks/` | runnable experiments + figures |
 | `results/` | logged run records (CSV) |
 | `figures/` | output plots |
 
@@ -35,4 +36,4 @@ python -m tests.test_lab      # once the lab is implemented
 jupyter notebook              # then open notebooks/01_core_snooping.ipynb
 ```
 
-Notebooks add the repo root to `sys.path` so they can `import snooping`.
+Notebooks add the repo root to `sys.path` so they can `import snooping_backend`.
