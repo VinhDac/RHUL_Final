@@ -211,9 +211,39 @@ The point is sharp: the isometry changes nothing that should matter — same dis
 ---
 
 ## Appendix A — code provenance (build log)
-*Outside the 50-page limit (handbook §5.5); examiners may not read it — so the essential reasoning stays in the body. Per piece, filled only when we implement (last): exact source → code → check.*
+*Outside the 50-page limit (handbook §5.5); examiners may not read it — so the essential reasoning stays in the body. Per piece: exact source → code → check. `lab.py` is implemented and verified — every check below passes in `tests/test_lab.py` (and an independent harness confirmed the Case 3 tree-drop).*
 
 ### `lab.py` · `make_X(n, d, rng)` — the Gaussian samples
 **Why.** Supervisor: *"construct a matrix of Gaussian samples. This is your X — each row is one synthetic 'sample'."* (`Supervisor`, `Plan/Plan_2.docx`)
 **Source.** numpy `Generator.standard_normal` — *"Draw samples from a standard Normal distribution (mean=0, stdev=1)"*; with `size=(m,n)` it draws `m*n` samples into that shape. <https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.standard_normal.html>
-**Check (when coded).** `X.shape == (n, d)`; each column mean ≈ 0; each column std ≈ 1.
+**Check (verified).** `X.shape == (n, d)`; each column mean ≈ 0; each column std ≈ 1. ✓
+
+### `lab.py` · `labels_random(n, rng)` — Case 1 labels
+**Why.** No signal → true generalisation = chance (§2.2, §4 case 1); the baseline that isolates the winner's curse.
+**Source.** numpy `Generator.integers(low, high=None, size=None, …, endpoint=False)` — draws from the half-open interval `[low, high)`, so `integers(0, 2, size=n)` yields `{0, 1}`. <https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.integers.html>
+**Check (verified).** values ⊆ `{0,1}`; class balance ≈ 50/50; independent of `X` by construction. ✓
+
+### `lab.py` · `labels_sign(X)` — Case 2 labels
+**Why.** Supervisor: *"Label each row j as label_j = sign(X_{j,1})"* (`Supervisor`) — a clean, axis-aligned linear rule (§4 case 2).
+**Source.** Implemented as `(X[:, 0] > 0).astype(int)` → `{0,1}`. This realises the supervisor's `sign` rule while avoiding the `sign(0)=0` third value — numpy `sign` returns *"-1 if x < 0, 0 if x==0, 1 if x > 0"*, and the `> 0` form sidesteps the measure-zero tie. <https://numpy.org/doc/stable/reference/generated/numpy.sign.html>
+**Check (verified).** equals `(X[:,0] > 0)`; class balance ≈ 50/50 (Gaussian symmetric); linearly separable at `flip_y=0`. ✓
+
+### `lab.py` · `random_isometry(d, rng)` — the random rotation R
+**Why.** Supervisor: *"multiply the matrix X by a random isometry … R is a square matrix which is a rotation and (possibly) a reflection"* (`Supervisor`); used for Case 3 (§4).
+**Source.** numpy `linalg.qr` — *"Factor the matrix a as qr, where q is orthonormal and r is upper-triangular"*, with `q` = *"A matrix with orthonormal columns"*. Taking `q` of a random Gaussian `A` gives a random orthogonal matrix (an isometry), whatever `A` is. <https://numpy.org/doc/stable/reference/generated/numpy.linalg.qr.html>
+**Check (verified).** `R @ R.T ≈ I` (`np.allclose`). ✓ *(Uncorrected QR is orthogonal but not Haar-uniform; the `sign(diag(R))` correction is an optional refinement — any orthogonal R suffices here.)*
+
+### `lab.py` · `rotate(X, R)` — Case 3 features
+**Why.** Apply the isometry so the (axis-aligned) Case-2 boundary becomes oblique in the observed coordinates (§4). Labels are taken from the **original** `X` first, *then* the features are rotated — order matters: rotate-then-label makes the boundary axis-aligned again and erases the tree-drop artifact.
+**Source.** numpy matrix product `X @ R`. An orthogonal map preserves inner products and distances (`(XR)(XR)ᵀ = X RRᵀ Xᵀ = X Xᵀ`) — standard linear algebra, derived in place.
+**Check (verified).** `X @ X.T ≈ (X@R) @ (X@R).T` (inner products preserved → distances preserved). ✓ Consequence (measured): kNN/logreg unchanged Case 2↔3, tree drops `1.000 → 0.72`.
+
+### `lab.py` · `inject_noise(y, flip_y, rng)` — the label-noise knob
+**Why.** The §6.1 question — *does more noise widen the gap?* The lab can inject *exactly-known* noise (`Plan`). Off in the core (`flip_y = 0` → no-op).
+**Source.** numpy `Generator.choice(a, size, replace=False, …)` picks `n_flip = int(flip_y · n)` distinct indices; flipped via `1 - y`. <https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.choice.html>
+**Check (verified).** fraction actually flipped ≈ `flip_y`. ✓
+
+### `lab.py` · `make_dataset(case, n, d, flip_y, sizes, rng)` — assemble + split
+**Why.** One call builds a case's data and the three splits that feed the machine (§3): a training set, a **small** validation set (the snooping engine), and a **large** sealed test (truth ≈ no sampling error). Re-samples fresh each call.
+**Source.** numpy `split(ary, indices_or_sections)` — *"a 1-D array of sorted integers … indicate where along axis the array is split"*; the cut points are the cumulative sizes `np.cumsum(sizes[:-1])` (= `[train, train+val]`), so the three parts get the requested sizes (requires `n == sum(sizes)`). <https://numpy.org/doc/stable/reference/generated/numpy.split.html>
+**Check (verified).** three splits with shapes summing to `n`, `val` small < `test` large; Case 3 built label-then-rotate (tree drops vs Case 2). ✓
