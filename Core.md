@@ -26,7 +26,7 @@ Legend — all of §1–§6 is the core thesis: **✅ in the ~6 July gate** (syn
 | 6.1 | &nbsp;&nbsp;Label noise — does more noise widen the gap? | (6) | ⏳ |
 | 6.2 | &nbsp;&nbsp;Model capacity | (6) | ⏳ |
 | 6.3 | &nbsp;&nbsp;Selection protocol — single split / k-fold / nested CV | (6) | ⏳ |
-| 6.4 | &nbsp;&nbsp;From-scratch MLP (NumPy backprop derivation) | (5) | ⏳ |
+| 6.4 | &nbsp;&nbsp;The MLP's mathematics (backprop, SGD, L2) | (5) | ⏳ |
 | 6.5 | &nbsp;&nbsp;Real data — UCI loan default; finance ^GSPC (walk-forward) | (6) | ⏳ |
 | 7 | Discussion & analysis — where the thesis concludes | (6) | ✅ *(skeleton; grows with §6)* |
 | 8 | Self-assessment / appraisal | (7) | ✍️ *(mandatory)* |
@@ -134,7 +134,7 @@ The synthetic experiment does **not** assume its own answer: I fix the *truth* a
 ## 3. Method — the one machine
 ✅
 
-**In plain words.** Picture a *bag of model configurations* — a handful of kNN, tree, logistic-regression and SVM settings. You try each on a *small* validation set and keep the one that scored best; that best score is the number you would proudly report (the *apparent* score). Then you open a *huge* sealed test set — so large it tells the truth — and read that model's *true* score. The apparent score sits above the truth, and that inflation is the **gap**. The more configurations you try, the more chances you have to get lucky, so the gap grows with N. The rest of this section makes this precise.
+**In plain words.** Picture a *bag of model configurations* — a handful of MLP settings, differing in width and learning rate. You try each on a *small* validation set and keep the one that scored best; that best score is the number you would proudly report (the *apparent* score). Then you open a *huge* sealed test set — so large it tells the truth — and read that model's *true* score. The apparent score sits above the truth, and that inflation is the **gap**. The more configurations you try, the more chances you have to get lucky, so the gap grows with N. The rest of this section makes this precise.
 
 ![The core in one picture: try N configurations, keep the best on the small validation set, then reveal the truth on the huge sealed test — the gap is the inflation, and it widens as N grows.](figures/core_idea.svg)
 
@@ -142,11 +142,13 @@ Every experiment in this report — gate and after — runs the *same* procedure
 
 **The one machine.** On a freshly generated dataset:
 1. **Split** the data into three disjoint parts — a training set, a validation set (deliberately small, so `Ŝ` is noisy), and a sealed test set (made large; see below).
-2. **Search** a space of `N` configurations (model type and hyper-parameters across the garden — kNN, tree, logistic regression, SVM).
+2. **Search** a space of `N` configurations — here, **MLP configurations drawn at random** (width and learning rate). *(The sklearn garden — kNN, tree, logistic regression, SVM — is a separate **support** track for the isometry insight, §4–§5, not the headline search.)*
 3. For each configuration, **fit on the training set** and **score on the validation set**, giving `Ŝ_1, …, Ŝ_N`.
 4. **Keep the best on validation**: select `i* = argmax_i Ŝ_i`. The *apparent* score is `Ŝ_{i*}` — the number a practitioner would proudly report.
 5. **Reveal the sealed test exactly once**, scoring the single selected model to get `T_{i*}`, the estimate of its true performance `S_{i*}`.
 6. **Record the gap**: `gap = Ŝ_{i*} − T_{i*}` — apparent minus true.
+
+**The instrument — the MLP.** The model searched here is a small multilayer perceptron — one hidden layer (ReLU), two output logits — trained by full-batch gradient descent with cross-entropy loss. A *configuration* is its searchable knobs, **width** and **learning rate**, drawn at random; the model *family* is held fixed so a change in the gap is attributable to the search, not the wiring. Capacity, label noise and selection protocol are varied one at a time later (§6). We **derive** the forward pass, backprop and the SGD update in §6.4; PyTorch's autograd only executes them. (PyTorch replaces the from-scratch NumPy plan — a change to confirm with the supervisor.)
 
 **The ruler: the sealed-test estimator.** The test score `T` is just the model's average correctness over the test points — a sample mean of an accuracy. By the law of large numbers it converges to its expectation, the true performance `S`, as the test size `n_test` grows; for an accuracy (a proportion) the sampling error shrinks like `√(p(1−p)/n_test) ≤ 0.5/√n_test`. This is the law-of-large-numbers argument promised in §2.3, now concrete: with `n_test = 100 000`, that standard error is at most about `0.0016`, so `T` pins `S` to within a few thousandths — far finer than the gaps we will measure. On the synthetic lab we *can* make `n_test` this large, which is exactly why the ruler is sharp here and blunt on real data.
 
@@ -180,10 +182,10 @@ The point is sharp: the isometry changes nothing that should matter — same dis
 ## 5. Core results
 ✅ *This section is the controlled measurement — **internal validity** (§2.4): with the truth known, the gap is measured exactly and the mechanism isolated. It establishes the instrument; whether the effect matters in practice is settled by the real-data comparison (§6.5), read in §7.*
 
-*To write — figures from `notebooks/01_core_snooping.ipynb`. Three artifacts: (1) Case 1 (random labels) as the cleanest snoop demo, gap = best_val − 0.5; (2) the headline figure — apparent (best-validation) vs true (sealed-test) as N grows; (3) the isometry insight — kNN / logistic regression / SVM identical across Cases 2↔3, only the tree drops.*
+*To write — figures from `notebooks/01_core_snooping.ipynb`. Three artifacts: (1) Case 1 (random labels) **on the MLP** as the cleanest snoop demo, gap = best_val − 0.5; (2) the **headline figure** — searching N **MLP configurations**, apparent (best-validation) vs true (sealed-test) as N grows; (3) the isometry insight (**support track — sklearn garden**) — kNN / logistic regression / SVM identical across Cases 2↔3, only the tree drops.*
 
 ## 6. Extensions and the real-data comparison
-⏳ **The rest of the core arc — after the ~6 July gate, but integral (not optional).** The same machine (§3) extends with no new parts: first to the other three questions and the from-scratch MLP, then onto real data, where the synthetic↔real comparison delivers the conclusion (§2.4, §7).
+⏳ **The rest of the core arc — after the ~6 July gate, but integral (not optional).** The same machine (§3) extends with no new parts: first to the other three questions and the MLP's backprop/optimizer derivation (§6.4), then onto real data, where the synthetic↔real comparison delivers the conclusion (§2.4, §7).
 
 ### 6.1 Label noise — does more noise widen the gap?
 ⏳ *Inject known label noise into the lab; measure the gap vs noise level.*
@@ -194,8 +196,8 @@ The point is sharp: the isometry changes nothing that should matter — same dis
 ### 6.3 Selection protocol — single split / k-fold / nested CV
 ⏳ *Which honest protocol shrinks the gap — measured, not asserted. The protocols (single split, k-fold, nested CV) are standard procedures, implemented via documented sklearn functions cited inline when coded.*
 
-### 6.4 From-scratch MLP (NumPy backprop)
-⏳ *The original instrument — derive backprop + the optimizer updates + L2 from the chain rule (a self-contained derivation, no external authority needed); implemented in numpy with calls cited inline to its docs.*
+### 6.4 The MLP's mathematics — backprop, the SGD update, L2
+⏳ *The MLP is the **core instrument** (§3); here we **derive** its forward pass, backprop and the SGD update (and L2 if used) from the chain rule — a self-contained derivation, no external authority. PyTorch's autograd executes these; deriving them is the formula-derivation deliverable. (It replaces the from-scratch NumPy plan — a change to confirm with the supervisor.)*
 
 ### 6.5 Real data — UCI loan default; finance ^GSPC
 ⏳ *The external-validity half of the arc (§2.4). Loan = real stakes: does the gap appear on its own? Finance = signal ≈ 0, walk-forward split: the searched "edge" is almost all luck and collapses out-of-sample — the warning case. The conclusion is the comparison of these against the synthetic measurement.*
@@ -245,3 +247,24 @@ The last line is the isometry insight (§4): an orthogonal map preserves every d
 - `random_isometry` — numpy `linalg.qr` (`q` orthonormal → an orthogonal `R`): <https://numpy.org/doc/stable/reference/generated/numpy.linalg.qr.html>
 - `inject_noise` — numpy `Generator.choice` (distinct indices, `replace=False`): <https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.choice.html>
 - `rotate` / `make_dataset` — matrix product `@` and explicit row slicing; standard, no citation needed.
+
+### `mlp.py` — the deep-learning instrument ↔ code ↔ verified number
+
+The MLP is the headline instrument (§3); verified by `python -m tests.test_mlp`.
+
+| Design (§3) | Code (`mlp.py`) | Verified — number (`python -m tests.test_mlp`) |
+|---|---|---|
+| one hidden layer, ReLU, 2 logits | `make_mlp(d, width)`: `Linear(d,width) → ReLU → Linear(width,2)` | trains (~2.7s for 4 fits) |
+| full-batch GD, cross-entropy | `train(X, y, width, lr)`: `optim.SGD` + `CrossEntropyLoss`, `epochs=300` | loss descends; numbers below |
+| config = (width, lr), searched | function args `width`, `lr` | search space = `sample_config` (§3, Phần 3) |
+| Case 2 learnable → `S → 1` | — | width 16 / 128 → **test 0.991 / 0.982** |
+| Case 1 random → `S = 0.5` (no generalisation) | — | width 16 / 128 → **test 0.495 / 0.500**; train 0.665 / 0.668 (fits some noise) |
+
+**Worked example** (`n_train = 2000, d = 20, n_test = 20000, seed 0`):
+```
+Case 2 (y = sign feature 0): width 16 -> test 0.991 | width 128 -> test 0.982   learns the signal
+Case 1 (random labels)     : width 16 -> test 0.495 | width 128 -> test 0.500   no generalisation
+                             train 0.665 / 0.668 -> fits some noise; clear capacity effect = §6.2
+```
+
+**Tool sources:** PyTorch API — `nn.Linear`, `nn.ReLU`, `nn.CrossEntropyLoss`, `torch.optim.SGD` (<https://pytorch.org/docs/stable/>). The backprop and SGD **mathematics** is *derived* in §6.4 — that derivation is the grounding; the library only executes it.
