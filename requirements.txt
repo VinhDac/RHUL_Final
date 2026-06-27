@@ -4,6 +4,7 @@ matplotlib
 pandas
 jupyter
 ipywidgets
+torch          # MLP spine (Apple Silicon -> arm64 wheel + MPS)
 
 # real-world layer (add when we get there):
 # yfinance

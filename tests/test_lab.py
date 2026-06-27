@@ -1,44 +1,57 @@
-"""test_lab.py - sanity checks for the lab.
-
-These are not just tests: the rotate() check IS the supervisor's isometry
-insight, proven by numbers. Keep them as plain asserts - no framework needed.
+"""test_lab.py - sanity checks for the lab, PRINT style.
 
 Run from the repo root:   python -m tests.test_lab
 
-------------------------------------------------------------------------------
-Checks to implement (bodies are yours):
-
-  make_X            -> shape == (n, d); column mean ~ 0; column std ~ 1
-  labels_random     -> class balance ~ 50/50
-  labels_sign       -> logistic regression ~ 100% accuracy when flip_y = 0
-  random_isometry   -> R @ R.T ~ I (allclose with a tolerance)
-  rotate            -> kNN accuracy on Case 3 == kNN accuracy on Case 2
-                       (the distances are preserved by the rotation)
-  inject_noise      -> fraction of labels actually flipped ~ flip_y
-------------------------------------------------------------------------------
+Each line prints the real number next to what we expect, and ends in OK / FAIL.
+You read the numbers; a FAIL jumps out if a change ever breaks something.
+The "rotate keeps distance" line IS the supervisor's isometry insight, as a number.
 """
 import numpy as np
-from snooping_backend.lab import make_X, labels_random, labels_sign, \
-                                 random_isometry, rotate, inject_noise, make_dataset
+from snooping_backend.lab import (make_X, labels_random, labels_sign,
+                                  random_isometry, rotate, inject_noise, make_dataset)
 
 rng = np.random.default_rng(0)
 
-assert make_X(1000, 10, rng).shape == (1000, 10), "make_X"
-assert np.abs(make_X(1000, 10, rng).mean(axis=0)).max() < 0.1, "make_X mean"
-assert np.abs(make_X(1000, 10, rng).std(axis=0) - 1).max() < 0.1, "make_X std"
-y_random = labels_random(1000, rng)
-assert np.mean(y_random == 0) > 0.4 and np.mean(y_random == 1) > 0.4, "labels_random"
+print("=== LAB CHECKS (read the numbers; each line ends OK / FAIL) ===\n")
+
+# make_X: Gaussian samples, shape (n, d), each column ~ N(0, 1)
 X = make_X(1000, 10, rng)
-y_sign = labels_sign(X)
-assert np.mean(y_sign == 0) > 0.4 and np.mean(y_sign == 1) > 0.4, "labels_sign"
+ok = X.shape == (1000, 10)
+print("make_X shape          :", X.shape, "  expect (1000, 10)        ->", "OK" if ok else "FAIL")
+
+mean_err = float(np.abs(X.mean(axis=0)).max())
+print("make_X column mean    :", round(mean_err, 3), "          expect ~0  (< 0.1)       ->", "OK" if mean_err < 0.1 else "FAIL")
+
+std_err = float(np.abs(X.std(axis=0) - 1).max())
+print("make_X column std-1   :", round(std_err, 3), "          expect ~0  (< 0.1)       ->", "OK" if std_err < 0.1 else "FAIL")
+
+# labels_random (Case 1): fair coin, ~50/50, independent of X
+yr = labels_random(1000, rng)
+print("labels_random balance :", round(float(yr.mean()), 3), "          expect ~0.5 (0.4-0.6)    ->", "OK" if 0.4 < yr.mean() < 0.6 else "FAIL")
+
+# labels_sign (Case 2): sign of feature 0, also ~50/50 (Gaussian is symmetric)
+ys = labels_sign(X)
+print("labels_sign  balance  :", round(float(ys.mean()), 3), "          expect ~0.5 (0.4-0.6)    ->", "OK" if 0.4 < ys.mean() < 0.6 else "FAIL")
+
+# random_isometry: R is orthogonal  ->  R @ R.T = identity
 R = random_isometry(10, rng)
-assert np.allclose(R @ R.T, np.eye(10), atol=1e-6), "random_isometry"
-X_rotated = rotate(X, R)
-assert np.allclose(X @ X.T, X_rotated @ X_rotated.T) "Rotate"
-y_noisy = inject_noise(y_sign, 0.1, rng)
-assert np.mean(y_noisy == y_sign) > 0.8 and np.mean(y_noisy != y_sign) > 0.08, "inject_noise" 
-assert make_dataset(1, 1000, 10, 0.1, [600, 200, 200], rng)[0][0].shape == (600, 10), "make_dataset"  
+iso_err = float(np.abs(R @ R.T - np.eye(10)).max())
+print("isometry R @ R.T = I  :", f"{iso_err:.2e}", "       expect ~0               ->", "OK" if iso_err < 1e-6 else "FAIL")
 
+# rotate (Case 3): an isometry preserves every pairwise inner product / distance.
+# This single number IS the insight: why kNN / SVM / logreg are unchanged by the rotation.
+Xr = rotate(X, R)
+dist_err = float(np.abs(X @ X.T - Xr @ Xr.T).max())
+print("rotate keeps distance :", f"{dist_err:.2e}", "       expect ~0  (INSIGHT)    ->", "OK" if dist_err < 1e-6 else "FAIL")
 
+# inject_noise: flips ~ flip_y fraction of the labels
+yn = inject_noise(ys, 0.1, rng)
+frac = float(np.mean(yn != ys))
+print("inject_noise flipped  :", round(frac, 3), "          expect ~0.10 (0.08-0.12) ->", "OK" if 0.08 < frac < 0.12 else "FAIL")
 
-print("ALL CHECKS PASSED")   
+# make_dataset: builds a case and splits it; shapes must match the requested sizes
+(Xtr, ytr), (Xval, yval), (Xte, yte) = make_dataset(1, 10, 0.1, [600, 200, 200], rng)
+shapes_ok = Xtr.shape == (600, 10) and Xval.shape == (200, 10) and Xte.shape == (200, 10)
+print("make_dataset splits   :", (Xtr.shape, Xval.shape, Xte.shape), "expect (600,10)(200,10)(200,10) ->", "OK" if shapes_ok else "FAIL")
+
+print("\n(if every line says OK, the lab is good)")

@@ -1,89 +1,90 @@
 """lab.py - the synthetic laboratory (known-truth data).
 
-Builds a Gaussian dataset and the three labelling regimes, so the
-true performance is known by construction and the gap can be measured exactly.
+Builds a Gaussian dataset and the three labelling regimes, so the true
+performance is known by construction and the gap can be measured exactly.
 
-Design note (locked): EVERYTHING is a variable. Each repeat re-samples fresh
-train / validation / sealed-test from the generator. The sealed test stays LARGE
-and is opened only once, after selection - re-drawing it is fine, leaking it is not.
+Design note (locked): everything is re-sampled fresh on each call. The sealed
+test set stays LARGE and is opened only once, after selection - re-drawing it is
+fine, leaking it is not.
 
+Detailed provenance (source -> code -> check) lives in Core.md, Appendix A.
 """
-
 import numpy as np
 
-""" make_X(n, d, rng) -> X : (n, d) array of i.i.d. N(0, 1)
-      tool : rng.standard_normal((n, d))   (rng passed in, never seeded inside)
-      check: X.shape == (n, d); column mean ~ 0; column std ~ 1"""
-def make_X(n, d, rng):   
-    """Make a Gaussian dataset of shape (n,d) with i.i.d. N(0,1) entries"""
-    X = rng.standard_normal((n, d))
-    return X
 
-"""  labels_random(n, rng) -> y : random labels, independent of X      [Case 1]
-      meaning: no signal -> true generalisation = chance (~50%)
-      check  : class balance ~ 50/50"""
+def make_X(n, d, rng):
+    """(n, d) matrix of i.i.d. standard-Gaussian entries. rng is passed in, never seeded here."""
+    return rng.standard_normal((n, d))
+
+
 def labels_random(n, rng):
-    """Random labels, independent of X"""
-    y = rng.integers(0, 2, size=n)
-    return y   
+    """Case 1 labels: a fair coin, independent of X -> no signal (true accuracy = 0.5)."""
+    return rng.integers(0, 2, size=n)
 
-"""  labels_sign(X) -> y = sign(X[:, 0])                                [Case 2]
-      meaning: a clean, axis-aligned linear rule on feature 0
-      check  : logistic regression ~ 100% when flip_y = 0 (linearly separable)"""
+
 def labels_sign(X):
-    """Labels according to the sign of the first feature"""
-    y = (X[:, 0] > 0).astype(int)
-    return y
+    """Case 2 labels: sign of feature 0 -> a clean, axis-aligned linear rule.
 
-"""  random_isometry(d, rng) -> R : (d, d) orthogonal (rotation +/- reflection)
-      tool : QR factorisation of a random Gaussian matrix
-      check: R @ R.T ~ I"""
+    Uses (X[:, 0] > 0) to give {0, 1} and dodge the measure-zero sign(0)=0 tie.
+    """
+    return (X[:, 0] > 0).astype(int)
+
+
 def random_isometry(d, rng):
-    """Generate a random orthogonal matrix (isometry) of shape (d,d)"""
+    """A random (d, d) orthogonal matrix R: a rotation, possibly with a reflection.
+
+    The Q factor of the QR factorisation of a random Gaussian matrix is orthogonal.
+    """
     A = rng.standard_normal((d, d))
-    Q, R = np.linalg.qr(A)
+    Q, _ = np.linalg.qr(A)      # Q = orthogonal factor (our isometry); the triangular factor is unused
     return Q
 
-"""  rotate(X, R) -> X @ R                                              [Case 3]
-      meaning: same rule as Case 2, now hidden along an oblique direction
-      check  : kNN accuracy on Case 3 == kNN accuracy on Case 2
-               (an isometry preserves distances - this is the supervisor's
-                insight, proven by numbers)
-"""
+
 def rotate(X, R):
-    """Rotate the dataset X using the orthogonal matrix R"""
+    """Apply the isometry: X @ R. An orthogonal R preserves all distances and inner products."""
     return X @ R
 
-"""  inject_noise(y, flip_y, rng) -> y with a fraction flip_y of labels flipped
-      check: fraction actually flipped ~ flip_y"""
+
 def inject_noise(y, flip_y, rng):
-    """Inject label noise by flipping a fraction of the labels"""
+    """Flip a flip_y fraction of the labels (exactly-known noise). flip_y = 0 -> no-op."""
     n = len(y)
     n_flip = int(flip_y * n)
     flip_indices = rng.choice(n, size=n_flip, replace=False)
     y_noisy = y.copy()
-    y_noisy[flip_indices] = 1 - y_noisy[flip_indices]  # Flip labels
+    y_noisy[flip_indices] = 1 - y_noisy[flip_indices]   # flip {0,1} labels at those rows
     return y_noisy
 
-"""  make_dataset(case, n, d, flip_y, sizes, rng)
-        -> (X_train, y_train), (X_val, y_val), (X_test, y_test)
-      val is SMALL (snooping engine); test is LARGE (truth ~ no sampling error).
-      re-sample fresh on every call."""
-def make_dataset(case, n, d, flip_y, sizes, rng):
-    X = make_X(n, d, rng)
-    if case == 1:
-        y = labels_random(n, rng)
-    elif case == 2:
-        y = labels_sign(X)
-    elif case == 3:
-        R = random_isometry(d, rng)
-        y = labels_sign(X)
-        X = rotate(X, R)
-        
-    else:
-        raise ValueError("Invalid case")
-    y_noisy = inject_noise(y, flip_y, rng)
-    X_train, X_val, X_test = np.split(X, np.cumsum(sizes[:-1]))
-    y_train, y_val, y_test = np.split(y_noisy, np.cumsum(sizes[:-1]))
-    return (X_train, y_train), (X_val, y_val), (X_test, y_test)
 
+def make_dataset(case, d, flip_y, sizes, rng):
+    """Build one case and split it into train / (small) val / (large) sealed test.
+
+    sizes = (n_train, n_val, n_test). Re-samples fresh on every call.
+    """
+    n_train, n_val, n_test = sizes          # sizes is the single source of truth ...
+    n = n_train + n_val + n_test            # ... so n can never disagree with the splits below
+
+    X = make_X(n, d, rng)
+
+    if case == 1:
+        y = labels_random(n, rng)           # no signal -> true accuracy = 0.5
+    elif case == 2:
+        y = labels_sign(X)                  # axis-aligned linear rule on feature 0
+    elif case == 3:
+        y = labels_sign(X)                  # label FIRST, from the original X ...
+        R = random_isometry(d, rng)
+        X = rotate(X, R)                    # ... THEN rotate. Swap these two lines and the boundary
+                                            # re-aligns with an axis -> the tree-drop artifact vanishes.
+    else:
+        raise ValueError(f"case must be 1, 2 or 3, got {case}")
+
+    y = inject_noise(y, flip_y, rng)        # no-op when flip_y == 0
+
+    # Split by explicit row ranges (no cumsum / np.split index math to decode):
+    X_train = X[:n_train]
+    X_val   = X[n_train:n_train + n_val]
+    X_test  = X[n_train + n_val:]
+    y_train = y[:n_train]
+    y_val   = y[n_train:n_train + n_val]
+    y_test  = y[n_train + n_val:]
+
+    return (X_train, y_train), (X_val, y_val), (X_test, y_test)
