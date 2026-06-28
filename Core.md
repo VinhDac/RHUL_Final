@@ -204,8 +204,14 @@ This is the central hypothesis (§1) **measured, not predicted**: the inflation 
 ### 6.1 Label noise — does more noise widen the gap?
 ⏳ *Inject known label noise into the lab; measure the gap vs noise level.*
 
-### 6.2 Model capacity
-⏳ *Vary capacity; measure the gap vs capacity.*
+### 6.2 Model capacity (H3) — refuted
+✅
+
+Hypothesis H3 expected that a bigger MLP, by overfitting more, would widen the gap. It does **not**. Varying the hidden width across 4–256 — each width searched over N = 20 configurations on Case 2 with 30% label noise, the regime where overfitting could bite — the gap stays **flat, +0.034 to +0.043** across the whole range; apparent and true accuracy both barely move (figure). A scarce-data check (300 training rows) went the *other* way: there the gap *shrank* with capacity (+0.056 → +0.021), because the smaller nets underfit. Either way, **capacity does not widen the gap.**
+
+![Apparent (best validation) and true (sealed test) accuracy vs hidden width, Case 2 + noise — both flat, so the gap is flat: H3 is not supported.](figures/gap_vs_capacity.svg)
+
+The reason: in this measurement the gap *is* the winner's curse — the overshoot of the maximum of N noisy validation draws — and that overshoot is governed by the **search size N and the validation noise**, not by model capacity. Capacity changes how a single model fits, but not how far the best-of-N validation score overruns the truth. Reported as the plan requires — *let the data confirm or refute, and report honestly, even against me* — this refines the picture: the dangerous knobs are **N and a small validation set**, not raw capacity.
 
 ### 6.3 Selection protocol — single split / k-fold / nested CV
 ⏳ *Which honest protocol shrinks the gap — measured, not asserted. The protocols (single split, k-fold, nested CV) are standard procedures, implemented via documented sklearn functions cited inline when coded.*

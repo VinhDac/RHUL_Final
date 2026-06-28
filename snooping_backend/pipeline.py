@@ -25,7 +25,7 @@ from snooping_backend.lab import make_dataset
 from snooping_backend.mlp import train, accuracy, sample_config
 
 
-def run_once(make_splits, N, rng, epochs=300):
+def run_once(make_splits, N, rng, epochs=300, sample=sample_config):
     """One full gap measurement (the machine of Core.md section 3), for ANY data source.
 
     make_splits(rng) -> (X_train, y_train), (X_val, y_val), (X_test, y_test).
@@ -36,7 +36,7 @@ def run_once(make_splits, N, rng, epochs=300):
 
     best_val, best_model, best_config = -1.0, None, None
     for _ in range(N):
-        config = sample_config(rng)
+        config = sample(rng)
         seed = int(rng.integers(0, 2**31 - 1))         # each config gets its own init
         model = train(X_train, y_train, config["width"], config["lr"], epochs=epochs, seed=seed)
         val = accuracy(model, X_val, y_val)             # SELECTION uses validation only
@@ -48,7 +48,7 @@ def run_once(make_splits, N, rng, epochs=300):
     return {"apparent": best_val, "true": true, "gap": best_val - true, "config": best_config}
 
 
-def sweep(make_splits, N_values, rng, R=30, epochs=300):
+def sweep(make_splits, N_values, rng, R=30, epochs=300, sample=sample_config):
     """The headline sweep: for each N, the mean gap over R repeats (Core.md section 5).
 
     make_splits(rng) -> (train, val, test); called fresh each repeat (a new synthetic
@@ -67,7 +67,7 @@ def sweep(make_splits, N_values, rng, R=30, epochs=300):
 
         models, vals = [], []
         for _ in range(N_max):
-            cfg = sample_config(rng)
+            cfg = sample(rng)
             seed = int(rng.integers(0, 2**31 - 1))
             m = train(X_tr, y_tr, cfg["width"], cfg["lr"], epochs=epochs, seed=seed)
             models.append(m)
