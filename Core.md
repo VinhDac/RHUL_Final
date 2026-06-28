@@ -215,18 +215,23 @@ This is the central hypothesis (§1) **measured, not predicted**: the inflation 
 
 ### 6.5 Real data — UCI loan default; finance ^GSPC
 
-**Loan default — the gap appears in the wild.** The same machine (§3), fed the loan provider instead of the synthetic one, measures the gap on real, messy data with *genuine* signal (a logistic-regression baseline scores 0.819 vs a 0.786 majority). Searching N MLP configurations still inflates the apparent score above the truth: the gap is positive and grows with N, to **+0.016 at N = 100** — *smaller* than synthetic Case 1 (+0.080), but real and growing.
+The same machine (§3), fed a loan or finance provider instead of the synthetic one, measures the gap across the **signal axis** (§2.4). The winner's curse appears on every dataset; its *size* tracks how much real signal there is.
 
-![Gap vs N for the synthetic lab (no signal, gap reaches +0.080) and real loan data (genuine signal, gap reaches +0.016) — both positive and growing: the winner's curse survives in the wild, muted by real signal.](figures/gap_synth_vs_loan.svg)
+![Gap vs N for three providers — synthetic (no signal), finance ^GSPC (signal ≈ 0), loan default (real signal). All positive and broadly growing: the curse is universal; the real signal in loan mutes it most.](figures/gap_three_datasets.svg)
 
 | N | 1 | 2 | 5 | 10 | 20 | 50 | 100 |
 |---|---|---|---|---|---|---|---|
-| gap synthetic (no signal) | −0.007 | +0.016 | +0.027 | +0.045 | +0.059 | +0.075 | +0.080 |
-| gap loan (real signal) | −0.007 | −0.003 | +0.004 | +0.006 | +0.009 | +0.013 | +0.016 |
+| synthetic (no signal) | −0.020 | +0.010 | +0.025 | +0.043 | +0.060 | +0.071 | +0.077 |
+| finance (signal ≈ 0) | −0.029 | −0.019 | +0.000 | +0.005 | +0.014 | +0.034 | +0.019 |
+| loan (real signal) | −0.016 | −0.012 | −0.005 | −0.002 | +0.002 | +0.007 | +0.010 |
 
-The snooping gap is therefore **not an artefact of the synthetic design**: it survives on real data, muted by the genuine signal (and by validation accuracy sitting near 0.8, where finite-sample noise is smaller than at 0.5 — a simple property of the binomial). Reproduce from `notebooks/02_real_data.ipynb`.
+**Loan — the gap appears, muted by real signal.** Loan default has genuine signal (logistic regression 0.819 vs a 0.786 majority), and its gap is the smallest of the three (+0.010 at N = 100): searching still inflates the apparent score, but the real quality differences between configurations — and the smaller finite-sample noise of an accuracy near 0.8 (a property of the binomial) — keep it quiet. The mechanism survives; it is just subtler.
 
-**Finance ^GSPC (⏳).** Signal ≈ 0, walk-forward split: the searched "edge" is almost all luck and collapses out-of-sample — the warning case (R3–R4). The conclusion (§7) reads the gap across the axis: measured exactly on synthetic, muted on loan, and — to come — dominant on finance.
+**Finance ^GSPC — the warning: the searched edge is luck.** With signal ≈ 0 the gap is luck-driven like the no-signal synthetic case (positive and growing, though noisier — the walk-forward split is fixed, so there is less to average over). The practical cost is the point. Searching 50 MLP configurations on a small validation window (the plan's *small validation on purpose*) finds one with an apparent **64.0%** directional accuracy — a tempting "edge" — that scores **53.3%** out-of-sample (≈ chance): a gap of **+0.107**, pure luck. Deployed as a strategy it returns **+82%** over the test period versus **+94%** for simply buying and holding — *searching for an edge lost money relative to doing nothing.*
+
+![Out-of-sample equity — the best-on-validation strategy (an apparent 64% edge) underperforms buy-and-hold (+82% vs +94%): the edge was luck.](figures/finance_equity.svg)
+
+Reproduce both from `notebooks/02_real_data.ipynb`. **The arc closes (§7):** the gap is measured exactly where truth is known (synthetic), muted where signal is real (loan), and a money-losing illusion where signal is absent (finance).
 
 ## 7. Discussion & analysis — where the thesis concludes
 ✅ *Skeleton (grows with §6) — what the gap means; the optimal search budget (apparent keeps rising, true rises then turns down); honest reporting even against myself. **This is where the thesis concludes**, by reading the synthetic↔real comparison across the signal axis (§2.4): the mechanism measured exactly on synthetic, then shown to appear on loan and to dominate on finance (§6.5).*
