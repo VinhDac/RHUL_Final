@@ -214,7 +214,19 @@ This is the central hypothesis (§1) **measured, not predicted**: the inflation 
 ⏳ *The MLP is the **core instrument** (§3); here we **derive** its forward pass, backprop and the SGD update (and L2 if used) from the chain rule — a self-contained derivation, no external authority. PyTorch's autograd executes these; deriving them is the formula-derivation deliverable. (It replaces the from-scratch NumPy plan — a change to confirm with the supervisor.)*
 
 ### 6.5 Real data — UCI loan default; finance ^GSPC
-⏳ *The external-validity half of the arc (§2.4). Loan = real stakes: does the gap appear on its own? Finance = signal ≈ 0, walk-forward split: the searched "edge" is almost all luck and collapses out-of-sample — the warning case. The conclusion is the comparison of these against the synthetic measurement.*
+
+**Loan default — the gap appears in the wild.** The same machine (§3), fed the loan provider instead of the synthetic one, measures the gap on real, messy data with *genuine* signal (a logistic-regression baseline scores 0.819 vs a 0.786 majority). Searching N MLP configurations still inflates the apparent score above the truth: the gap is positive and grows with N, to **+0.016 at N = 100** — *smaller* than synthetic Case 1 (+0.080), but real and growing.
+
+![Gap vs N for the synthetic lab (no signal, gap reaches +0.080) and real loan data (genuine signal, gap reaches +0.016) — both positive and growing: the winner's curse survives in the wild, muted by real signal.](figures/gap_synth_vs_loan.svg)
+
+| N | 1 | 2 | 5 | 10 | 20 | 50 | 100 |
+|---|---|---|---|---|---|---|---|
+| gap synthetic (no signal) | −0.007 | +0.016 | +0.027 | +0.045 | +0.059 | +0.075 | +0.080 |
+| gap loan (real signal) | −0.007 | −0.003 | +0.004 | +0.006 | +0.009 | +0.013 | +0.016 |
+
+The snooping gap is therefore **not an artefact of the synthetic design**: it survives on real data, muted by the genuine signal (and by validation accuracy sitting near 0.8, where finite-sample noise is smaller than at 0.5 — a simple property of the binomial). Reproduce from `notebooks/02_real_data.ipynb`.
+
+**Finance ^GSPC (⏳).** Signal ≈ 0, walk-forward split: the searched "edge" is almost all luck and collapses out-of-sample — the warning case (R3–R4). The conclusion (§7) reads the gap across the axis: measured exactly on synthetic, muted on loan, and — to come — dominant on finance.
 
 ## 7. Discussion & analysis — where the thesis concludes
 ✅ *Skeleton (grows with §6) — what the gap means; the optimal search budget (apparent keeps rising, true rises then turns down); honest reporting even against myself. **This is where the thesis concludes**, by reading the synthetic↔real comparison across the signal axis (§2.4): the mechanism measured exactly on synthetic, then shown to appear on loan and to dominate on finance (§6.5).*
