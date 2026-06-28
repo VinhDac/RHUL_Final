@@ -332,3 +332,16 @@ Real data for the external-validity half (§6.5). The gap machine is unchanged; 
 | real signal present? | sklearn `LogisticRegression` baseline | logreg test **0.819 > majority 0.786** → signal |
 
 **Tool source:** `ucimlrepo.fetch_ucirepo` — <https://github.com/uci-ml-repo/ucimlrepo>. Needs network; fetched once and reused (not a per-run test).
+
+### `data_finance.py` — finance ^GSPC ↔ code ↔ verified number
+
+The warning case (§6.5): signal ≈ 0, **walk-forward** split. Same gap machine; this only supplies a chronological `make_splits` provider (no future leaks into training).
+
+| What | Code | Verified — number |
+|---|---|---|
+| download ^GSPC daily; k=5 lagged-return features + next-day direction + aligned returns | `load_finance(ticker, start, k)` | X = (6654, 5), y ∈ {0,1}, r (returns) |
+| up-day rate (slight drift) | — | 0.537 |
+| WALK-FORWARD provider (train old / val mid / test newest; **no shuffle**) | `finance_provider(X, y, sizes)` | splits (4000)/(200)/(1000), chronological |
+| signal ≈ 0 (the point) | sklearn `LogisticRegression` baseline | logreg test **0.540 ≈ majority 0.544** → no edge |
+
+**Tool source:** `yfinance` — <https://github.com/ranaroussi/yfinance>. Needs network; fetched once and reused.

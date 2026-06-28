@@ -7,6 +7,4 @@ ipywidgets
 torch          # MLP spine (Apple Silicon -> arm64 wheel + MPS)
 
 ucimlrepo      # UCI loan default (R1)
-
-# real-world layer (add when we get there):
-# yfinance
+yfinance       # finance ^GSPC (R3)
