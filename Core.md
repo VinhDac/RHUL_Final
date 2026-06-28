@@ -201,8 +201,18 @@ This is the central hypothesis (§1) **measured, not predicted**: the inflation 
 ## 6. Extensions and the real-data comparison
 ⏳ **The rest of the core arc — after the ~6 July gate, but integral (not optional).** The same machine (§3) extends with no new parts: first to the other three questions and the MLP's backprop/optimizer derivation (§6.4), then onto real data, where the synthetic↔real comparison delivers the conclusion (§2.4, §7).
 
-### 6.1 Label noise — does more noise widen the gap?
-⏳ *Inject known label noise into the lab; measure the gap vs noise level.*
+### 6.1 Label noise (H2) — confirmed
+✅
+
+Hypothesis H2 — more label noise widens the gap — holds, cleanly. Sweeping the injected noise on Case 2, the gap rises monotonically with `flip_y`, from ≈ 0 on clean labels to **+0.062 at flip_y = 0.5**:
+
+![The snooping gap vs injected label noise (Case 2): monotone rise from ≈ 0 (clean) to +0.062 (half the labels flipped).](figures/gap_vs_noise.svg)
+
+| flip_y | 0.0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 |
+|---|---|---|---|---|---|---|
+| gap | +0.004 | +0.011 | +0.025 | +0.042 | +0.046 | +0.062 |
+
+The mechanism is visible in the numbers: with clean labels every configuration saturates near 1.0, so there is no room for the best-of-N validation score to overshoot and the gap is ≈ 0; as noise pushes accuracy off the ceiling, the small validation set scatters more, the best of N overshoots further, and the gap grows. By `flip_y = 0.5` — labels independent of the features, the Case-1 regime — the gap is purely the winner's curse on noise. Read together with §6.2 the picture sharpens: **noise feeds the gap, capacity does not.** The snoop is a property of how much room there is for validation luck — set by the signal-to-noise ratio and the search size N — not by model size.
 
 ### 6.2 Model capacity (H3) — refuted
 ✅
