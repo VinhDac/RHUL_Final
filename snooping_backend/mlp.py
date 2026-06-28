@@ -22,9 +22,10 @@ def make_mlp(d, width):
     )
 
 
-def train(X, y, width, lr, epochs=300, seed=0):
-    """Train an MLP on (X, y) by full-batch gradient descent (SGD). Returns the model.
+def train(X, y, width, lr, epochs=300, seed=0, return_loss=False):
+    """Train an MLP on (X, y) by full-batch gradient descent (SGD).
 
+    Returns the model, or (model, per-epoch losses) when return_loss=True.
     X: (n, d) float array.  y: (n,) int labels in {0, 1}.
     """
     torch.manual_seed(seed)                   # reproducible weights + training
@@ -36,13 +37,16 @@ def train(X, y, width, lr, epochs=300, seed=0):
     optimizer = torch.optim.SGD(model.parameters(), lr=lr)
     loss_fn = nn.CrossEntropyLoss()
 
+    losses = []
     for _ in range(epochs):
         optimizer.zero_grad()
         logits = model(Xt)                    # forward pass
         loss = loss_fn(logits, yt)            # cross-entropy on the 2 logits
         loss.backward()                       # backprop: autograd computes the gradients
         optimizer.step()                      # SGD step:  w <- w - lr * grad
-    return model
+        if return_loss:
+            losses.append(loss.item())
+    return (model, losses) if return_loss else model
 
 
 def accuracy(model, X, y):

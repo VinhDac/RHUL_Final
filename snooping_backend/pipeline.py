@@ -19,6 +19,8 @@ early-stop. Any leak invalidates the measurement.
   repeat / sweep / log_run  -> Phan 5 (the headline sweep + logging).
 ------------------------------------------------------------------------------
 """
+import numpy as np
+
 from snooping_backend.lab import make_dataset
 from snooping_backend.mlp import train, accuracy, sample_config
 
@@ -45,3 +47,43 @@ def run_once(case, N, sizes, d, flip_y, rng, epochs=300):
     # sealed test touched EXACTLY ONCE, on the winner only (never used to select):
     true = accuracy(best_model, X_test, y_test)
     return {"apparent": best_val, "true": true, "gap": best_val - true, "config": best_config}
+
+
+def sweep(case, N_values, sizes, d, flip_y, rng, R=30, epochs=300):
+    """The headline sweep: for each N, the mean gap over R repeats (Core.md section 5).
+
+    Cumulative search: each repeat trains ONE pool of max(N_values) configs and
+    records each config's validation score; then for each N it keeps the
+    best-of-the-first-N by VALIDATION and reveals the sealed test ONLY on that
+    winner. Returns dict: N -> {apparent, true, gap, gap_std} (means over R).
+    """
+    N_max = max(N_values)
+    apparent = {N: [] for N in N_values}
+    true = {N: [] for N in N_values}
+    gap = {N: [] for N in N_values}
+
+    for _ in range(R):
+        (X_tr, y_tr), (X_val, y_val), (X_te, y_te) = make_dataset(case, d, flip_y, sizes, rng)
+
+        models, vals = [], []
+        for _ in range(N_max):
+            cfg = sample_config(rng)
+            seed = int(rng.integers(0, 2**31 - 1))
+            m = train(X_tr, y_tr, cfg["width"], cfg["lr"], epochs=epochs, seed=seed)
+            models.append(m)
+            vals.append(accuracy(m, X_val, y_val))            # validation only
+        vals = np.array(vals)
+
+        test_of = {}                                          # winner index -> sealed-test score
+        for N in N_values:
+            i = int(np.argmax(vals[:N]))                      # best-of-first-N, by validation
+            if i not in test_of:
+                test_of[i] = accuracy(models[i], X_te, y_te)  # test revealed ONLY on a winner
+            a, t = float(vals[i]), test_of[i]
+            apparent[N].append(a); true[N].append(t); gap[N].append(a - t)
+
+    return {N: {"apparent": float(np.mean(apparent[N])),
+                "true": float(np.mean(true[N])),
+                "gap": float(np.mean(gap[N])),
+                "gap_std": float(np.std(gap[N]))}
+            for N in N_values}

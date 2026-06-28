@@ -186,7 +186,17 @@ The point is sharp: the isometry changes nothing that should matter — same dis
 ## 5. Core results
 ✅ *This section is the controlled measurement — **internal validity** (§2.4): with the truth known, the gap is measured exactly and the mechanism isolated. It establishes the instrument; whether the effect matters in practice is settled by the real-data comparison (§6.5), read in §7.*
 
-*To write — figures from `notebooks/01_core_snooping.ipynb`. Three artifacts: (1) Case 1 (random labels) **on the MLP** as the cleanest snoop demo, gap = best_val − 0.5; (2) the **headline figure** — searching N **MLP configurations**, apparent (best-validation) vs true (sealed-test) as N grows; (3) the isometry insight (**support track — sklearn garden**) — kNN / logistic regression / SVM identical across Cases 2↔3, only the tree drops.*
+**The headline — the gap grows with N (Case 1).** On Case 1 (random labels) every configuration's true performance is 0.5 by construction, so the gap is the winner's curse with nothing else mixed in. Searching N MLP configurations (`sample_config`), keeping the best on a small validation set (`n_val = 200`) and revealing a large sealed test (`n_test = 20 000`) exactly once, the **apparent** score climbs with N while the **true** score stays at 0.5. The gap is positive and grows monotonically — from ≈ 0 at N = 1 to **+0.087 at N = 200** (mean of R = 20 repeats):
+
+![Headline: apparent (best validation) climbs with N while true (sealed test) stays at 0.5 — the snooping gap is the distance between them, and it grows with N.](figures/headline_gap_vs_N.svg)
+
+| N | 1 | 2 | 5 | 10 | 20 | 50 | 100 | 200 |
+|---|---|---|---|---|---|---|---|---|
+| **gap** | −0.005 | +0.014 | +0.037 | +0.049 | +0.056 | +0.070 | +0.080 | +0.087 |
+
+This is the central hypothesis (§1) **measured, not predicted**: the inflation is positive and grows with N. Reproduce from `notebooks/01_core_snooping.ipynb`.
+
+**The three core artifacts.** (1) *Cleanest snoop — Case 1* (above): truth = 0.5 by construction, so any `best_val − 0.5` is pure luck. (2) *The headline* (above): apparent vs true as N grows. (3) *The isometry insight* — **support track (sklearn garden)**: kNN / logistic regression / SVM identical across Cases 2↔3, only the tree drops — added with the support models (§6).
 
 ## 6. Extensions and the real-data comparison
 ⏳ **The rest of the core arc — after the ~6 July gate, but integral (not optional).** The same machine (§3) extends with no new parts: first to the other three questions and the MLP's backprop/optimizer derivation (§6.4), then onto real data, where the synthetic↔real comparison delivers the conclusion (§2.4, §7).
@@ -285,13 +295,15 @@ Case 1 (random labels)     : width 16 -> test 0.495 | width 128 -> test 0.500   
 | reveal test once, on winner | **one** `accuracy(best_model, X_test, ·)`, outside the loop | true ≈ 0.50 on Case 1 |
 | gap = apparent − true | `best_val - true` | grows with N (below) |
 
-**Worked example** (Case 1 random labels, n_val = 200, n_test = 10 000, mean of R = 8):
+`sweep(case, N_values, …, R)` runs this **cumulatively** over a grid of N — one config pool per repeat, best-of-the-first-N by validation, test revealed only on each winner — and averages; that is the headline (§5).
+
+**Worked example** — `sweep` on Case 1 random labels (n_val = 200, n_test = 10 000, mean of R = 6):
 ```
  N     apparent   true      gap
- 1       0.485   0.501   -0.016     no search yet — gap is just noise
- 5       0.540   0.501   +0.039
-20       0.567   0.499   +0.068     winner's curse: apparent climbs, true stays 0.50
+ 1       0.514   0.498   +0.017
+ 5       0.546   0.501   +0.045
+20       0.568   0.500   +0.068     apparent climbs, true stays ~0.50
 ```
-`true` holds at 0.50 (no generalisation, by construction) while `apparent` rises with N, so the gap grows — the central hypothesis, measured rather than predicted. The full headline sweep (larger N, R repeats) is §5.
+`true` holds at 0.50 (no generalisation, by construction) while `apparent` rises with N, so the gap grows — the central hypothesis, **measured** rather than predicted. The full headline (larger N, more repeats) is plotted in the notebook, §5.
 
 **Tool sources:** none new — `run_once` composes `lab` + `mlp` (already cited). The sealed-test discipline is *visible in the code*: exactly one `accuracy(…, X_test)`, outside the search loop.
