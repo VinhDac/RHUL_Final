@@ -285,17 +285,17 @@ Case 1 (random labels)     : width 16 -> test 0.495 | width 128 -> test 0.500   
 
 ### `pipeline.py` — the gap machine ↔ code ↔ verified number
 
-`run_once` implements the six steps of §3; verified by `python -m tests.test_pipeline`.
+`run_once` implements the six steps of §3; it is **data-agnostic** — it takes a `make_splits(rng)` provider, so the *same* machine runs on the synthetic lab and (later) on real data. Verified by `python -m tests.test_pipeline`.
 
 | §3 step | Code (`run_once`) | Discipline / number |
 |---|---|---|
-| split (val small, test large) | `make_dataset(case, d, flip_y, sizes, rng)` | n_val = 200, n_test = 10 000 |
+| split (val small, test large) | `make_splits(rng)` — e.g. `synthetic_splits(case, d, flip_y, sizes)`; loan/finance supply their own | n_val = 200, n_test = 10 000 |
 | search N, score on val | loop: `sample_config` → `train` → `accuracy(·, X_val)` | apparent climbs with N |
 | keep best on val | `if val > best_val` — **selection on validation only** | — |
 | reveal test once, on winner | **one** `accuracy(best_model, X_test, ·)`, outside the loop | true ≈ 0.50 on Case 1 |
 | gap = apparent − true | `best_val - true` | grows with N (below) |
 
-`sweep(case, N_values, …, R)` runs this **cumulatively** over a grid of N — one config pool per repeat, best-of-the-first-N by validation, test revealed only on each winner — and averages; that is the headline (§5).
+`sweep(make_splits, N_values, rng, R)` runs this **cumulatively** over a grid of N — one config pool per repeat, best-of-the-first-N by validation, test revealed only on each winner — and averages; that is the headline (§5).
 
 **Worked example** — `sweep` on Case 1 random labels (n_val = 200, n_test = 10 000, mean of R = 6):
 ```

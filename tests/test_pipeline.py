@@ -8,7 +8,7 @@ winner's curse: apparent (best-validation) climbs, true (sealed test) stays at
 the real headline (larger N, more repeats) lives in the notebook (Phan 5).
 """
 import numpy as np
-from snooping_backend.pipeline import sweep
+from snooping_backend.pipeline import sweep, synthetic_splits
 
 sizes = [1000, 200, 10000]      # train, SMALL val (the snoop), large sealed test (truth)
 N_values = [1, 5, 20]
@@ -19,7 +19,7 @@ print(f"  n_val={sizes[1]} (small)  n_test={sizes[2]} (large)  R={R}  N_max={max
 print(f"  {'N':>4}  {'apparent':>9}  {'true':>6}  {'gap':>8}")
 
 rng = np.random.default_rng(0)
-res = sweep(1, N_values, sizes, d, 0.0, rng, R=R, epochs=epochs)
+res = sweep(synthetic_splits(1, d, 0.0, sizes), N_values, rng, R=R, epochs=epochs)
 for N in N_values:
     r = res[N]
     print(f"  {N:>4}  {r['apparent']:>9.3f}  {r['true']:>6.3f}  {r['gap']:>+8.3f}")

@@ -25,15 +25,14 @@ from snooping_backend.lab import make_dataset
 from snooping_backend.mlp import train, accuracy, sample_config
 
 
-def run_once(case, N, sizes, d, flip_y, rng, epochs=300):
-    """One full gap measurement (the machine of Core.md section 3).
+def run_once(make_splits, N, rng, epochs=300):
+    """One full gap measurement (the machine of Core.md section 3), for ANY data source.
 
-    split -> search N MLP configs (score on the SMALL val) -> keep best-on-val
-    -> reveal the LARGE sealed test once, on the winner only -> gap.
-
-    sizes = (n_train, n_val, n_test). Returns dict(apparent, true, gap, config).
+    make_splits(rng) -> (X_train, y_train), (X_val, y_val), (X_test, y_test).
+    Search N MLP configs (score on the SMALL val) -> keep best-on-val -> reveal the
+    LARGE sealed test once, on the winner only -> gap. Returns dict(apparent, true, gap, config).
     """
-    (X_train, y_train), (X_val, y_val), (X_test, y_test) = make_dataset(case, d, flip_y, sizes, rng)
+    (X_train, y_train), (X_val, y_val), (X_test, y_test) = make_splits(rng)
 
     best_val, best_model, best_config = -1.0, None, None
     for _ in range(N):
@@ -49,13 +48,14 @@ def run_once(case, N, sizes, d, flip_y, rng, epochs=300):
     return {"apparent": best_val, "true": true, "gap": best_val - true, "config": best_config}
 
 
-def sweep(case, N_values, sizes, d, flip_y, rng, R=30, epochs=300):
+def sweep(make_splits, N_values, rng, R=30, epochs=300):
     """The headline sweep: for each N, the mean gap over R repeats (Core.md section 5).
 
-    Cumulative search: each repeat trains ONE pool of max(N_values) configs and
-    records each config's validation score; then for each N it keeps the
-    best-of-the-first-N by VALIDATION and reveals the sealed test ONLY on that
-    winner. Returns dict: N -> {apparent, true, gap, gap_std} (means over R).
+    make_splits(rng) -> (train, val, test); called fresh each repeat (a new synthetic
+    sample, or a re-shuffled split of fixed real data). Cumulative: each repeat trains
+    ONE pool of max(N_values) configs and records each config's validation score; then
+    for each N it keeps the best-of-the-first-N by VALIDATION and reveals the sealed
+    test ONLY on that winner. Returns N -> {apparent, true, gap, gap_std} (means over R).
     """
     N_max = max(N_values)
     apparent = {N: [] for N in N_values}
@@ -63,7 +63,7 @@ def sweep(case, N_values, sizes, d, flip_y, rng, R=30, epochs=300):
     gap = {N: [] for N in N_values}
 
     for _ in range(R):
-        (X_tr, y_tr), (X_val, y_val), (X_te, y_te) = make_dataset(case, d, flip_y, sizes, rng)
+        (X_tr, y_tr), (X_val, y_val), (X_te, y_te) = make_splits(rng)
 
         models, vals = [], []
         for _ in range(N_max):
@@ -87,3 +87,12 @@ def sweep(case, N_values, sizes, d, flip_y, rng, R=30, epochs=300):
                 "gap": float(np.mean(gap[N])),
                 "gap_std": float(np.std(gap[N]))}
             for N in N_values}
+
+
+def synthetic_splits(case, d, flip_y, sizes):
+    """A make_splits provider for the synthetic lab (fresh sample on every call).
+
+    Real data (loan, finance) will supply its own make_splits provider; the machine
+    (run_once / sweep) is unchanged - it just receives a different one.
+    """
+    return lambda rng: make_dataset(case, d, flip_y, sizes, rng)
