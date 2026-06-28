@@ -51,3 +51,15 @@ def accuracy(model, X, y):
     with torch.no_grad():
         pred = model(Xt).argmax(dim=1).numpy()
     return float((pred == y).mean())
+
+
+def sample_config(rng):
+    """Draw one random MLP config from the search space (random search).
+
+    width ~ one of {4, 8, 16, 32, 64, 128, 256}   (capacity)
+    lr    ~ log-uniform in [0.01, 1.0]            (learning rate)
+    Drawing more configs = larger N; the headline sweeps N.
+    """
+    width = int(rng.choice([4, 8, 16, 32, 64, 128, 256]))
+    lr = float(10 ** rng.uniform(-2, 0))
+    return {"width": width, "lr": lr}

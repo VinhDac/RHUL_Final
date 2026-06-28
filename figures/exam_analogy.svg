@@ -1,0 +1,51 @@
+<svg width="100%" viewBox="0 0 680 448" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>The winner's curse shown as an exam</title>
+<desc>N model configurations sit a short quiz (small validation set); the luckiest scores 80% although everyone's true level is 50%. That winner then sits a huge final (sealed test) and falls back to 50%. The gap is the drop, pure luck, and it grows with more configurations or a shorter quiz.</desc>
+<style>
+  .title{font:600 16px system-ui,-apple-system,sans-serif;fill:#16203a}
+  .t{font:500 13px system-ui,-apple-system,sans-serif;fill:#1f2937}
+  .ts{font:400 12px system-ui,-apple-system,sans-serif;fill:#6b7280}
+  .tg{font:700 13px system-ui,-apple-system,sans-serif;fill:#b45309}
+  .tr{font:700 13px system-ui,-apple-system,sans-serif;fill:#dc2626}
+  .panel{fill:#ffffff;stroke:#e2e8f0;stroke-width:1}
+  .dot{fill:#94a3b8}
+</style>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<rect x="2" y="2" width="676" height="444" rx="10" fill="#fbfcfe" stroke="#eef1f6"/>
+<text class="title" x="340" y="36" text-anchor="middle">The winner's curse — a short quiz fools you</text>
+
+<rect class="panel" x="40" y="64" width="300" height="300" rx="8"/>
+<rect class="panel" x="400" y="64" width="240" height="300" rx="8"/>
+<text class="t" x="190" y="86" text-anchor="middle">Short quiz · small validation</text>
+<text class="t" x="520" y="86" text-anchor="middle">Huge final · sealed test</text>
+
+<line x1="50" y1="300" x2="632" y2="300" stroke="#64748b" stroke-width="1" stroke-dasharray="5 4"/>
+<text class="ts" x="56" y="294">true level — everyone really 50%</text>
+
+<circle class="dot" cx="80" cy="318" r="6"/>
+<circle class="dot" cx="120" cy="300" r="6"/>
+<circle class="dot" cx="160" cy="288" r="6"/>
+<circle class="dot" cx="210" cy="322" r="6"/>
+<circle class="dot" cx="255" cy="294" r="6"/>
+<circle class="dot" cx="300" cy="308" r="6"/>
+<circle cx="185" cy="150" r="12" fill="#f59e0b" stroke="#b45309" stroke-width="1.5"/>
+<text class="tg" x="185" y="132" text-anchor="middle">80% — luckiest</text>
+
+<line x1="205" y1="150" x2="393" y2="150" stroke="#9aa3b2" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text class="ts" x="299" y="142" text-anchor="middle">keep the best</text>
+
+<line x1="410" y1="150" x2="600" y2="150" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3 3"/>
+<text class="ts" x="505" y="144" text-anchor="middle">quiz claimed 80%</text>
+<circle cx="500" cy="300" r="10" fill="#f59e0b" stroke="#b45309" stroke-width="1.5"/>
+<text class="t" x="500" y="324" text-anchor="middle">truth 50%</text>
+<line x1="600" y1="150" x2="600" y2="300" stroke="#dc2626" stroke-width="1.5" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<text class="tr" x="592" y="229" text-anchor="end">gap = luck</text>
+
+<text class="t" x="340" y="398" text-anchor="middle">Larger N, or a shorter quiz, lifts the lucky top score — so the gap grows.</text>
+<text class="ts" x="340" y="420" text-anchor="middle">student = model configuration  ·  quiz = validation set  ·  final = sealed test</text>
+</svg>

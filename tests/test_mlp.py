@@ -13,7 +13,7 @@ Expected:
 """
 import numpy as np
 from snooping_backend.lab import make_dataset
-from snooping_backend.mlp import train, accuracy
+from snooping_backend.mlp import train, accuracy, sample_config
 
 d = 20
 sizes = [2000, 500, 20000]      # train, val (unused here), large sealed test = truth
@@ -46,3 +46,16 @@ print("  -> train > 0.5 = fits some of the noise (clear capacity effect: SS6.2) 
       "OK" if tr_a > 0.5 and tr_b > 0.5 else "FAIL")
 
 print("\n(read the numbers above; this is E0 - the network trains)")
+
+
+print("\n=== CONFIG SAMPLING (the random search space, Phan 3) ===")
+rng_cfg = np.random.default_rng(1)
+widths, lrs = [], []
+for i in range(10):
+    c = sample_config(rng_cfg)
+    widths.append(c["width"]); lrs.append(c["lr"])
+    print(f"  config {i + 1:2d}: width {c['width']:4d}   lr {c['lr']:.4f}")
+ok_w = all(w in (4, 8, 16, 32, 64, 128, 256) for w in widths)
+ok_lr = all(0.01 <= l <= 1.0 for l in lrs)
+print("  -> widths in {4..256}?", "OK" if ok_w else "FAIL",
+      "| lr in [0.01, 1.0]?", "OK" if ok_lr else "FAIL")
