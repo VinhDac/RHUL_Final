@@ -272,3 +272,26 @@ Case 1 (random labels)     : width 16 -> test 0.495 | width 128 -> test 0.500   
 ```
 
 **Tool sources:** PyTorch API — `nn.Linear`, `nn.ReLU`, `nn.CrossEntropyLoss`, `torch.optim.SGD` (<https://pytorch.org/docs/stable/>). The backprop and SGD **mathematics** is *derived* in §6.4 — that derivation is the grounding; the library only executes it.
+
+### `pipeline.py` — the gap machine ↔ code ↔ verified number
+
+`run_once` implements the six steps of §3; verified by `python -m tests.test_pipeline`.
+
+| §3 step | Code (`run_once`) | Discipline / number |
+|---|---|---|
+| split (val small, test large) | `make_dataset(case, d, flip_y, sizes, rng)` | n_val = 200, n_test = 10 000 |
+| search N, score on val | loop: `sample_config` → `train` → `accuracy(·, X_val)` | apparent climbs with N |
+| keep best on val | `if val > best_val` — **selection on validation only** | — |
+| reveal test once, on winner | **one** `accuracy(best_model, X_test, ·)`, outside the loop | true ≈ 0.50 on Case 1 |
+| gap = apparent − true | `best_val - true` | grows with N (below) |
+
+**Worked example** (Case 1 random labels, n_val = 200, n_test = 10 000, mean of R = 8):
+```
+ N     apparent   true      gap
+ 1       0.485   0.501   -0.016     no search yet — gap is just noise
+ 5       0.540   0.501   +0.039
+20       0.567   0.499   +0.068     winner's curse: apparent climbs, true stays 0.50
+```
+`true` holds at 0.50 (no generalisation, by construction) while `apparent` rises with N, so the gap grows — the central hypothesis, measured rather than predicted. The full headline sweep (larger N, R repeats) is §5.
+
+**Tool sources:** none new — `run_once` composes `lab` + `mlp` (already cited). The sealed-test discipline is *visible in the code*: exactly one `accuracy(…, X_test)`, outside the search loop.
