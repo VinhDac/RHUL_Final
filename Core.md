@@ -307,3 +307,16 @@ Case 1 (random labels)     : width 16 -> test 0.495 | width 128 -> test 0.500   
 `true` holds at 0.50 (no generalisation, by construction) while `apparent` rises with N, so the gap grows — the central hypothesis, **measured** rather than predicted. The full headline (larger N, more repeats) is plotted in the notebook, §5.
 
 **Tool sources:** none new — `run_once` composes `lab` + `mlp` (already cited). The sealed-test discipline is *visible in the code*: exactly one `accuracy(…, X_test)`, outside the search loop.
+
+### `data_loan.py` — UCI loan default ↔ code ↔ verified number
+
+Real data for the external-validity half (§6.5). The gap machine is unchanged; this only supplies a `make_splits` provider (it feeds `run_once` / `sweep` exactly like `synthetic_splits`).
+
+| What | Code | Verified — number |
+|---|---|---|
+| fetch UCI 'default of credit card clients' (id 350) | `load_loan()`: `fetch_ucirepo(id=350)` | X = (30000, 23), y ∈ {0,1} |
+| class balance (imbalanced) | — | default rate 0.221 → chance ≈ **majority 0.786**, not 0.5 |
+| provider, standardise on TRAIN only (no leak) | `loan_provider(X, y, sizes)` | train col mean ≈ 0, std ≈ 1 |
+| real signal present? | sklearn `LogisticRegression` baseline | logreg test **0.819 > majority 0.786** → signal |
+
+**Tool source:** `ucimlrepo.fetch_ucirepo` — <https://github.com/uci-ml-repo/ucimlrepo>. Needs network; fetched once and reused (not a per-run test).
