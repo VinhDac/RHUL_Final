@@ -8,7 +8,7 @@
 
 ## Contents & roadmap
 
-Legend — all of §1–§6 is the core thesis: **✅ in the ~6 July gate** (synthetic instrument + headline) · **⏳ after the gate** (the rest of the arc — carries the synthetic↔real conclusion; essential, not optional) · **✍️ write last**
+Legend — **§1–§7 (the whole core thesis) is ✅ done and measured**; **✍️ write last** marks the abstract and appraisal (§0, §8, §9), written after a full read-through.
 
 | # | Section | Handbook req (§5.4) | Status |
 |---|---------|---------------------|--------|
@@ -22,17 +22,17 @@ Legend — all of §1–§6 is the core thesis: **✅ in the ~6 July gate** (syn
 | 3 | Method — the one machine | (5) | ✅ |
 | 4 | The synthetic lab — design (Gaussian X, 3 cases, isometry) | (5) | ✅ |
 | 5 | Core results — gap vs N, headline figure, 3 artifacts | (6) | ✅ |
-| 6 | Extensions and the real-data comparison | (5),(6) | ⏳ **after the gate** |
-| 6.1 | &nbsp;&nbsp;Label noise — does more noise widen the gap? | (6) | ⏳ |
-| 6.2 | &nbsp;&nbsp;Model capacity | (6) | ⏳ |
-| 6.3 | &nbsp;&nbsp;Selection protocol — single split / k-fold / nested CV | (6) | ⏳ |
-| 6.4 | &nbsp;&nbsp;The MLP's mathematics (backprop, SGD, L2) | (5) | ⏳ |
-| 6.5 | &nbsp;&nbsp;Real data — UCI loan default; finance ^GSPC (walk-forward) | (6) | ⏳ |
+| 6 | Extensions and the real-data comparison | (5),(6) | ✅ |
+| 6.1 | &nbsp;&nbsp;Label noise — does more noise widen the gap? | (6) | ✅ |
+| 6.2 | &nbsp;&nbsp;Model capacity | (6) | ✅ |
+| 6.3 | &nbsp;&nbsp;Selection protocol — single split / k-fold / nested CV | (6) | ✅ |
+| 6.4 | &nbsp;&nbsp;The MLP's mathematics (backprop, SGD, L2) | (5) | ✅ |
+| 6.5 | &nbsp;&nbsp;Real data — UCI loan default; finance ^GSPC (walk-forward) | (6) | ✅ |
 | 7 | Discussion & analysis — where the thesis concludes | (6) | ✅ *(skeleton; grows with §6)* |
 | 8 | Self-assessment / appraisal | (7) | ✍️ *(mandatory)* |
 | 9 | How to use my project — repo, notebooks, reproduce the figure | (10) | ✍️ |
 | — | Bibliography | (9) | grows throughout |
-| — | Appendix A — code provenance & listings | (11) | ⏳ *(outside the page limit; examiners may not read — so essential reasoning stays in the body)* |
+| — | Appendix A — code provenance & listings | (11) | ✅ *(outside the page limit; examiners may not read — so essential reasoning stays in the body)* |
 
 > **The arc, in one line.** Measure the gap exactly on the synthetic lab (§1–§5) — apparent vs true as N grows, the headline figure — then test whether it survives on real data (§6.5: loan, finance) and conclude from the comparison (§7). The whole of §1–§6 is the core thesis; the **~6 July gate** is its first checkpoint: the synthetic instrument and the headline figure.
 
@@ -211,7 +211,7 @@ This is the central hypothesis (§1) **measured, not predicted**: the inflation 
 The isometry changed nothing that should matter — same distances, same separability — so the tree's drop exposes that it leaned on a coordinate artifact (axis-alignment), not on the signal. Reproduce from `notebooks/01_core_snooping.ipynb`.
 
 ## 6. Extensions and the real-data comparison
-⏳ **The rest of the core arc — after the ~6 July gate, but integral (not optional).** The same machine (§3) extends with no new parts: first to the other three questions and the MLP's backprop/optimizer derivation (§6.4), then onto real data, where the synthetic↔real comparison delivers the conclusion (§2.4, §7).
+✅ **The rest of the core arc.** The same machine (§3) extends with no new parts — to the three remaining questions (label noise §6.1, capacity §6.2, selection protocol §6.3), the MLP's mathematics (§6.4), and onto real data (§6.5), where the synthetic↔real comparison delivers the conclusion (§2.4, §7).
 
 ### 6.1 Label noise (H2) — confirmed
 ✅
@@ -250,7 +250,43 @@ Hypothesis H4 — an honest selection protocol shrinks the gap — holds. The si
 The mechanism is the same winner's curse, dampened: averaging over folds cuts the variance of the validation estimate, so the maximum of N draws overshoots less. A fully *nested* cross-validation — selecting in an inner loop and reporting on an untouched outer fold — would shrink it further still, at more compute; the two-protocol comparison already makes the point. This is the practical antidote implied by §7: because the gap is driven by validation noise, spending data on an honest, lower-variance validation estimate is exactly what shrinks it.
 
 ### 6.4 The MLP's mathematics — backprop, the SGD update, L2
-⏳ *The MLP is the **core instrument** (§3); here we **derive** its forward pass, backprop and the SGD update (and L2 if used) from the chain rule — a self-contained derivation, no external authority. PyTorch's autograd executes these; deriving them is the formula-derivation deliverable. (It replaces the from-scratch NumPy plan — a change to confirm with the supervisor.)*
+✅
+
+The MLP is the core instrument (§3). PyTorch's autograd computes its gradients, but the project *derives* them — using a formula is what justifies relying on it. The derivation is self-contained: the chain rule, nothing more.
+
+**The forward pass.** For one input `x ∈ ℝ^d`, with a hidden layer of width `m`:
+
+- `a = W₁x + b₁` — pre-activations (`W₁ ∈ ℝ^{m×d}`, `b₁ ∈ ℝ^m`);
+- `h = ReLU(a) = max(a, 0)` — hidden activations;
+- `z = W₂h + b₂` — the two output logits (`W₂ ∈ ℝ^{2×m}`, `b₂ ∈ ℝ^2`);
+- `p = softmax(z)`, and the cross-entropy loss for the true class `y` is `L = −log p_y`.
+
+**Backprop is the chain rule, back to front.** The one clean fact is the gradient of cross-entropy-after-softmax with respect to the logits. Writing `L = −z_y + log Σ_k e^{z_k}` and differentiating, `∂L/∂z_j = −[j = y] + e^{z_j}/Σ_k e^{z_k} = p_j − [j = y]`, i.e.
+
+> `∂L/∂z = p − e_y`,
+
+where `e_y` is the one-hot vector of the true class. (This is *why* softmax and cross-entropy are paired — their composition has this simple derivative.) Each layer's gradient then follows mechanically:
+
+- **Output layer:** `∂L/∂W₂ = (p − e_y) hᵀ`,  `∂L/∂b₂ = p − e_y`.
+- **Into the hidden layer:** `∂L/∂h = W₂ᵀ (p − e_y)`.
+- **Through the ReLU:** `∂L/∂a = ∂L/∂h ⊙ 𝟙[a > 0]` — elementwise; the ReLU passes the gradient only where its input was positive.
+- **Input layer:** `∂L/∂W₁ = (∂L/∂a) xᵀ`,  `∂L/∂b₁ = ∂L/∂a`.
+
+For full-batch training each parameter's gradient is the mean of these over the training set.
+
+**The SGD update.** Gradient descent moves each parameter `θ` against its gradient,
+
+> `θ ← θ − η · ∂L/∂θ`,
+
+with learning rate `η` (the searched `lr`). Because training is full-batch, `∂L/∂θ` is the *exact* mean gradient over the training set — plain gradient descent, no mini-batch sampling.
+
+**L2 (weight decay).** Adding the penalty `(λ/2)‖θ‖²` to the loss adds `λθ` to each weight's gradient, so the update becomes
+
+> `θ ← (1 − ηλ) θ − η · ∂L/∂θ`,
+
+shrinking the weights by a factor `(1 − ηλ)` each step — "weight decay" (`weight_decay = λ` in PyTorch). It is off in the core (`λ = 0`) and would enter only as a capacity lever (§6.2).
+
+Every formula above is *used* by the instrument and is grounded by this derivation, not by an external authority (the project's source rule, §Sources). PyTorch's autograd merely executes them; deriving them is the formula-derivation deliverable, replacing the from-scratch NumPy plan — a change to confirm with the supervisor.
 
 ### 6.5 Real data — UCI loan default; finance ^GSPC
 
