@@ -196,6 +196,17 @@ The point is sharp: the isometry changes nothing that should matter — same dis
 
 This is the central hypothesis (§1) **measured, not predicted**: the inflation is positive and grows with N. Reproduce from `notebooks/01_core_snooping.ipynb`.
 
+**The optimal search budget (Case 2 + noise).** On Case 1 the truth is flat at 0.5, so over-searching only inflates the *apparent* score. The plan anticipated a sharper cost on a problem with real signal — that searching too hard buys a *worse* model. On Case 2 with 20% label noise (signal + noise, small validation), exactly that appears: as N grows the **true** performance of the selected config rises, **peaks around N ≈ 20 (0.736), then declines** (to 0.728 at N = 200), while the **apparent** score keeps climbing (to 0.795).
+
+![Optimal search budget (Case 2 + noise): the true (sealed-test) accuracy of the selected config peaks near N ≈ 20 and then declines, while the apparent (best-validation) score keeps rising.](figures/optimal_budget.svg)
+
+| N | 1 | 2 | 5 | 10 | **20** | 50 | 100 | 200 |
+|---|---|---|---|---|---|---|---|---|
+| apparent | 0.654 | 0.709 | 0.742 | 0.757 | 0.770 | 0.777 | 0.785 | 0.795 |
+| true | 0.663 | 0.697 | 0.727 | 0.735 | **0.736** | 0.732 | 0.732 | 0.728 |
+
+So there is an **optimal search budget** (here ≈ 20 configurations): past it, more search buys luck rather than quality — a *worse* deployed model carried by *higher* false confidence. This is the plan's headline expectation, confirmed.
+
 **The three core artifacts.** (1) *Cleanest snoop — Case 1* (above): truth = 0.5 by construction, so any `best_val − 0.5` is pure luck. (2) *The headline* (above): apparent vs true as N grows. (3) *The isometry insight* (support track — sklearn garden), below.
 
 **(3) Isometry — only the axis-aligned tree drops.** §4 predicted that rotating Case 2 into Case 3 (an isometry) leaves any coordinate-free method untouched and degrades only the axis-aligned tree. Measured on the four sklearn families, exactly that happens — kNN, logistic regression and SVM are *identical* across the rotation; only the decision tree drops:
@@ -209,6 +220,8 @@ This is the central hypothesis (§1) **measured, not predicted**: the inflation 
 | change | +0.000 | +0.000 | +0.000 | **−0.150** |
 
 The isometry changed nothing that should matter — same distances, same separability — so the tree's drop exposes that it leaned on a coordinate artifact (axis-alignment), not on the signal. Reproduce from `notebooks/01_core_snooping.ipynb`.
+
+**Fit ≠ generalise on random labels (Case 1) — the supervisor's question.** On Case 1 the supervisor asked *"how well can you fit?"* — and the answer is wide while generalisation has only one value. A 1-nearest-neighbour and an unpruned tree fit the training labels *perfectly* (train accuracy 1.000 — pure memorisation); an SVM fits much (0.773); a linear logistic regression barely (0.549). Yet **all four generalise at chance** — test 0.499 / 0.510 / 0.503 / 0.517. Fitting capacity varies enormously; generalisation is uniformly 0.5, because there is no signal to generalise to. This is the project in one line: a high score on data you *fitted* — or *searched over* — says nothing about true performance.
 
 ## 6. Extensions and the real-data comparison
 ✅ **The rest of the core arc.** The same machine (§3) extends with no new parts — to the three remaining questions (label noise §6.1, capacity §6.2, selection protocol §6.3), the MLP's mathematics (§6.4), and onto real data (§6.5), where the synthetic↔real comparison delivers the conclusion (§2.4, §7).
@@ -301,6 +314,8 @@ The same machine (§3), fed a loan or finance provider instead of the synthetic 
 | loan (real signal) | −0.016 | −0.012 | −0.005 | −0.002 | +0.002 | +0.007 | +0.010 |
 
 **Loan — the gap appears, muted by real signal.** Loan default has genuine signal (logistic regression 0.819 vs a 0.786 majority), and its gap is the smallest of the three (+0.010 at N = 100): searching still inflates the apparent score, but the real quality differences between configurations — and the smaller finite-sample noise of an accuracy near 0.8 (a property of the binomial) — keep it quiet. The mechanism survives; it is just subtler.
+
+**The stakes hide inside the accuracy.** The plan asked for the *consequence* — how many bad loans get wrongly approved. The classes are imbalanced (22% default), so a high accuracy can still be a poor decision rule: the best-on-validation winner scores **0.82 on test yet approves 1 406 of the 2 126 real defaults — 66% of the bad loans wrongly approved**. Accuracy is the number the search optimises, but it masks the real cost; chasing it optimises, for the stakes, the wrong quantity.
 
 **Finance ^GSPC — the warning: the searched edge is luck.** With signal ≈ 0 the gap is luck-driven like the no-signal synthetic case (positive and growing, though noisier — the walk-forward split is fixed, so there is less to average over). The practical cost is the point. Searching 50 MLP configurations on a small validation window (the plan's *small validation on purpose*) finds one with an apparent **64.0%** directional accuracy — a tempting "edge" — that scores **53.3%** out-of-sample (≈ chance): a gap of **+0.107**, pure luck. Deployed as a strategy it returns **+82%** over the test period versus **+94%** for simply buying and holding — *searching for an edge lost money relative to doing nothing.*
 
