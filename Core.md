@@ -196,7 +196,19 @@ The point is sharp: the isometry changes nothing that should matter — same dis
 
 This is the central hypothesis (§1) **measured, not predicted**: the inflation is positive and grows with N. Reproduce from `notebooks/01_core_snooping.ipynb`.
 
-**The three core artifacts.** (1) *Cleanest snoop — Case 1* (above): truth = 0.5 by construction, so any `best_val − 0.5` is pure luck. (2) *The headline* (above): apparent vs true as N grows. (3) *The isometry insight* — **support track (sklearn garden)**: kNN / logistic regression / SVM identical across Cases 2↔3, only the tree drops — added with the support models (§6).
+**The three core artifacts.** (1) *Cleanest snoop — Case 1* (above): truth = 0.5 by construction, so any `best_val − 0.5` is pure luck. (2) *The headline* (above): apparent vs true as N grows. (3) *The isometry insight* (support track — sklearn garden), below.
+
+**(3) Isometry — only the axis-aligned tree drops.** §4 predicted that rotating Case 2 into Case 3 (an isometry) leaves any coordinate-free method untouched and degrades only the axis-aligned tree. Measured on the four sklearn families, exactly that happens — kNN, logistic regression and SVM are *identical* across the rotation; only the decision tree drops:
+
+![Test accuracy of four sklearn methods on Case 2 vs Case 3 — kNN, logistic regression and SVM are unchanged by the rotation; only the axis-aligned tree drops.](figures/isometry.svg)
+
+| | kNN | logreg | SVM | tree |
+|---|---|---|---|---|
+| Case 2 (axis-aligned) | 0.953 | 0.999 | 0.983 | 0.998 |
+| Case 3 (rotated) | 0.953 | 0.999 | 0.983 | 0.849 |
+| change | +0.000 | +0.000 | +0.000 | **−0.150** |
+
+The isometry changed nothing that should matter — same distances, same separability — so the tree's drop exposes that it leaned on a coordinate artifact (axis-alignment), not on the signal. Reproduce from `notebooks/01_core_snooping.ipynb`.
 
 ## 6. Extensions and the real-data comparison
 ⏳ **The rest of the core arc — after the ~6 July gate, but integral (not optional).** The same machine (§3) extends with no new parts: first to the other three questions and the MLP's backprop/optimizer derivation (§6.4), then onto real data, where the synthetic↔real comparison delivers the conclusion (§2.4, §7).
@@ -223,8 +235,19 @@ Hypothesis H3 expected that a bigger MLP, by overfitting more, would widen the g
 
 The reason: in this measurement the gap *is* the winner's curse — the overshoot of the maximum of N noisy validation draws — and that overshoot is governed by the **search size N and the validation noise**, not by model capacity. Capacity changes how a single model fits, but not how far the best-of-N validation score overruns the truth. Reported as the plan requires — *let the data confirm or refute, and report honestly, even against me* — this refines the picture: the dangerous knobs are **N and a small validation set**, not raw capacity.
 
-### 6.3 Selection protocol — single split / k-fold / nested CV
-⏳ *Which honest protocol shrinks the gap — measured, not asserted. The protocols (single split, k-fold, nested CV) are standard procedures, implemented via documented sklearn functions cited inline when coded.*
+### 6.3 Selection protocol (H4) — confirmed
+✅
+
+Hypothesis H4 — an honest selection protocol shrinks the gap — holds. The single small validation split that drives the rest of this report is the *least* honest protocol: with only 200 held-out points the validation score is noisy, so the best of N overshoots far. Replacing it with **5-fold cross-validation** on the same data budget — each configuration scored by the mean accuracy over five folds, a far less noisy estimate — roughly **halves the gap, and more at large N**:
+
+![Gap vs N for two protocols on Case 1 — a single small validation split vs honest 5-fold CV; the k-fold protocol shrinks the gap at every N.](figures/gap_vs_protocol.svg)
+
+| N | 1 | 5 | 20 | 50 |
+|---|---|---|---|---|
+| single split | +0.000 | +0.043 | +0.062 | +0.074 |
+| 5-fold CV | +0.002 | +0.015 | +0.024 | +0.026 |
+
+The mechanism is the same winner's curse, dampened: averaging over folds cuts the variance of the validation estimate, so the maximum of N draws overshoots less. A fully *nested* cross-validation — selecting in an inner loop and reporting on an untouched outer fold — would shrink it further still, at more compute; the two-protocol comparison already makes the point. This is the practical antidote implied by §7: because the gap is driven by validation noise, spending data on an honest, lower-variance validation estimate is exactly what shrinks it.
 
 ### 6.4 The MLP's mathematics — backprop, the SGD update, L2
 ⏳ *The MLP is the **core instrument** (§3); here we **derive** its forward pass, backprop and the SGD update (and L2 if used) from the chain rule — a self-contained derivation, no external authority. PyTorch's autograd executes these; deriving them is the formula-derivation deliverable. (It replaces the from-scratch NumPy plan — a change to confirm with the supervisor.)*

@@ -96,3 +96,29 @@ def synthetic_splits(case, d, flip_y, sizes):
     (run_once / sweep) is unchanged - it just receives a different one.
     """
     return lambda rng: make_dataset(case, d, flip_y, sizes, rng)
+
+
+def gap_kfold(make_splits, N, rng, k=5, epochs=300, sample=sample_config):
+    """Honest protocol (H4, section 6.3): score each config by k-fold CV on the train+val
+    pool, keep the best, refit on the full pool, reveal the sealed test once. A k-fold
+    estimate is far less noisy than a single small validation split, so the gap shrinks.
+    Same signature shape as run_once; returns dict(apparent, true, gap).
+    """
+    (X_tr, y_tr), (X_val, y_val), (X_te, y_te) = make_splits(rng)
+    Xp = np.concatenate([X_tr, X_val]); yp = np.concatenate([y_tr, y_val])     # selection pool
+    folds = np.array_split(rng.permutation(len(Xp)), k)
+
+    best_cv, best_cfg, best_seed = -1.0, None, 0
+    for _ in range(N):
+        cfg = sample(rng); seed = int(rng.integers(0, 2**31 - 1)); scores = []
+        for i in range(k):
+            vi = folds[i]; ti = np.concatenate([folds[j] for j in range(k) if j != i])
+            m = train(Xp[ti], yp[ti], cfg["width"], cfg["lr"], epochs=epochs, seed=seed)
+            scores.append(accuracy(m, Xp[vi], yp[vi]))
+        cv = float(np.mean(scores))                        # the k-fold validation score (averaged)
+        if cv > best_cv:
+            best_cv, best_cfg, best_seed = cv, cfg, seed
+
+    model = train(Xp, yp, best_cfg["width"], best_cfg["lr"], epochs=epochs, seed=best_seed)
+    true = accuracy(model, X_te, y_te)                     # sealed test, opened once on the winner
+    return {"apparent": best_cv, "true": true, "gap": best_cv - true}
