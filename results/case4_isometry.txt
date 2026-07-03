@@ -1,0 +1,13 @@
+MLP-ESSENTIAL (Case 4 XOR) -- test accuracy:
+  kNN     0.635
+  tree    0.715
+  logreg  0.500  <- LINEAR (stuck at chance)
+  SVM     0.501  <- LINEAR (stuck at chance)
+  MLP     0.965  <- deep model learns it
+
+ISOMETRY (garden, Case 2 vs Case 3 rotated) -- test accuracy:
+  kNN     case2=0.805  case3=0.805  change=+0.000
+  tree    case2=1.000  case3=0.709  change=-0.291
+  logreg  case2=0.989  case3=0.989  change=+0.000
+  SVM     case2=0.986  case3=0.986  change=+0.000
+DONE

@@ -62,191 +62,375 @@ Local context (the project's own material, not external authorities):
 ✍️ *Write last — a short summary of the work (handbook §5.4(1)).*
 
 ## 1. Introduction — the problem
-✅
 
-**The trusted practice.** To "improve" a model, we try many configurations (architectures, hyper-parameters), keep the one with the best validation score, and call that "the improvement".
+**The trusted practice.** To improve a deep-learning model we try many
+*configurations* — a configuration is a model together with its settings: its
+architecture, its width, its learning rate. We train each one, keep the one that
+scores best on a held-out *validation set* (data the model was not trained on), and
+call that "the improvement."
 
-**The hidden flaw.** A validation score is not true performance — it is *true performance + luck* (noise, because the validation set is finite, and here deliberately small). Keeping the best of *N* such scores means taking the **maximum of N noisy draws**, which usually lands on the *luckiest* configuration, not the *best*. So the reported score is **systematically inflated**, and the inflation grows with N.
+**The hidden flaw.** Picture ten students who know nothing sitting the same short
+quiz: by luck alone, the best of them scores 80%. A validation score is the same —
+not the model's true skill, but **true skill + luck**, because the validation set is
+finite (and here, small on purpose). Keeping the best of *N* such scores lands on the
+*luckiest* configuration, not the *best* one — so the reported score is inflated, and
+the harder we search, the more inflated it gets.
 
-**Why it matters.** Practitioners trust that number. If it is inflated, they deploy a *worse* model with *false confidence* — and the more they search, the more they fool themselves. (winner's curse = selection bias = data snooping: three names, one phenomenon.)
+**Why deep learning makes this worst.** Deep learning is where we search hardest, and
+most of that search goes uncounted. Every extra training *epoch* (one pass over the
+training data) is another candidate model — and stopping at the best-looking epoch is
+itself a choice made on the validation set. Every random seed is another attempt. So
+the number of models we *effectively* tried is far larger than the handful we think
+we chose. The more knobs there are to turn, the more luck we harvest — and the more
+we fool ourselves.
 
-**Central hypothesis.** `gap = best-validation score − true performance` is **positive** and **grows with N**. We **measure** it — we do not predict it with a formula — using a sealed test set opened exactly once.
+**What we claim, and how we show it.** So the question is: of a reported improvement,
+how much is real, and how much is luck we bought by searching? We argue that trust
+does not live in the number but in the *process* that produced it. We do not guess
+the inflation from a formula — we **measure** it:
 
-> *To add (handbook §5.3): an explicit aims & objectives list, and one line on how this work helps my future career.*
-> Sources: the framing follows the approved plan (`Plan`); the winner's-curse claim is *derived*, not cited — see §2.2.
+> gap = best validation score − true performance,
+
+using a test set kept sealed and opened exactly once. The gap is positive, it grows
+with the search, and it is the amount of trust lost per unit of searching. (Winner's
+curse, selection bias, data snooping: three names for this one phenomenon.)
+
+> *To add (handbook §5.3): an explicit aims & objectives list, and one line on how
+> this work helps my future career.*
+> Sources: framing follows the approved plan (`Plan`); the winner's-curse claim is
+> *derived* (§2.2); the hidden-search claim is *measured* (§6.3).
 
 ## 2. Background & related work
 ✅
 
-### 2.1 The learning problem — train / validation / test
-✅
+### 2.1 The learning problem — train, validation, test
 
-**The quantity we actually care about.** A learning algorithm sees a finite sample and returns a model. What matters is not how that model does on the sample it was fitted to, but its *true performance* — its expected accuracy on fresh data drawn from the same source. We write this true performance `S`. Everything in this report is, ultimately, a statement about `S`.
+**What we actually care about.** A model is only useful on data it has never seen.
+So the quantity that matters is *true performance*: the model's accuracy on fresh
+data from the same source. Call it S. Everything here is, in the end, a statement
+about S — which we never see directly, only estimate.
 
-We never observe `S` directly; we estimate it by holding data out. The data is split into three parts, each with a different job:
+**Three sets, three jobs.** To estimate S honestly, the data is split three ways:
+- **Training set** — used to *fit* the model. Its error is optimistic: the model has
+  already seen these points, so low training error can mean it learned the signal
+  *or* just memorised the answers. It is not a measure of S.
+- **Validation set** — held out from fitting, used to *choose* between configurations.
+  Its score estimates S for each configuration — but from finite data, so it is noisy,
+  and we pick the best on it. That is exactly where the trouble starts (§2.2).
+- **Test set** — held out from *both* fitting and choosing, kept sealed and opened
+  once at the very end, to estimate S for the single final model. It is honest
+  precisely because it played no part in producing that model.
 
-- **Training set** — used to *fit* the model. Its error is optimistic: the model has already seen these points, so a low training error can mean it learned the signal *or* merely memorised the sample. Training error is therefore not a measure of `S`.
-- **Validation set** — held out from fitting, used to *choose* between configurations (model selection). The validation score `Ŝ` is our estimate of `S` for each configuration — but it is a finite-sample estimate, so it is noisy, and we select on it. Selecting the best of N such scores is exactly where the winner's curse enters (§2.2).
-- **Test set** — held out from *both* fitting and selection, kept sealed and opened exactly once at the very end, to estimate `S` for the single final model. It is an honest estimate precisely because it played no part in producing that model.
+**The whole project lives in one gap.** We *select on and report* the validation
+score; we *care about* S; and the distance between them —
+`gap = best validation score − true performance` — is what the rest measures.
 
-**The whole project lives in one gap.** Training error, validation score `Ŝ`, test score and true performance `S` are four different numbers. We *select on and report* `Ŝ`; we *care about* `S`; and `gap = best-validation − true performance` (§1) is the distance between them. On real data the sealed test is our only window onto `S` — itself an estimate (§2.3). In the synthetic lab we can know `S` outright, which is why the lab is where the gap is measured exactly.
+> Sources: standard supervised-learning material (`Course`), stated plainly.
 
-> Sources: standard supervised-learning material (`Course`), stated plainly — nothing here is non-obvious or needs an external authority.
+### 2.2 The mechanism — the winner's curse
 
-### 2.2 The mechanism — winner's curse
-✅
+**A concrete version first.** Flip a fair coin ten times and record the fraction of
+heads; call that a "score." Do it for two coins and keep the higher score — it
+averages above 50%. Do it for five and keep the highest — higher still. Nothing about
+the coins changed; you simply *took the best of more tries*, and the best of more
+noisy tries is larger. Swap "coin" for "configuration" and "fraction of heads" for
+"validation score," and that is the whole mechanism.
 
-A validation score is a finite-sample estimate, so it carries noise. For configuration *i* we observe `Ŝ_i = S_i + ε_i`, where `S_i` is the configuration's true performance and `ε_i` is zero-mean noise from scoring on a finite — here deliberately small — validation set.
+**In words.** Each validation score is *true skill + luck*. For a *single* fixed
+model the luck averages to zero — the score neither over- nor under-states that
+model's skill. The bias appears only when we **keep the best of N** scores: we
+preferentially pick the configuration whose luck happened to be positive. So the
+reported score sits above the truth, and the gap grows with N, because the best of
+more noisy draws overshoots more. No heavy formula is needed — §6 *measures* this.
+(The cleanest case is random labels, §4 case 1: every configuration's true score is
+exactly 0.5, so any `best validation − 0.5` is pure luck, the curse with nothing else
+mixed in.)
 
-Searching means computing `Ŝ_1, …, Ŝ_N` and keeping the best: we select `i* = argmax_i Ŝ_i` and report `Ŝ_{i*}`. Because we keep the *largest observed* score, we preferentially land on configurations whose noise `ε_i` happened to be positive. So the reported score overstates the selected configuration's own truth — `E[ Ŝ_{i*} − S_{i*} ] ≥ 0` — and this optimism grows with N, because the expected maximum of N noisy draws increases as N increases. This is the *winner's curse* (equivalently selection bias, data snooping — §1).
+**One caveat, load-bearing.** "The luck averages to zero" assumes the validation
+points are independent, like fresh coin flips. On the synthetic lab and the loan data
+that holds; on financial prices it does not — adjacent days move together — so there
+even the reference wobbles (§6.5). We flag it wherever it bites.
 
-This needs no external authority — it is two lines of elementary probability — and §5 *measures* it. The cleanest case is random labels (§4, case 1): every configuration has the same true score `S_i = 0.5`, so any `best-validation − 0.5` is pure noise `ε_i`, the winner's curse with nothing else mixed in.
+**The number we don't count.** N is not just the configurations we consciously list.
+Every random seed we retry, and every epoch we stop at "when validation looked best,"
+is another draw. The *effective* count is therefore
+`N_eff = configurations × seeds × epoch-checkpoints`, usually far larger than the
+handful we think we tried — which is why the curse bites hardest in deep learning
+(§3 makes N_eff precise; §6.3 measures its effect).
 
 ### 2.3 Why a synthetic laboratory
-✅
 
-**What the measurement needs.** The gap is `best-validation score − true performance` (§1). To compute it, I must hold the *true performance* of the selected model in my hand — that single quantity is what the whole project rests on. So the first question is not *which* dataset, but *whose truth can I trust as the reference*.
+**We are here because** measuring the gap needs the one thing real data will not give
+us: the *true* performance of the selected model, held in our hand as a reference.
 
-**On real data, the reference is itself a guess.** Real datasets do not ship with true performance attached. The best available substitute is to hold out a test set and average the model's error on it — but that average is only an *estimate* of true performance, and a finite test set makes it a *noisy* estimate. The approved plan states this plainly: *"On real data … the 'true' performance is itself only an estimate from a finite test set."* (`Plan`, `Plan/Plan_2.docx`)
+**On real data the reference is itself a guess.** Real datasets do not come with true
+performance attached. The best substitute is to hold out a test set and average the
+model's error on it — but that average is only an *estimate* of the truth, and a
+finite test makes it a *noisy* one. So the ruler we measure with carries the same
+finite-sample noise as the thing we are measuring: we could never cleanly separate a
+real gap from the wobble of our own estimate. (The plan puts it the same way: on real
+data *"the gap I measure is blurred by the very noise I am trying to study."*)
 
-**So on real data the ruler carries the same disease as the thing it measures.** The gap is, by construction, an effect *of* sampling luck — a validation score inflated because the validation set is finite (§1). If the reference "truth" is *also* a noisy estimate, then — in the plan's words — *"the gap I measure is blurred by the very noise I am trying to study."* (`Plan`) I would be measuring a noise effect with a ruler made of the same noise, and could never cleanly separate a genuine gap from the wobble of my own estimate.
+**Writing the data ourselves removes the wobble.** When we generate the data, we know
+the labelling rule exactly, so true performance stops being estimated and becomes
+*controlled*. That buys three things real data cannot:
+- **Exact truth** — we can make the test set as large as we like (100 000 rows), so
+  its estimate of the truth has almost no sampling error and the gap is measured
+  exactly (§3 makes this precise).
+- **A signal dial** — we can set the difficulty from easy to near-impossible, so all
+  our datasets sit on one axis.
+- **Known noise** — we can inject an exactly-known amount of label noise, which is
+  what the noise experiment (§6.1) needs.
 
-**Writing the data-generating process removes the blur.** When I generate the data myself, I know the true labelling rule exactly, so true performance stops being something I estimate and becomes something I control. The approved plan names three things this buys — none of them available on real data:
+The synthetic lab is where the gap is *earned* exactly; the real datasets (§6.5) then
+test whether the same effect appears in the wild.
 
-- **Exact truth.** *"I can make the test set as large as I like (e.g. 100k rows) ⇒ the test score ≈ true performance with almost no sampling error, so the gap is measured exactly."* (`Plan`) — a large independent test set drives the sampling error of that average toward zero (a law-of-large-numbers argument, made precise in §3).
-- **A signal dial.** *"I can set the signal strength from easy … down to near-random ⇒ all three datasets sit on one axis."* (`Plan`) The three label cases (§4) are points on that dial.
-- **Known noise.** *"I can inject exactly-known label noise"* (`Plan`) — precisely what the label-noise question (§6.1) requires, because the amount injected is known by construction.
+> Sources: the synthetic-first rationale and the three things it buys follow the
+> approved plan (`Plan`).
 
-**Conclusion.** As the plan concludes, *"synthetic is the only place I can measure the gap precisely and run controlled experiments; the loan and finance sets then test whether the same effect appears in the wild."* (`Plan`) The synthetic lab is where the core results are *earned* exactly; the real datasets (§6.5) are where the effect is tested in the wild — see the thesis arc, §2.4.
+### 2.4 Three datasets, one arc — and a remedy
 
-### 2.4 Three datasets, one conclusion — the thesis arc
-✅
+**We are here because** an exact measurement on data we designed is necessary but not
+sufficient: it proves the instrument works (*internal validity*), but not that the
+effect bites in practice (*external validity*). Only real data shows the second.
 
-Measuring the gap on synthetic data is necessary but not sufficient. It buys **internal validity**: because the truth is known by construction, the synthetic lab measures the snooping mechanism *cleanly and exactly*, and proves the instrument works. But a controlled result cannot, on its own, show that the effect *bites in practice* — that is **external validity**, and only real data can supply it.
+So the project runs the *same* machine across three datasets on one axis of signal
+strength:
+- **Synthetic** — truth known; the gap measured exactly, the mechanism isolated. (§3–§5)
+- **Loan default** (UCI) — real and messy, with stakes; does the gap appear on its
+  own? *Strong signal.* (§6.5)
+- **Financial prices** (^GSPC) — signal ≈ 0, so the "edge" found by searching is
+  almost all luck and collapses out-of-sample. *The warning case.* (§6.5)
 
-So the project places three datasets on one axis of signal strength (`Plan`):
-- **Synthetic** — truth known; the gap is measured exactly and the mechanism isolated. *Internal validity.* (§3–§5)
-- **UCI loan default** — real, messy, with stakes; *"does the gap appear on its own?"* (`Plan`) *External validity, strong signal.* (§6.5)
-- **Financial prices (^GSPC)** — signal ≈ 0, so *"the 'edge' found by searching is almost all luck"* and the best-on-validation strategy *"collapses out-of-sample"* (`Plan`). *External validity, no signal — the warning case.* (§6.5)
+The conclusion is not "a gap exists on data we designed" — it is the **comparison
+across the axis**: the mechanism pinned down where truth is known, then shown to
+survive where signal is real and to dominate where it is absent.
 
-The synthetic experiment does **not** assume its own answer: I fix the *truth* and the *noise*, but the gap is produced by the honest search procedure, and that *same* procedure runs unchanged on the real datasets. So the conclusion of the thesis is not "a gap exists on data I designed" — it is the **comparison across the axis**: the mechanism measured exactly where truth is known, then shown to survive (loan) or to dominate (finance) where it is not. The synthetic core is the first point on that axis and the instrument that calibrates the rest; it is not, by itself, the conclusion.
+**And then a remedy.** Diagnosing the disease is only half a thesis. So we close by
+*comparing* an honest, restrained procedure against an aggressive, over-searched one
+on the same data (§6.6), and give a plain rule for when a model's score can be
+trusted. Measure → confirm → cure.
 
 ## 3. Method — the one machine
-✅
 
-**The idea in one exam.** Picture *N* students sitting the *same short quiz*. When none of them truly knows the material, every true score is 50% — yet on a ten-question quiz someone scores 80% by luck. Hire that top scorer, set a ten-thousand-question final, and they fall back to 50%: the 80% was luck, not skill. Swap *student* for *model configuration*, *short quiz* for the small validation set, and *long final* for the huge sealed test, and that is this entire report. The **gap** is the top scorer's quiz mark minus their final mark — how much the short quiz fooled us — and it grows the more students sit the quiz. Three design choices follow at once: the quiz is kept *short* (a small validation set) so the luck, and the gap, are large; the final is *huge* (a large sealed test) so it reports the truth; and because the top mark climbs fast then ever more slowly, we try N at 1, 2, 5, 10, 20, … rather than 1, 2, 3, 4.
+**The idea, as an exam.** Picture N students who all know nothing sitting the *same*
+short quiz. On a ten-question quiz, someone scores 80% by luck. Hire that top scorer,
+sit them a ten-thousand-question final, and they fall back to 50%: the 80% was luck,
+not skill. Swap *student* for *model configuration*, *short quiz* for a small
+validation set, *long final* for a huge sealed test, and that is this whole report.
+The **gap** is the top scorer's quiz mark minus their final mark — how much the quiz
+fooled us — and it grows the more students sit the quiz.
 
-![The winner's curse as an exam: N configurations sit a short quiz (small validation); the luckiest scores 80% though the truth is 50%; the huge final (sealed test) reveals it, and the gap is the drop.](figures/exam_analogy.svg)
+![The winner's curse as an exam.](figures/exam_analogy.svg)
 
-**In plain words.** Picture a *bag of model configurations* — a handful of MLP settings, differing in width and learning rate. You try each on a *small* validation set and keep the one that scored best; that best score is the number you would proudly report (the *apparent* score). Then you open a *huge* sealed test set — so large it tells the truth — and read that model's *true* score. The apparent score sits above the truth, and that inflation is the **gap**. The more configurations you try, the more chances you have to get lucky, so the gap grows with N. The rest of this section makes this precise.
+Three design choices fall out at once: the quiz is *short* (a small validation set)
+so the luck, and the gap, are large; the final is *huge* (a large sealed test) so it
+reports the truth; and because the top mark climbs fast then ever more slowly, we try
+N at 1, 2, 5, 10, 20, … rather than 1, 2, 3, 4.
 
-![The core in one picture: try N configurations, keep the best on the small validation set, then reveal the truth on the huge sealed test — the gap is the inflation, and it widens as N grows.](figures/core_idea.svg)
+**The one machine.** Every experiment runs the *same* procedure on a fresh dataset:
+1. **Split** into three parts — training, a small validation set (so its score is
+   noisy), and a large sealed test.
+2. **Search** N configurations — settings of a small neural network, drawn at random.
+3. **Fit** each on the training set and **score** it on the validation set.
+4. **Keep the best on validation** — that best score is the number a practitioner
+   would proudly report (the *apparent* score).
+5. **Open the sealed test exactly once**, on that one selected model, for its *true* score.
+6. **Record the gap** = apparent − true.
 
-Every experiment in this report — gate and after — runs the *same* procedure. Fixing the procedure and varying only one input at a time is what lets a change in the gap be attributed to that input rather than to an accident of wiring.
+Fixing the procedure and varying only one input at a time is what lets a change in the
+gap be blamed on that input, not on an accident of wiring.
 
-**The one machine.** On a freshly generated dataset:
-1. **Split** the data into three disjoint parts — a training set, a validation set (deliberately small, so `Ŝ` is noisy), and a sealed test set (made large; see below).
-2. **Search** a space of `N` configurations — here, **MLP configurations drawn at random** (width and learning rate). *(The sklearn garden — kNN, tree, logistic regression, SVM — is a separate **support** track for the isometry insight, §4–§5, not the headline search.)*
-3. For each configuration, **fit on the training set** and **score on the validation set**, giving `Ŝ_1, …, Ŝ_N`.
-4. **Keep the best on validation**: select `i* = argmax_i Ŝ_i`. The *apparent* score is `Ŝ_{i*}` — the number a practitioner would proudly report.
-5. **Reveal the sealed test exactly once**, scoring the single selected model to get `T_{i*}`, the estimate of its true performance `S_{i*}`.
-6. **Record the gap**: `gap = Ŝ_{i*} − T_{i*}` — apparent minus true.
+**The instrument — a small neural network (MLP).** The model we search is a small
+*multilayer perceptron*: an input layer, one hidden layer, and two outputs (one per
+class). Its searchable knobs are its **width** (how many hidden units) and its
+**learning rate** (how big a step each training update takes), drawn at random; the
+model family is held fixed so a change in the gap comes from the search, not the
+wiring. How it learns is derived in the appendix; here we need only that it turns
+settings into a trained model.
 
-**The instrument — the MLP.** The model searched here is a small multilayer perceptron — one hidden layer (ReLU), two output logits — trained by full-batch gradient descent with cross-entropy loss. A *configuration* is its searchable knobs — **width** (one of 4–256 units) and **learning rate** (log-uniform in [0.01, 1]) — drawn at random by `sample_config`; the model *family* is held fixed so a change in the gap is attributable to the search, not the wiring. Capacity, label noise and selection protocol are varied one at a time later (§6). We **derive** the forward pass, backprop and the SGD update in §6.4; PyTorch's autograd only executes them. (PyTorch replaces the from-scratch NumPy plan — a change to confirm with the supervisor.)
+**The knobs we don't count.** Two more knobs hide inside every fit. Training runs for
+many *epochs* (passes over the data); keeping the model from the epoch that looked
+best on validation — ordinary *early stopping* — is another choice made on the
+validation set. And each fit starts from a random *seed*; retrying seeds and keeping
+the best is another choice. So the effective number searched is
+`N_eff = configurations × seeds × epoch-checkpoints` (§2.2), far larger than the
+handful we list. §6.3 measures how much this inflates the gap.
 
-**The ruler: the sealed-test estimator.** The test score `T` is just the model's average correctness over the test points — a sample mean of an accuracy. By the law of large numbers it converges to its expectation, the true performance `S`, as the test size `n_test` grows; for an accuracy (a proportion) the sampling error shrinks like `√(p(1−p)/n_test) ≤ 0.5/√n_test`. This is the law-of-large-numbers argument promised in §2.3, now concrete: with `n_test = 100 000`, that standard error is at most about `0.0016`, so `T` pins `S` to within a few thousandths — far finer than the gaps we will measure. On the synthetic lab we *can* make `n_test` this large, which is exactly why the ruler is sharp here and blunt on real data.
+**The ruler — why a huge test tells the truth.** The test score is just the fraction
+of test points the model gets right — an average, like the fraction of heads in many
+coin flips. The more flips, the closer the fraction settles to the true rate; the
+error shrinks like `0.5 / √(test size)`. With 100 000 test points that error is at
+most about 0.0016 — far below the gaps we measure (≈ 0.01–0.09), so the test pins the
+truth. This works because each point is a clean right/wrong outcome (we score by
+accuracy) on *independent* data; it does **not** hold when points are correlated, as
+on financial prices (§6.5), where the ruler is blunter. Full derivation: appendix.
 
-**Open once — why the discipline is load-bearing.** The test is opened a single time, on the *one* model that search already selected. If it were consulted earlier — to pick among configurations, or to decide when to stop — it would become part of the selection and would itself be snooped, and `T` would no longer be an honest estimate of `S`. "Opened exactly once at the very end" is not ceremony; it is the condition under which `T ≈ S` holds.
+**Open once — why the discipline is load-bearing.** The test is opened a single time,
+on the one model search already selected. Consult it earlier — to pick a configuration
+or to decide when to stop — and it becomes part of the selection and is itself
+snooped, so its score no longer tells the truth. "Opened exactly once at the end" is
+not ceremony; it is the condition under which the test score equals true performance.
 
-**One knob per experiment.** To read cause from the data, the machine varies exactly one input and holds everything else fixed. For the gate that knob is **N**, the number of configurations searched: we sweep `N` and watch `Ŝ_{i*}` (apparent) against `T_{i*}` (true). From §2.2 we expect apparent to climb with `N` while true stays flat or falls — the gap widening as search buys luck rather than quality. That sweep is the headline figure (§5). The remaining knobs — label noise, capacity, selection protocol (§6.1–6.3) — reuse this machine unchanged.
+> Sources: the procedure is the project's own design (`Plan`); the ruler's error is
+> the standard sampling error of a proportion, derived in the appendix.
 
-> Sources: the procedure is the project's own design (`Plan`); the sealed-test estimator and its error are derived in place from elementary probability (the standard error of a proportion). Library calls (the split, the four estimators) will be cited inline to numpy/sklearn docs when §5's code is written.
+## 4. The synthetic lab — designing the truth
 
-## 4. The synthetic lab — design
-✅
+**We are here because** §3's ruler is only sharp when we *know* the truth, and real
+data will not tell us. So here we build data whose truth we set ourselves. The
+features are the same throughout — a table of independent standard-Gaussian numbers,
+one row per example — and only the *labelling rule* changes. Choosing that rule **is**
+choosing the truth. Three rules, each forced by a specific need.
 
-**The features.** `X` is an `n × d` matrix of independent standard-Gaussian entries, each row one sample `x ∈ R^d` (`Supervisor`). The choice of an isotropic Gaussian is not incidental: its distribution is **rotation-invariant** — for any orthogonal `Q`, `Qx` is again standard Gaussian (`Qx ~ N(0, Q I Qᵀ) = N(0, I)`). This single property is what turns the rotation in case 3 into a *clean control*, as shown below.
+**Case 1 — no signal (isolate the luck).** Each label is an independent fair coin,
+unrelated to the features. There is nothing to learn, so the true accuracy of *any*
+model is exactly 0.5. This is the purest measurement of the winner's curse: any
+validation score above 0.5 is pure luck, nothing else mixed in. *(Forced by: we want
+to see luck alone.)*
 
-**Three labellings — three points on one signal axis.** The cases share the Gaussian features (or a rotation of them) and differ only in how labels are attached (`Supervisor`):
-- **Case 1 — random labels.** Each `y` is an independent fair coin, drawn independently of `x`. There is no signal to learn, so the true performance of *any* model on unseen data is `S = 0.5`. This baseline isolates the winner's curse: any `best-validation − 0.5` is pure noise (§2.2).
-- **Case 2 — `y = sign(x₁)`.** The label is the sign of the first coordinate. The true boundary is the hyperplane `x₁ = 0`: a linear rule that is also *axis-aligned*. The signal is perfectly learnable, so `S → 1` as a model captures it.
-- **Case 3 — rotated.** Labels are assigned exactly as in case 2 (from the original `x₁`), then the features are rotated: `X' = X R` with `R` a random isometry (orthogonal: `RᵀR = I`; a rotation, possibly with a reflection). In the new coordinates the true boundary becomes `wᵀx' = 0` for a fixed generic unit vector `w` — the *same* linear rule, no longer aligned with any axis.
+**Case 2 — a linear signal (show the cost).** The label is the sign of the first
+feature (`y = 1` when `x₁ > 0`) — a real, learnable rule, so a good model approaches
+100%. We need this because Case 1 can never show the *cost* of over-searching: with
+truth flat at 0.5 there is no real model to damage. With a real signal, searching too
+hard can pick a genuinely *worse* model (§5), and this is also the ground for the
+noise and capacity experiments (§6.1–§6.2). *(Forced by: we want to see the cost, and
+a signal to vary.)*
 
-**Why the isometry leaves the problem unchanged.** An orthogonal map preserves inner products and Euclidean distances (`‖Qa − Qb‖ = ‖a − b‖`, `⟨Qa, Qb⟩ = ⟨a, b⟩`). Together with the rotation-invariance of the Gaussian above, the rotated features `X'` have the *same distribution* as `X`, and case 3 is just case 2 rewritten in rotated coordinates: identical Bayes-optimal accuracy, identical geometry — only the alignment between the (fixed) decision boundary and the coordinate axes has changed.
+**Case 4 — a nonlinear signal (make the deep model earn its place).** The label is
+the XOR of the signs of the first two features: `y = 1` when exactly one of `x₁, x₂`
+is positive. No straight line separates the four sign-quadrants, so linear models
+(logistic regression, a linear SVM) are stuck at chance — while the MLP learns it. On
+Cases 1 and 2 a linear model does as well as the MLP, so the network is just a
+config-generator; Case 4 is where the deep model does something a linear one *cannot*,
+and where we re-test whether capacity matters when the problem actually needs it
+(§6.2). *(Forced by: we want the MLP to be necessary, not decorative.)*
 
-**Why it still separates the methods.** Because the problem is geometrically the same, any *coordinate-free* method must score identically on cases 2 and 3, while any method that secretly relies on the axes must move:
-- **k-nearest-neighbours** uses only pairwise distances; the isometry preserves every distance, so each query's neighbour set — and therefore every prediction — is unchanged. Identical accuracy.
-- **Logistic regression and SVM** are rotation-equivariant: the fitting objective is unchanged when the data and the weight vector rotate together (`x ↦ Qx`, `β ↦ Qβ`), and the L2 penalty is itself rotation-invariant (`‖Qβ‖ = ‖β‖`). The optimal boundary simply rotates with the data, so the achievable accuracy is identical. (A kernel SVM is preserved too, because an inner-product or distance kernel is unchanged by the isometry.)
-- **Decision trees** split one feature at a time, partitioning space into axis-aligned boxes. In case 2 a single split on feature 1 captures `x₁ = 0` exactly; in case 3 the boundary `wᵀx' = 0` is oblique, and axis-aligned splits can only approximate it with a staircase of boxes — a poorer, higher-variance fit. We therefore expect the tree's true performance to *drop* from case 2 to case 3 while kNN, logistic regression and SVM stay put. §5 measures exactly this.
+![The three labelling rules in 2-D (x₁ vs x₂): random dots, a vertical split, a checkerboard.](figures/cases_2d.svg)
 
-The point is sharp: the isometry changes nothing that should matter — same distances, same separability, same Bayes accuracy — so any method whose score falls was leaning on a coordinate artifact (axis-alignment), not on the signal. That is the third core artifact (§5).
+*(A picture only, to fix intuition — the argument does not rest on it.)*
 
-> Sources: the design — Gaussian `X`, the three label cases, the random isometry — is the supervisor's (`Supervisor`, the feedback block of `Plan/Plan_2.docx`). The invariance arguments (orthogonal maps preserve distances and inner products; the isotropic Gaussian is rotation-invariant; trees are axis-aligned) are standard linear algebra, derived in place — no external authority. `make_X` is logged in Appendix A.
+**A fourth rule lives in the appendix.** One more instructive rule — Case 2 *rotated*
+by a random isometry — leaves everything that should matter unchanged (distances,
+difficulty, best achievable accuracy) yet exposes which methods secretly leaned on the
+coordinate axes rather than the signal. It is a clean linear-algebra aside, off the
+main snooping thread, so it lives in the appendix.
 
-## 5. Core results
-✅ *This section is the controlled measurement — **internal validity** (§2.4): with the truth known, the gap is measured exactly and the mechanism isolated. It establishes the instrument; whether the effect matters in practice is settled by the real-data comparison (§6.5), read in §7.*
+> Sources: the Gaussian features and the labelling cases are the supervisor's design
+> (`Supervisor`); XOR is the standard textbook example no straight line can solve.
 
-**The headline — the gap grows with N (Case 1).** On Case 1 (random labels) every configuration's true performance is 0.5 by construction, so the gap is the winner's curse with nothing else mixed in. Searching N MLP configurations (`sample_config`), keeping the best on a small validation set (`n_val = 200`) and revealing a large sealed test (`n_test = 20 000`) exactly once, the **apparent** score climbs with N while the **true** score stays at 0.5. The gap is positive and grows monotonically — from ≈ 0 at N = 1 to **+0.087 at N = 200** (mean of R = 20 repeats):
+## 5. Core results — the gap, measured
 
-![Headline: apparent (best validation) climbs with N while true (sealed test) stays at 0.5 — the snooping gap is the distance between them, and it grows with N.](figures/headline_gap_vs_N.svg)
+**We are here because** §3 built the machine and §4 gave it a world whose truth we
+know. Now we run the machine and read the gap.
+
+**The headline — the gap grows with the search.** On Case 1 (random labels) the truth
+is exactly 0.5, so any apparent score above 0.5 is pure luck. Searching N
+configurations, keeping the best on a small validation set, and revealing a huge
+sealed test once, the **apparent** score climbs from 0.51 to 0.58 as N grows to 200,
+while the **true** score never leaves 0.50. The gap between them grows monotonically
+from ≈ 0 to **+0.080**:
+
+![Headline: apparent climbs with N while true stays at 0.5; the gap is the drop.](figures/headline_gap_vs_N.svg)
 
 | N | 1 | 2 | 5 | 10 | 20 | 50 | 100 | 200 |
 |---|---|---|---|---|---|---|---|---|
-| **gap** | −0.005 | +0.014 | +0.037 | +0.049 | +0.056 | +0.070 | +0.080 | +0.087 |
+| apparent | .509 | .524 | .531 | .551 | .556 | .564 | .577 | .581 |
+| true | .501 | .501 | .500 | .500 | .500 | .500 | .500 | .501 |
+| **gap** | +.009 | +.023 | +.031 | +.051 | +.057 | +.063 | +.077 | **+.080** |
 
-This is the central hypothesis (§1) **measured, not predicted**: the inflation is positive and grows with N. Reproduce from `notebooks/01_core_snooping.ipynb`.
+This is the winner's curse of §2.2, now *measured* rather than argued: keep the best
+of more noisy draws and the best overshoots more. Reproduce from
+`notebooks/01_core_snooping.ipynb`.
 
-**The optimal search budget (Case 2 + noise).** On Case 1 the truth is flat at 0.5, so over-searching only inflates the *apparent* score. The plan anticipated a sharper cost on a problem with real signal — that searching too hard buys a *worse* model. On Case 2 with 20% label noise (signal + noise, small validation), exactly that appears: as N grows the **true** performance of the selected config rises, **peaks around N ≈ 20 (0.736), then declines** (to 0.728 at N = 200), while the **apparent** score keeps climbing (to 0.795).
+**The optimal search budget — past a point, more search buys a worse model.** On a
+problem *with* signal the curse does something sharper than inflate a number. On Case
+2 with 20% label noise, as N grows the **true** performance of the selected model
+rises, peaks around N ≈ 50 (0.766), then flattens and dips slightly (0.760 at N = 200)
+— while the **apparent** score keeps climbing to 0.80:
 
-![Optimal search budget (Case 2 + noise): the true (sealed-test) accuracy of the selected config peaks near N ≈ 20 and then declines, while the apparent (best-validation) score keeps rising.](figures/optimal_budget.svg)
+![Optimal budget: true peaks near N≈50 then flattens, while apparent keeps rising.](figures/optimal_budget.svg)
 
-| N | 1 | 2 | 5 | 10 | **20** | 50 | 100 | 200 |
-|---|---|---|---|---|---|---|---|---|
-| apparent | 0.654 | 0.709 | 0.742 | 0.757 | 0.770 | 0.777 | 0.785 | 0.795 |
-| true | 0.663 | 0.697 | 0.727 | 0.735 | **0.736** | 0.732 | 0.732 | 0.728 |
+| N | 1 | 5 | 20 | 50 | 100 | 200 |
+|---|---|---|---|---|---|---|
+| apparent | .700 | .762 | .779 | .789 | .798 | .800 |
+| true | .694 | .742 | .759 | **.766** | .759 | .760 |
 
-So there is an **optimal search budget** (here ≈ 20 configurations): past it, more search buys luck rather than quality — a *worse* deployed model carried by *higher* false confidence. This is the plan's headline expectation, confirmed.
+So there is an **optimal search budget** (here around N ≈ 50): past it, extra search
+buys apparent inflation, not a better model. (The dip in true is small, within
+run-to-run noise; the robust point is that true stops improving while apparent keeps
+climbing — a *worse-or-equal* model carried by *higher* false confidence.)
 
-**The three core artifacts.** (1) *Cleanest snoop — Case 1* (above): truth = 0.5 by construction, so any `best_val − 0.5` is pure luck. (2) *The headline* (above): apparent vs true as N grows. (3) *The isometry insight* (support track — sklearn garden), below.
+**The deep model earns its place (Case 4).** On Cases 1 and 2 a linear model matches
+the MLP, so the network is just a config-generator. On Case 4 (XOR) it is not: the
+linear models sit at chance while the MLP learns a rule no straight line can draw.
+(Even distance- and axis-based methods struggle once the two signal features are
+buried among eighteen noise features; only the MLP captures it cleanly.)
 
-**(3) Isometry — only the axis-aligned tree drops.** §4 predicted that rotating Case 2 into Case 3 (an isometry) leaves any coordinate-free method untouched and degrades only the axis-aligned tree. Measured on the four sklearn families, exactly that happens — kNN, logistic regression and SVM are *identical* across the rotation; only the decision tree drops:
+| | logreg | SVM | kNN | tree | **MLP** |
+|---|---|---|---|---|---|
+| Case 4 (XOR) test accuracy | 0.50 | 0.50 | 0.64 | 0.72 | **0.97** |
 
-![Test accuracy of four sklearn methods on Case 2 vs Case 3 — kNN, logistic regression and SVM are unchanged by the rotation; only the axis-aligned tree drops.](figures/isometry.svg)
-
-| | kNN | logreg | SVM | tree |
-|---|---|---|---|---|
-| Case 2 (axis-aligned) | 0.953 | 0.999 | 0.983 | 0.998 |
-| Case 3 (rotated) | 0.953 | 0.999 | 0.983 | 0.849 |
-| change | +0.000 | +0.000 | +0.000 | **−0.150** |
-
-The isometry changed nothing that should matter — same distances, same separability — so the tree's drop exposes that it leaned on a coordinate artifact (axis-alignment), not on the signal. Reproduce from `notebooks/01_core_snooping.ipynb`.
-
-**Fit ≠ generalise on random labels (Case 1) — the supervisor's question.** On Case 1 the supervisor asked *"how well can you fit?"* — and the answer is wide while generalisation has only one value. A 1-nearest-neighbour and an unpruned tree fit the training labels *perfectly* (train accuracy 1.000 — pure memorisation); an SVM fits much (0.773); a linear logistic regression barely (0.549). Yet **all four generalise at chance** — test 0.499 / 0.510 / 0.503 / 0.517. Fitting capacity varies enormously; generalisation is uniformly 0.5, because there is no signal to generalise to. This is the project in one line: a high score on data you *fitted* — or *searched over* — says nothing about true performance.
+**Fit is not generalisation.** One last reading of Case 1 makes the whole point in
+miniature: a flexible model can fit the random training labels almost perfectly, yet
+its accuracy on fresh data is exactly chance — memorising answers is not learning. A
+high score on data you *fitted* (or *searched over*) says nothing about true
+performance.
 
 ## 6. Extensions and the real-data comparison
 ✅ **The rest of the core arc.** The same machine (§3) extends with no new parts — to the three remaining questions (label noise §6.1, capacity §6.2, selection protocol §6.3), the MLP's mathematics (§6.4), and onto real data (§6.5), where the synthetic↔real comparison delivers the conclusion (§2.4, §7).
 
-### 6.1 Label noise (H2) — confirmed
-✅
+### 6.1 Does more label noise widen the gap? (H2)
 
-Hypothesis H2 — more label noise widens the gap — holds, cleanly. Sweeping the injected noise on Case 2, the gap rises monotonically with `flip_y`, from ≈ 0 on clean labels to **+0.062 at flip_y = 0.5**:
+**We are here because** §5 measured the gap; now we turn one knob at a time to see
+what drives it. The first knob is label noise.
 
-![The snooping gap vs injected label noise (Case 2): monotone rise from ≈ 0 (clean) to +0.062 (half the labels flipped).](figures/gap_vs_noise.svg)
+**The result.** Sweeping the fraction of labels flipped on Case 2, the gap rises
+monotonically, from ≈ 0 on clean labels to **+0.057** when half the labels are random:
+
+![The gap vs injected label noise.](figures/gap_vs_noise.svg)
 
 | flip_y | 0.0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 |
 |---|---|---|---|---|---|---|
-| gap | +0.004 | +0.011 | +0.025 | +0.042 | +0.046 | +0.062 |
+| gap | +.008 | +.005 | +.011 | +.026 | +.041 | +.057 |
 
-The mechanism is visible in the numbers: with clean labels every configuration saturates near 1.0, so there is no room for the best-of-N validation score to overshoot and the gap is ≈ 0; as noise pushes accuracy off the ceiling, the small validation set scatters more, the best of N overshoots further, and the gap grows. By `flip_y = 0.5` — labels independent of the features, the Case-1 regime — the gap is purely the winner's curse on noise. Read together with §6.2 the picture sharpens: **noise feeds the gap, capacity does not.** The snoop is a property of how much room there is for validation luck — set by the signal-to-noise ratio and the search size N — not by model size.
+**Why.** With clean labels the model saturates near 100%, so there is no room for the
+best-of-N validation score to overshoot, and the gap is near zero. As noise pushes
+accuracy off that ceiling, the small validation set scatters more, the best of N
+overshoots further, and the gap grows. At `flip_y = 0.5` the labels are independent of
+the features — Case 1's regime — and the gap (+0.057) matches the headline gap at the
+same N (§5). So the gap is set by how much room there is for validation luck (the
+signal-to-noise ratio and N), not by the model. Reproduce from
+`notebooks/03_extensions.ipynb`.
 
-### 6.2 Model capacity (H3) — refuted
-✅
+### 6.2 Does a bigger model widen the gap? (H3 — refuted)
 
-Hypothesis H3 expected that a bigger MLP, by overfitting more, would widen the gap. It does **not**. Varying the hidden width across 4–256 — each width searched over N = 20 configurations on Case 2 with 30% label noise, the regime where overfitting could bite — the gap stays **flat, +0.034 to +0.043** across the whole range; apparent and true accuracy both barely move (figure). A scarce-data check (300 training rows) went the *other* way: there the gap *shrank* with capacity (+0.056 → +0.021), because the smaller nets underfit. Either way, **capacity does not widen the gap.**
+**We are here because** §6.1 traced the gap to noise and search size. The natural next
+suspect is model *size*: surely a bigger network, with more room to overfit, snoops
+more? It does not.
 
-![Apparent (best validation) and true (sealed test) accuracy vs hidden width, Case 2 + noise — both flat, so the gap is flat: H3 is not supported.](figures/gap_vs_capacity.svg)
+**The result.** Varying the hidden width from 4 to 256 units — each width searched over
+N = 20 configurations, on Case 2 with 30% label noise (where overfitting could bite) —
+the gap stays **flat**, with no trend:
 
-The reason: in this measurement the gap *is* the winner's curse — the overshoot of the maximum of N noisy validation draws — and that overshoot is governed by the **search size N and the validation noise**, not by model capacity. Capacity changes how a single model fits, but not how far the best-of-N validation score overruns the truth. Reported as the plan requires — *let the data confirm or refute, and report honestly, even against me* — this refines the picture: the dangerous knobs are **N and a small validation set**, not raw capacity.
+![Gap vs hidden width: flat on both cases.](figures/gap_vs_capacity.svg)
+
+| width | 4 | 8 | 16 | 32 | 64 | 128 | 256 |
+|---|---|---|---|---|---|---|---|
+| gap, Case 2 (linear) | .028 | .026 | .022 | .029 | .009 | .040 | .029 |
+| gap, Case 4 (XOR) | .027 | .019 | .012 | .030 | .024 | .047 | .034 |
+
+The second row is the *fair* test: a skeptic could say Case 2 is linear, so a small
+net already fits it and capacity was never needed. So we re-ran on Case 4 (XOR), where
+the model genuinely needs capacity to fit — and the gap is still flat. (Width-to-width
+scatter is within the ±0.03 run-to-run noise on both.)
+
+**Why.** Here the gap *is* the overshoot of the best of N noisy validation draws,
+governed by the search size N and the validation noise — model size does not enter.
+Capacity changes how a single model fits; it does not change how far the best-of-N
+validation score runs past the truth. So H3 is refuted **even where capacity is needed
+to fit the signal**: the dangerous knobs are **N and a small validation set**, not raw
+model size. Reproduce from `notebooks/03_extensions.ipynb`.
 
 ### 6.3 Selection protocol (H4) — confirmed
 ✅

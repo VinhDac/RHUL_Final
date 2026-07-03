@@ -1,0 +1,10 @@
+OPTIMAL BUDGET (Case 2 + 20% noise, n_test=100000, R=8):
+  N=   1   apparent=0.7000   true=0.6938   gap=+0.0062 (+/-0.0295)
+  N=   2   apparent=0.7369   true=0.7253   gap=+0.0116 (+/-0.0271)
+  N=   5   apparent=0.7619   true=0.7416   gap=+0.0203 (+/-0.0204)
+  N=  10   apparent=0.7738   true=0.7534   gap=+0.0203 (+/-0.0224)
+  N=  20   apparent=0.7788   true=0.7592   gap=+0.0196 (+/-0.0222)
+  N=  50   apparent=0.7894   true=0.7660   gap=+0.0234 (+/-0.0167)
+  N= 100   apparent=0.7981   true=0.7586   gap=+0.0395 (+/-0.0323)
+  N= 200   apparent=0.8000   true=0.7605   gap=+0.0395 (+/-0.0350)
+DONE

@@ -29,6 +29,17 @@
 - **4 — README:** hướng dẫn đọc + sơ đồ (đã có) + bố cục sửa lỗi thời + 1 dòng reproduce.
 - **5 — Audit end-to-end (người mới, workflow, đối kháng):** README→Core→appendix→code; mọi link resolve · why-trước-what · core↔code liền mạch · chỗ nào vẫn bí/nghi/thiếu bằng chứng.
 
+**Thứ tự thực thi (INTERLEAVE — chốt 3 Jul):** viết **§1→§4 trước** (không cần số) → rồi §5→§7 kèm số. ⚠️ Background compute flaky ở env này (nuốt output ×2) → số §5+ chạy **foreground-lean per-section** (R vừa timeout 600s + noise band) cho chắc, thử background khi được. Nội dung/nguyên tắc không đổi, chỉ đổi thứ tự thực thi.
+
+**Phase 1 — kết quả (checkpoint, đang chạy):**
+- **§5 Headline ✅ (Case 1, n_test=100k, R=8):** apparent 0.51→0.58, true ~0.50, **gap +0.009→+0.080** (N 1→200), gap_std ±0.008–0.03.
+- **§5 Optimal budget ✅ (Case 2+20%nhiễu):** apparent 0.70→0.80; true đỉnh ~0.766@N50 → 0.760@N200 (**dip nhẹ, trong nhiễu** → khung honest); gap +.006→+.040.
+- **Isometry ✅ (→appendix, d=20):** kNN 0.805=0.805 · logreg 0.989=0.989 · SVM 0.986=0.986 · **tree 1.00→0.71 (−0.29)**.
+- ⚠️ **Figures cần REGEN (Phase 3)** với số canonical: headline_gap_vs_N · optimal_budget · isometry.
+- **Case 4 / §5 MLP-bắt-buộc ✅:** XOR — logreg 0.49 · SVM 0.49 (chance) vs **MLP ~0.99** (width 16–256, robust). Garden: kNN 0.88, tree 0.95 (phi tuyến cũng học → khung "vs baseline tuyến tính").
+- **§6.3 E-2 (Hd) ✅ trụ DL — PASS (Case 1, 5cfg×5seed×6epoch, R=20):** gap tăng theo chiều ẩn — config-only(N_eff=5) **+0.033** · +seed(25) **+0.055** · +epoch(150) **+0.072**. Mỗi mức **rơi đúng đường headline** tại N_eff (5→.031, 25→.057, 150→.077) → *"nút ẩn = N trá hình"*; 5 config tưởng-là gánh gap ~150. (gap3 hơi dưới headline vì draws trong 1 config tương quan → effective-N <150, honest.)
+- **Case 4 / §6.2 H3 tái kiểm ✅ (canonical R=10, +30% nhiễu):** gap-vs-width — **Case 2:** .028/.026/.022/.029/.009/.040/.029 · **Case 4 (XOR):** .027/.019/.012/.030/.024/.047/.034 (width 4→256). Cả hai **phẳng ~0.01–0.05, KHÔNG xu hướng theo width** (scatter trong ±0.03 nhiễu). → **H3 bị bác NGAY CẢ trên phi tuyến** — capacity không làm gap to *kể cả nơi cần capacity để fit*. Nút nguy = **N + nhiễu val**, không phải size. *(Compute: sweep nặng vượt timeout foreground 600s → heavy runs sau chạy background + verify file.)*
+
 ---
 
 ## Flow bài (đã sửa) + Biện pháp mới (H5)
@@ -231,6 +242,12 @@ Cụm: chi phối gap (6.1–6.4) → đời thật (6.5) → thuốc (6.6). **N
 - **Vai:** DISCUSSION — không toán/code/số mới; chỉ nối về core statement.
 
 ---
+
+## Track A — tiến độ viết Core.md
+- **§1 · §2 · §3 · §4 ✅ đã ghi Core.md** (nửa lý luận xong; mỗi § mở bằng nối mạch, ví-dụ-trước, gloss jargon, đạo hàm→appendix).
+- **[Phase 3 — đừng rơi] Chuyển nội dung isometry (từ §4 cũ) → appendix** (đại số orthogonal + kNN/logreg/SVM bất biến, tree tụt); §4 body chỉ trỏ.
+- **[Phase 3 — đừng rơi] Sinh `figures/cases_2d.svg`** (3 panel 2D: random/dọc/bàn cờ) từ notebook; §4 đang trỏ.
+- **Đang làm:** §5 (cần số → chạy foreground-lean).
 
 ## Backlog P0 (bàn khi tới § tương ứng, đừng để rơi)
 - Finance "mất tiền" overclaim (long-short vs long-only + phí giao dịch) — §6.5

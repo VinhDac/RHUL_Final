@@ -30,6 +30,16 @@ def labels_sign(X):
     return (X[:, 0] > 0).astype(int)
 
 
+def labels_xor(X):
+    """Case 4 labels: XOR of the signs of features 0 and 1 -> a NONLINEAR rule.
+
+    y = 1 iff exactly one of x0, x1 is positive. No straight line separates the four
+    sign-quadrants, so LINEAR models (logistic regression, linear SVM) sit at chance;
+    the MLP (and kNN, unpruned tree) can learn it. Balance is ~0.5 by symmetry.
+    """
+    return ((X[:, 0] > 0) ^ (X[:, 1] > 0)).astype(int)
+
+
 def random_isometry(d, rng):
     """A random (d, d) orthogonal matrix R: a rotation, possibly with a reflection.
 
@@ -74,8 +84,10 @@ def make_dataset(case, d, flip_y, sizes, rng):
         R = random_isometry(d, rng)
         X = rotate(X, R)                    # ... THEN rotate. Swap these two lines and the boundary
                                             # re-aligns with an axis -> the tree-drop artifact vanishes.
+    elif case == 4:
+        y = labels_xor(X)                   # nonlinear (XOR): linear models stuck at chance
     else:
-        raise ValueError(f"case must be 1, 2 or 3, got {case}")
+        raise ValueError(f"case must be 1, 2, 3 or 4, got {case}")
 
     y = inject_noise(y, flip_y, rng)        # no-op when flip_y == 0
 
