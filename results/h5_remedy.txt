@@ -1,0 +1,15 @@
+ rep 1: A app=0.820 true=0.765 | B app=0.768 true=0.766
+ rep 2: A app=0.800 true=0.744 | B app=0.746 true=0.765
+ rep 3: A app=0.755 true=0.767 | B app=0.784 true=0.777
+ rep 4: A app=0.820 true=0.760 | B app=0.769 true=0.774
+ rep 5: A app=0.765 true=0.718 | B app=0.744 true=0.755
+ rep 6: A app=0.835 true=0.750 | B app=0.766 true=0.756
+ rep 7: A app=0.820 true=0.763 | B app=0.765 true=0.774
+ rep 8: A app=0.805 true=0.764 | B app=0.755 true=0.759
+ rep 9: A app=0.820 true=0.754 | B app=0.760 true=0.762
+ rep10: A app=0.810 true=0.743 | B app=0.765 true=0.763
+
+H5 (Case2+20%noise, A=aggressive 20cfg x 3seed x 6ep, B=honest 10cfg+5fold, R=10):
+  A (aggressive): apparent=0.8050  true=0.7527  gap=+0.0523
+  B (honest):     apparent=0.7621  true=0.7651  gap=-0.0029
+  true_B - true_A = +0.0123   (>=0 means honest B is as good or better)

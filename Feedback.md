@@ -37,6 +37,8 @@
 - **Isometry ✅ (→appendix, d=20):** kNN 0.805=0.805 · logreg 0.989=0.989 · SVM 0.986=0.986 · **tree 1.00→0.71 (−0.29)**.
 - ⚠️ **Figures cần REGEN (Phase 3)** với số canonical: headline_gap_vs_N · optimal_budget · isometry.
 - **Case 4 / §5 MLP-bắt-buộc ✅:** XOR — logreg 0.49 · SVM 0.49 (chance) vs **MLP ~0.99** (width 16–256, robust). Garden: kNN 0.88, tree 0.95 (phi tuyến cũng học → khung "vs baseline tuyến tính").
+- **§6.6 H5 (thuốc) ✅ — PASS (Case2+20%noise, R=10):** A(tham 20cfg×3seed×6ep) apparent **0.805** / true **0.753** / gap **+0.052** vs B(honest 10cfg+5fold) apparent 0.762 / true **0.765** / gap **−0.003**. → B thật ≥ A (+0.012) VÀ số B tin được (gap≈0). *"A đẹp mã hơn, tệ hơn."* Tiêu chí: tin số khi vượt baseline > `0.5/√n` trên test niêm phong trung thực.
+- **§5 loan/finance ✅:** loan logreg 0.821>0.787 (signal), gap +0.006→+0.035, stakes 58% nợ xấu duyệt nhầm (acc 0.815). finance logreg 0.540≈chance, edge 0.57→0.53 (luck), gap +0.007→+0.038.
 - **§6.3 E-2 (Hd) ✅ trụ DL — PASS (Case 1, 5cfg×5seed×6epoch, R=20):** gap tăng theo chiều ẩn — config-only(N_eff=5) **+0.033** · +seed(25) **+0.055** · +epoch(150) **+0.072**. Mỗi mức **rơi đúng đường headline** tại N_eff (5→.031, 25→.057, 150→.077) → *"nút ẩn = N trá hình"*; 5 config tưởng-là gánh gap ~150. (gap3 hơi dưới headline vì draws trong 1 config tương quan → effective-N <150, honest.)
 - **Case 4 / §6.2 H3 tái kiểm ✅ (canonical R=10, +30% nhiễu):** gap-vs-width — **Case 2:** .028/.026/.022/.029/.009/.040/.029 · **Case 4 (XOR):** .027/.019/.012/.030/.024/.047/.034 (width 4→256). Cả hai **phẳng ~0.01–0.05, KHÔNG xu hướng theo width** (scatter trong ±0.03 nhiễu). → **H3 bị bác NGAY CẢ trên phi tuyến** — capacity không làm gap to *kể cả nơi cần capacity để fit*. Nút nguy = **N + nhiễu val**, không phải size. *(Compute: sweep nặng vượt timeout foreground 600s → heavy runs sau chạy background + verify file.)*
 
@@ -244,7 +246,10 @@ Cụm: chi phối gap (6.1–6.4) → đời thật (6.5) → thuốc (6.6). **N
 ---
 
 ## Track A — tiến độ viết Core.md
-- **§1 · §2 · §3 · §4 ✅ đã ghi Core.md** (nửa lý luận xong; mỗi § mở bằng nối mạch, ví-dụ-trước, gloss jargon, đạo hàm→appendix).
+- **§1–§7 ✅ ĐÃ GHI CORE.MD (TOÀN MẠCH XONG)** — mỗi § mở bằng nối mạch, ví-dụ-trước, gloss jargon, số canonical (frozen data), P0 finance đã sửa (honest), thêm §6.3 Hd/E-2 + §6.6 H5. Còn §0 abstract / §8 / §9 (write-last).
+- **Phase 3 chunk 1 ✅:** backprop→Appendix B · isometry→Appendix C · roadmap cập nhật · 0 scaffold ✅ sót · token Việt/Phần dọn · §6 renumber sạch.
+- **Phase 3 chunk 2 ✅:** `figures/make_figures.py` regen **8 figure canonical** (headline/optimal/noise/capacity+Case4/protocol/isometry/cases_2d, giữ exam); xóa 4 stale; mọi ref resolve.
+- **Đang làm — chunk 3:** notebooks 01/02/03 tái lập số + figures (để "reproduce from notebook X" thành thật). **chunk 4:** provenance Appendix A + tests.
 - **[Phase 3 — đừng rơi] Chuyển nội dung isometry (từ §4 cũ) → appendix** (đại số orthogonal + kNN/logreg/SVM bất biến, tree tụt); §4 body chỉ trỏ.
 - **[Phase 3 — đừng rơi] Sinh `figures/cases_2d.svg`** (3 panel 2D: random/dọc/bàn cờ) từ notebook; §4 đang trỏ.
 - **Đang làm:** §5 (cần số → chạy foreground-lean).

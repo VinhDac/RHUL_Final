@@ -8,33 +8,30 @@
 
 ## Contents & roadmap
 
-Legend — **§1–§7 (the whole core thesis) is ✅ done and measured**; **✍️ write last** marks the abstract and appraisal (§0, §8, §9), written after a full read-through.
+**Reading order:** §1–§7 is the argument, written to be read once through. §0 (abstract), §8 (self-assessment) and §9 (how-to-use) are written last. The appendices hold the full derivations and code provenance, outside the page limit.
 
-| # | Section | Handbook req (§5.4) | Status |
-|---|---------|---------------------|--------|
-| 0 | Abstract | (1) | ✍️ |
-| 1 | Introduction — the problem, aims & objectives | (2) | ✅ |
-| 2 | Background & related work | (3) | ✅ |
-| 2.1 | &nbsp;&nbsp;The learning problem — train / validation / test | (3) | ✅ |
-| 2.2 | &nbsp;&nbsp;The mechanism — winner's curse | (3) | ✅ *(drafted)* |
-| 2.3 | &nbsp;&nbsp;Why a synthetic laboratory | (3) | ✅ *(drafted)* |
-| 2.4 | &nbsp;&nbsp;Three datasets, one conclusion — the thesis arc | (3) | ✅ *(drafted)* |
-| 3 | Method — the one machine | (5) | ✅ |
-| 4 | The synthetic lab — design (Gaussian X, 3 cases, isometry) | (5) | ✅ |
-| 5 | Core results — gap vs N, headline figure, 3 artifacts | (6) | ✅ |
-| 6 | Extensions and the real-data comparison | (5),(6) | ✅ |
-| 6.1 | &nbsp;&nbsp;Label noise — does more noise widen the gap? | (6) | ✅ |
-| 6.2 | &nbsp;&nbsp;Model capacity | (6) | ✅ |
-| 6.3 | &nbsp;&nbsp;Selection protocol — single split / k-fold / nested CV | (6) | ✅ |
-| 6.4 | &nbsp;&nbsp;The MLP's mathematics (backprop, SGD, L2) | (5) | ✅ |
-| 6.5 | &nbsp;&nbsp;Real data — UCI loan default; finance ^GSPC (walk-forward) | (6) | ✅ |
-| 7 | Discussion & analysis — where the thesis concludes | (6) | ✅ *(skeleton; grows with §6)* |
-| 8 | Self-assessment / appraisal | (7) | ✍️ *(mandatory)* |
-| 9 | How to use my project — repo, notebooks, reproduce the figure | (10) | ✍️ |
-| — | Bibliography | (9) | grows throughout |
-| — | Appendix A — code provenance & listings | (11) | ✅ *(outside the page limit; examiners may not read — so essential reasoning stays in the body)* |
+| # | Section | Handbook req (§5.4) |
+|---|---------|---------------------|
+| 0 | Abstract | (1) — *write last* |
+| 1 | Introduction — the problem, aims & objectives | (2) |
+| 2 | Background — train/val/test, the winner's curse, why a synthetic lab, the arc | (3) |
+| 3 | Method — the one machine | (5) |
+| 4 | The synthetic lab — designing the truth (Cases 1, 2, 4) | (5) |
+| 5 | Core results — the gap, measured | (6) |
+| 6 | Extensions and the real-data comparison | (5),(6) |
+| 6.1 | &nbsp;&nbsp;Label noise (H2) | (6) |
+| 6.2 | &nbsp;&nbsp;Model capacity (H3 — refuted) | (6) |
+| 6.3 | &nbsp;&nbsp;The knobs we don't count — hidden search in deep learning (Hd) | (6) |
+| 6.4 | &nbsp;&nbsp;An honest protocol shrinks the gap (H4) | (6) |
+| 6.5 | &nbsp;&nbsp;Real data — loan default; finance ^GSPC | (6) |
+| 6.6 | &nbsp;&nbsp;The remedy — an honest procedure you can trust (H5) | (6) |
+| 7 | Discussion — where the thesis lands | (6) |
+| 8 | Self-assessment / appraisal | (7) — *write last* |
+| 9 | How to use my project | (10) — *write last* |
+| — | Bibliography | (9) |
+| — | Appendices A (code provenance), B (the MLP's mathematics), C (the isometry control) | (11) |
 
-> **The arc, in one line.** Measure the gap exactly on the synthetic lab (§1–§5) — apparent vs true as N grows, the headline figure — then test whether it survives on real data (§6.5: loan, finance) and conclude from the comparison (§7). The whole of §1–§6 is the core thesis; the **~6 July gate** is its first checkpoint: the synthetic instrument and the headline figure.
+> **The arc, in one line.** Measure the gap exactly where the truth is known (synthetic, §3–§5), test whether it survives in the wild (loan and finance, §6.5), and close with a remedy (§6.6): **measure → confirm → cure**. The conclusion is the comparison across the signal axis, not any single dataset.
 
 ---
 
@@ -101,7 +98,6 @@ curse, selection bias, data snooping: three names for this one phenomenon.)
 > *derived* (§2.2); the hidden-search claim is *measured* (§6.3).
 
 ## 2. Background & related work
-✅
 
 ### 2.1 The learning problem — train, validation, test
 
@@ -378,7 +374,8 @@ high score on data you *fitted* (or *searched over*) says nothing about true
 performance.
 
 ## 6. Extensions and the real-data comparison
-✅ **The rest of the core arc.** The same machine (§3) extends with no new parts — to the three remaining questions (label noise §6.1, capacity §6.2, selection protocol §6.3), the MLP's mathematics (§6.4), and onto real data (§6.5), where the synthetic↔real comparison delivers the conclusion (§2.4, §7).
+
+**The rest of the arc.** The same machine (§3) turns one knob at a time — label noise (§6.1), model size (§6.2), the hidden knobs of deep learning (§6.3), the selection protocol (§6.4) — then runs unchanged on real data (§6.5), and closes with a remedy (§6.6). The MLP's own mathematics is derived in Appendix B.
 
 ### 6.1 Does more label noise widen the gap? (H2)
 
@@ -432,95 +429,192 @@ validation score runs past the truth. So H3 is refuted **even where capacity is 
 to fit the signal**: the dangerous knobs are **N and a small validation set**, not raw
 model size. Reproduce from `notebooks/03_extensions.ipynb`.
 
-### 6.3 Selection protocol (H4) — confirmed
-✅
+### 6.3 The knobs we don't count — hidden search in deep learning (Hd)
 
-Hypothesis H4 — an honest selection protocol shrinks the gap — holds. The single small validation split that drives the rest of this report is the *least* honest protocol: with only 200 held-out points the validation score is noisy, so the best of N overshoots far. Replacing it with **5-fold cross-validation** on the same data budget — each configuration scored by the mean accuracy over five folds, a far less noisy estimate — roughly **halves the gap, and more at large N**:
+**We are here because** §6.1–§6.2 found the gap is driven by the search size N, not by
+model size. But so far "N" has meant the configurations we consciously list. Deep
+learning's real danger is the search we *don't* count.
 
-![Gap vs N for two protocols on Case 1 — a single small validation split vs honest 5-fold CV; the k-fold protocol shrinks the gap at every N.](figures/gap_vs_protocol.svg)
+**The experiment.** Take a deliberately small search — just 5 configurations — on Case
+1, and add the two hidden dimensions of §3 one at a time. For each configuration we
+(a) retry 5 random seeds and keep the best on validation, and (b) checkpoint training
+at 6 epochs and keep the best-looking one (ordinary early stopping). Each addition
+multiplies the *effective* number of models searched:
+
+| what we count | effective N | gap |
+|---|---|---|
+| 5 configurations only | 5 | +0.033 |
+| + best of 5 seeds | 25 | +0.055 |
+| + best of 6 epoch-checkpoints | 150 | **+0.072** |
+
+**The punchline.** The same 5 configurations we *think* we tried carry the gap of about
+150 — a three-fold jump — once the uncounted seeds and epochs are counted. And each row
+lands on the headline curve (§5) at its effective N: the gap of "5 configs" with hidden
+selection (+0.072) is the gap of ~150 honest configs. Hidden knobs are not free; they
+are N in disguise. (The match sits slightly *under* the headline, because the seeds and
+epochs of one configuration give correlated draws, so the effective independent count
+is a touch below 150 — but the effect is unmistakable.)
+
+This is why the curse bites hardest in deep learning: a logistic regression has
+essentially one knob, but a neural network hides architecture, seed, and a full
+training trajectory behind every "configuration." Reproduce from
+`notebooks/03_extensions.ipynb`.
+
+### 6.4 An honest protocol shrinks the gap (H4)
+
+**We are here because** §6.1–§6.3 found what makes the gap *large* (a small validation
+set, a large — often hidden — search). The question back: what makes it *small*? The
+first remedy is a less noisy way of choosing.
+
+**The result.** The single small validation split used everywhere above is the
+*noisiest* honest estimate: with only 200 held-out points the score scatters, so the
+best of N overshoots far. Scoring each configuration instead by **5-fold
+cross-validation** — the average over five folds, a far less noisy estimate — shrinks
+the gap to about a third:
+
+![Gap vs N: a single small split vs 5-fold cross-validation.](figures/gap_vs_protocol.svg)
 
 | N | 1 | 5 | 20 | 50 |
 |---|---|---|---|---|
-| single split | +0.000 | +0.043 | +0.062 | +0.074 |
-| 5-fold CV | +0.002 | +0.015 | +0.024 | +0.026 |
+| single split | −.004 | +.039 | +.067 | +.071 |
+| 5-fold CV | −.003 | +.015 | +.022 | +.024 |
 
-The mechanism is the same winner's curse, dampened: averaging over folds cuts the variance of the validation estimate, so the maximum of N draws overshoots less. A fully *nested* cross-validation — selecting in an inner loop and reporting on an untouched outer fold — would shrink it further still, at more compute; the two-protocol comparison already makes the point. This is the practical antidote implied by §7: because the gap is driven by validation noise, spending data on an honest, lower-variance validation estimate is exactly what shrinks it.
+**Why.** The mechanism is the same winner's curse, dampened: averaging over folds cuts
+the variance of each validation estimate, so the maximum of N draws overshoots less.
+Spending data on a lower-variance estimate of quality is what buys back honesty.
+(Strictly, the two rows score "apparent" a little differently — the single split
+reports the best validation score, the k-fold the best cross-validation score — so the
+comparison is directional, not a like-for-like subtraction; the direction is
+unambiguous.) A fully *nested* cross-validation would shrink it further, at more
+compute. This is the first half of the remedy that §6.6 completes. Reproduce from
+`notebooks/03_extensions.ipynb`.
 
-### 6.4 The MLP's mathematics — backprop, the SGD update, L2
-✅
+### 6.5 Does it bite in the wild? Loan default and financial prices
 
-The MLP is the core instrument (§3). PyTorch's autograd computes its gradients, but the project *derives* them — using a formula is what justifies relying on it. The derivation is self-contained: the chain rule, nothing more.
+**We are here because** everything so far is measured in the lab, on data we designed.
+§2.4 promised the test: does the same machine, run unchanged on real data, find the
+same gap? It does — and its *size* tracks how much real signal there is.
 
-**The forward pass.** For one input `x ∈ ℝ^d`, with a hidden layer of width `m`:
+**Loan default — the gap appears, muted by real signal.** UCI credit-card default has
+genuine signal: a plain logistic regression scores 0.82, above the 0.79 you get by
+always predicting "no default." Run the machine on it and the gap is present but small
+— from ≈ 0 to **+0.035** at N = 100 — because real quality differences between
+configurations, and the smaller finite-sample noise of an accuracy near 0.8, keep the
+winner's overshoot quiet. The curse survives; it is just subtler.
 
-- `a = W₁x + b₁` — pre-activations (`W₁ ∈ ℝ^{m×d}`, `b₁ ∈ ℝ^m`);
-- `h = ReLU(a) = max(a, 0)` — hidden activations;
-- `z = W₂h + b₂` — the two output logits (`W₂ ∈ ℝ^{2×m}`, `b₂ ∈ ℝ^2`);
-- `p = softmax(z)`, and the cross-entropy loss for the true class `y` is `L = −log p_y`.
+**The stakes hide inside the accuracy.** Accuracy is the number the search optimises,
+but not the number that matters. The classes are imbalanced (22% default), so the
+winning model — 0.82 on the test — still **approves 58% of the real defaulters**
+(1 226 of 2 126). Chasing accuracy optimises, for the real cost, the wrong quantity.
 
-**Backprop is the chain rule, back to front.** The one clean fact is the gradient of cross-entropy-after-softmax with respect to the logits. Writing `L = −z_y + log Σ_k e^{z_k}` and differentiating, `∂L/∂z_j = −[j = y] + e^{z_j}/Σ_k e^{z_k} = p_j − [j = y]`, i.e.
+**Financial prices — the warning: the searched edge is luck.** Daily ^GSPC direction
+has essentially no signal: logistic regression scores 0.54, exactly the "always up"
+rate. Search fifty MLP configurations on a small validation window and one *looks* like
+an edge — an apparent directional accuracy of 0.57 — but out-of-sample it is **0.53, a
+coin flip**. The gap (+0.03, growing with N) is pure luck. A strategy built on a
+coin-flip signal has no real edge, and once any trading cost is subtracted it
+underperforms simply holding the index. The danger is largest exactly where there is
+least real signal to fall back on.
 
-> `∂L/∂z = p − e_y`,
+**The ruler is blunter here.** On real data we no longer know the truth; the test is a
+finite — and for finance an autocorrelated — estimate (§2.3, §3), so a real-data gap is
+the winner's curse *plus* the test's own sampling error. Read these figures as
+*directional*, not to the third decimal (the finance number is one fixed walk-forward
+path). Even so the pattern is unmistakable: the gap is smallest where signal is real
+(loan), and largest, dangerous, and money-losing where it is absent (finance).
+Reproduce from `notebooks/02_real_data.ipynb`.
 
-where `e_y` is the one-hot vector of the true class. (This is *why* softmax and cross-entropy are paired — their composition has this simple derivative.) Each layer's gradient then follows mechanically:
+### 6.6 The remedy — an honest procedure you can trust (H5)
 
-- **Output layer:** `∂L/∂W₂ = (p − e_y) hᵀ`,  `∂L/∂b₂ = p − e_y`.
-- **Into the hidden layer:** `∂L/∂h = W₂ᵀ (p − e_y)`.
-- **Through the ReLU:** `∂L/∂a = ∂L/∂h ⊙ 𝟙[a > 0]` — elementwise; the ReLU passes the gradient only where its input was positive.
-- **Input layer:** `∂L/∂W₁ = (∂L/∂a) xᵀ`,  `∂L/∂b₁ = ∂L/∂a`.
+**We are here because** §6.1–§6.5 diagnosed the disease and §6.4 hinted at a cure. Here
+we make it concrete: build two models on the same data — one the aggressive way, one
+the honest way — and open the sealed test on both.
 
-For full-batch training each parameter's gradient is the mean of these over the training set.
+**The head-to-head (Case 2 with 20% noise).**
+- **A, aggressive** — search 20 configurations and, for each, keep the best of 3 seeds
+  and 6 training epochs (the hidden knobs of §6.3), choosing on a small validation set.
+- **B, honest** — search only 10 configurations, each scored by 5-fold cross-validation,
+  with no per-configuration seed or epoch fishing.
 
-**The SGD update.** Gradient descent moves each parameter `θ` against its gradient,
+| | apparent (reported) | true (sealed test) | gap |
+|---|---|---|---|
+| A — aggressive | 0.805 | 0.753 | **+0.052** |
+| B — honest | 0.762 | 0.765 | **−0.003** |
 
-> `θ ← θ − η · ∂L/∂θ`,
+**A looks better and is worse.** A reports the prettier number (0.805 vs 0.762), so a
+practitioner comparing the two on their reported scores would ship A. But A's *true*
+performance is 0.753 — *below* B's 0.765 — and A's number is inflated by +0.052, while
+B's is honest to within noise. The restrained procedure wins twice: a real model that
+is as good or better, and a reported number you can actually trust.
 
-with learning rate `η` (the searched `lr`). Because training is full-batch, `∂L/∂θ` is the *exact* mean gradient over the training set — plain gradient descent, no mini-batch sampling.
+**When can you trust a number? The acceptance rule.** The lesson is not a magic
+threshold like "70%." Trust does not live in the size of the number; it lives in
+whether the number was produced by a process that *cannot* have inflated it.
+Concretely: accept a model only when its score, measured on a **sealed test opened
+once** by an honest procedure, beats the problem's baseline (chance, or the model
+already in use) by **more than the measurement error** (`0.5/√test-size`). By that rule
+B passes on its own reported score; A does not, because its reported score is not an
+honest estimate at all. The number to believe is the one the process earned the right
+to report. Reproduce from `notebooks/03_extensions.ipynb`.
 
-**L2 (weight decay).** Adding the penalty `(λ/2)‖θ‖²` to the loss adds `λθ` to each weight's gradient, so the update becomes
+## 7. Discussion — where the thesis lands
 
-> `θ ← (1 − ηλ) θ − η · ∂L/∂θ`,
+**The question we opened with.** If a validation score is `true + luck`, then when the
+sealed test comes back worse than the validation number we *know* we were fooled — so
+surely we just fix the model and try again? But every time we look at the test and let
+it steer the next attempt, the test becomes part of the search and is itself snooped:
+its number stops telling the truth. So how can a number ever be trusted?
 
-shrinking the weights by a factor `(1 − ηλ)` each step — "weight decay" (`weight_decay = λ` in PyTorch). It is off in the core (`λ = 0`) and would enter only as a capacity lever (§6.2).
+**The answer, in one line.** Trust does not live in the number; it lives in the
+*process* that produced it. A high score means nothing on its own — it can be pure
+snooping (§5) — while a modest score from a sealed test opened once, by an honest
+procedure, can be believed. The `gap` this project measures is exactly the trust lost
+per unit of searching, and everything below is that one idea, measured.
 
-Every formula above is *used* by the instrument and is grounded by this derivation, not by an external authority (the project's source rule, §Sources). PyTorch's autograd merely executes them; deriving them is the formula-derivation deliverable, replacing the from-scratch NumPy plan — a change to confirm with the supervisor.
+**Measured, not predicted.** On the synthetic lab, where the truth is known by
+construction, we did not argue the gap or bound it with a formula — we read it off a
+sealed test. On random labels the apparent score climbs while the truth never leaves
+0.5, so the gap grows from ≈ 0 to +0.08 (§5). No extreme-value machinery; a measurement.
 
-### 6.5 Real data — UCI loan default; finance ^GSPC
+**Deep learning is the worst habitat.** The danger scales with the *effective* number
+of things searched, and deep learning hides most of that number: architecture, seed,
+and a whole training trajectory sit behind every "configuration." Counting just seeds
+and epochs turned a search of 5 configurations into the gap of ~150 (§6.3). A logistic
+regression cannot fool you this way; a neural network can, and does.
 
-The same machine (§3), fed a loan or finance provider instead of the synthetic one, measures the gap across the **signal axis** (§2.4). The winner's curse appears on every dataset; its *size* tracks how much real signal there is.
+**What drives it, and what does not.** Varying one knob at a time: more label noise
+widens the gap (§6.1); a *bigger model does not* — the gap is refuted against capacity
+even on a nonlinear problem that needs it (§6.2); an honest, lower-variance protocol
+shrinks it to a third (§6.4). The dangerous knobs are the size and blindness of the
+search, never model size.
 
-![Gap vs N for three providers — synthetic (no signal), finance ^GSPC (signal ≈ 0), loan default (real signal). All positive and broadly growing: the curse is universal; the real signal in loan mutes it most.](figures/gap_three_datasets.svg)
+**It bites in the wild — worst where signal is least.** Run unchanged on real data the
+same gap appears: small where there is genuine signal (loan, +0.035, though a
+0.82-accuracy model still approves 58% of defaulters), and pure luck where there is
+none (finance, where a searched 0.57 "edge" is a 0.53 coin flip). The danger is largest
+exactly where there is least real signal to fall back on (§6.5).
 
-| N | 1 | 2 | 5 | 10 | 20 | 50 | 100 |
-|---|---|---|---|---|---|---|---|
-| synthetic (no signal) | −0.020 | +0.010 | +0.025 | +0.043 | +0.060 | +0.071 | +0.077 |
-| finance (signal ≈ 0) | −0.029 | −0.019 | +0.000 | +0.005 | +0.014 | +0.034 | +0.019 |
-| loan (real signal) | −0.016 | −0.012 | −0.005 | −0.002 | +0.002 | +0.007 | +0.010 |
+**And it has a remedy.** The cure is not a magic threshold but a discipline: search less
+and more honestly, keep a sealed test for one final look, and accept a model only when
+that honest score beats the problem's baseline by more than the measurement error. Head
+to head, the honest procedure produced a *better* real model than the aggressive one,
+and a number you could actually trust (§6.6).
 
-**Loan — the gap appears, muted by real signal.** Loan default has genuine signal (logistic regression 0.819 vs a 0.786 majority), and its gap is the smallest of the three (+0.010 at N = 100): searching still inflates the apparent score, but the real quality differences between configurations — and the smaller finite-sample noise of an accuracy near 0.8 (a property of the binomial) — keep it quiet. The mechanism survives; it is just subtler.
+**Internal and external validity, together.** Neither half stands alone. The synthetic
+lab earns *internal* validity — the gap measured exactly because the truth is controlled
+— but cannot show the effect bites in practice. The real datasets earn *external*
+validity — it bites, and on finance it bites hard — but cannot measure the gap cleanly,
+because their "truth" is itself a finite-test estimate. The conclusion is the
+*comparison across the signal axis*, not any single dataset.
 
-**The stakes hide inside the accuracy.** The plan asked for the *consequence* — how many bad loans get wrongly approved. The classes are imbalanced (22% default), so a high accuracy can still be a poor decision rule: the best-on-validation winner scores **0.82 on test yet approves 1 406 of the 2 126 real defaults — 66% of the bad loans wrongly approved**. Accuracy is the number the search optimises, but it masks the real cost; chasing it optimises, for the stakes, the wrong quantity.
-
-**Finance ^GSPC — the warning: the searched edge is luck.** With signal ≈ 0 the gap is luck-driven like the no-signal synthetic case (positive and growing, though noisier — the walk-forward split is fixed, so there is less to average over). The practical cost is the point. Searching 50 MLP configurations on a small validation window (the plan's *small validation on purpose*) finds one with an apparent **64.0%** directional accuracy — a tempting "edge" — that scores **53.3%** out-of-sample (≈ chance): a gap of **+0.107**, pure luck. Deployed as a strategy it returns **+82%** over the test period versus **+94%** for simply buying and holding — *searching for an edge lost money relative to doing nothing.*
-
-![Out-of-sample equity — the best-on-validation strategy (an apparent 64% edge) underperforms buy-and-hold (+82% vs +94%): the edge was luck.](figures/finance_equity.svg)
-
-Reproduce both from `notebooks/02_real_data.ipynb`. **The arc closes (§7):** the gap is measured exactly where truth is known (synthetic), muted where signal is real (loan), and a money-losing illusion where signal is absent (finance).
-
-## 7. Discussion & analysis — where the thesis concludes
-✅
-
-**The mechanism is measured, not predicted.** Searching N configurations and keeping the best validation score inflates that score above the truth. On the synthetic lab, where true performance is known by construction, this gap is not argued or bounded — it is *measured*: on random labels (truth = 0.5) the apparent best-validation score climbs from chance toward 0.59 as N grows to 200, while the truth never moves, so the gap grows from ≈ 0 to **+0.087** (§5). No extreme-value formula is invoked; the number is read off a sealed test opened once.
-
-**The same curse appears in the wild.** Run unchanged on real data, the machine finds the same effect — a positive gap that grows with N on both UCI loan default and ^GSPC (§6.5) — so it is not an artefact of a hand-built dataset. What changes is the gap's *size*, and the change is informative: where there is genuine signal (loan) configurations differ in real quality and the gap is muted (+0.010 at N = 100); where there is none, the gap is luck all the way down. The danger is largest exactly where there is least real signal to fall back on.
-
-**Finance is the warning.** With essentially no predictable signal, searching fifty MLP configurations on a small validation window produces a configuration that *looks* like a 64% directional edge and is, out-of-sample, a 53% coin-flip — a **+0.107** gap of pure luck. Acted on, that "edge" returns +82% over the test period against +94% for simply holding the index: the search did not merely fail to add value, it *destroyed* it. That is the concrete cost of data snooping for a practitioner who trusts the validation number.
-
-**What it means for practice.** A reported improvement is partly real and partly the maximum of N noisy draws; the second part grows with N and is invisible without an honest reference. Three disciplines keep it honest, and the project uses all three: a *small* validation set on purpose, so the noise — and the danger — is visible rather than hidden; a *large* sealed test opened exactly once, so the truth is not itself snooped; and *honest reporting* of the gap even when unflattering (the noisy finance sweep is left noisy, not polished). The implication is an *optimal search budget*: past some N, more search buys luck rather than quality, and on a signal-poor problem it buys false confidence that costs money.
-
-**Internal and external validity, together (§2.4).** Neither half stands alone. The synthetic lab earns *internal* validity — the gap is measured exactly because the truth is controlled — but cannot show the effect bites in practice. The real datasets earn *external* validity — it bites, and on finance it bites hard — but cannot measure the gap cleanly, because their "truth" is itself only a finite-test estimate (§2.3). The conclusion is the *comparison across the signal axis*: the mechanism pinned down precisely where truth is known, then shown to survive where signal is real and to dominate dangerously where it is absent. That comparison — not any single dataset — is the thesis.
-
-**Honest limits.** The real-data gaps are measured against a test *estimate*, not exact truth, so their absolute sizes carry sampling error; the finance gap is genuinely noisy because the walk-forward split is fixed and cannot be re-drawn; and the sweeps here vary only N — the other knobs (label noise, capacity, selection protocol; §6.1–6.3) extend the same machine but are not yet measured. None of this weakens the central, repeatedly-measured finding: the gap is positive, grows with N, and is most dangerous where signal is least.
+**Honest limits.** The real-data gaps are measured against a test *estimate*, not exact
+truth, so their sizes carry sampling error; the finance figure is one fixed walk-forward
+path, read as directional, not to the third decimal; and the sweeps here use modest
+repeats, so individual points carry a run-to-run band of a few hundredths. None of this
+touches the central, repeatedly-measured finding: the gap is positive, grows with the
+(often hidden) search, is refuted against model size, and is most dangerous where signal
+is least — and an honest, restrained process is what keeps a reported number worth
+believing.
 
 ## 8. Self-assessment / appraisal
 ✍️ *Write last (MANDATORY — handbook §5.3, §5.4(7)) — how the project went, what I did right/wrong, what I learnt about planning and executing a project, where next.*
@@ -573,7 +667,7 @@ The MLP is the headline instrument (§3); verified by `python -m tests.test_mlp`
 |---|---|---|
 | one hidden layer, ReLU, 2 logits | `make_mlp(d, width)`: `Linear(d,width) → ReLU → Linear(width,2)` | trains (~2.7s for 4 fits) |
 | full-batch GD, cross-entropy | `train(X, y, width, lr)`: `optim.SGD` + `CrossEntropyLoss`, `epochs=300` | loss descends; numbers below |
-| config = (width, lr), searched | function args `width`, `lr` | search space = `sample_config` (§3, Phần 3) |
+| config = (width, lr), searched | function args `width`, `lr` | search space = `sample_config` (§3) |
 | Case 2 learnable → `S → 1` | — | width 16 / 128 → **test 0.991 / 0.982** |
 | Case 1 random → `S = 0.5` (no generalisation) | — | width 16 / 128 → **test 0.495 / 0.500**; train 0.665 / 0.668 (fits some noise) |
 
@@ -607,7 +701,7 @@ Case 1 (random labels)     : width 16 -> test 0.495 | width 128 -> test 0.500   
  5       0.546   0.501   +0.045
 20       0.568   0.500   +0.068     apparent climbs, true stays ~0.50
 ```
-`true` holds at 0.50 (no generalisation, by construction) while `apparent` rises with N, so the gap grows — the central hypothesis, **measured** rather than predicted. The full headline (larger N, more repeats) is plotted in the notebook, §5.
+`true` holds at 0.50 (no generalisation, by construction) while `apparent` rises with N, so the gap grows — the winner's curse, **measured** rather than predicted. The full headline (larger N, more repeats) is plotted in the notebook, §5.
 
 **Tool sources:** none new — `run_once` composes `lab` + `mlp` (already cited). The sealed-test discipline is *visible in the code*: exactly one `accuracy(…, X_test)`, outside the search loop.
 
@@ -636,3 +730,61 @@ The warning case (§6.5): signal ≈ 0, **walk-forward** split. Same gap machine
 | signal ≈ 0 (the point) | sklearn `LogisticRegression` baseline | logreg test **0.540 ≈ majority 0.544** → no edge |
 
 **Tool source:** `yfinance` — <https://github.com/ranaroussi/yfinance>. Needs network; fetched once and reused.
+
+---
+
+## Appendix B — the MLP's mathematics (backprop, SGD, weight decay)
+
+The MLP is the searched instrument (§3). PyTorch's autograd computes its gradients, but the project *derives* them — deriving a formula is what justifies relying on it. The derivation is self-contained: the chain rule, nothing more.
+
+**The forward pass.** For one input `x ∈ ℝ^d`, with a hidden layer of width `m`:
+
+- `a = W₁x + b₁` — pre-activations (`W₁ ∈ ℝ^{m×d}`, `b₁ ∈ ℝ^m`);
+- `h = ReLU(a) = max(a, 0)` — hidden activations;
+- `z = W₂h + b₂` — the two output logits (`W₂ ∈ ℝ^{2×m}`, `b₂ ∈ ℝ^2`);
+- `p = softmax(z)`, and the cross-entropy loss for the true class `y` is `L = −log p_y`.
+
+**Backprop is the chain rule, back to front.** The one clean fact is the gradient of cross-entropy-after-softmax with respect to the logits. Writing `L = −z_y + log Σ_k e^{z_k}` and differentiating, `∂L/∂z_j = −[j = y] + e^{z_j}/Σ_k e^{z_k} = p_j − [j = y]`, i.e.
+
+> `∂L/∂z = p − e_y`,
+
+where `e_y` is the one-hot vector of the true class. (This is *why* softmax and cross-entropy are paired — their composition has this simple derivative.) Each layer's gradient then follows mechanically:
+
+- **Output layer:** `∂L/∂W₂ = (p − e_y) hᵀ`,  `∂L/∂b₂ = p − e_y`.
+- **Into the hidden layer:** `∂L/∂h = W₂ᵀ (p − e_y)`.
+- **Through the ReLU:** `∂L/∂a = ∂L/∂h ⊙ 𝟙[a > 0]` — elementwise; the ReLU passes the gradient only where its input was positive.
+- **Input layer:** `∂L/∂W₁ = (∂L/∂a) xᵀ`,  `∂L/∂b₁ = ∂L/∂a`.
+
+For full-batch training each parameter's gradient is the mean of these over the training set.
+
+**The SGD update.** Gradient descent moves each parameter `θ` against its gradient,
+
+> `θ ← θ − η · ∂L/∂θ`,
+
+with learning rate `η` (the searched `lr`). Because training is full-batch, `∂L/∂θ` is the *exact* mean gradient over the training set — plain gradient descent, no mini-batch sampling.
+
+**L2 (weight decay).** Adding the penalty `(λ/2)‖θ‖²` to the loss adds `λθ` to each weight's gradient, so the update becomes `θ ← (1 − ηλ) θ − η · ∂L/∂θ`, shrinking the weights by `(1 − ηλ)` each step (`weight_decay = λ` in PyTorch). It is off in the core (`λ = 0`).
+
+Every formula above is *used* by the instrument and grounded by this derivation; PyTorch's autograd merely executes them.
+
+---
+
+## Appendix C — the isometry control (Case 3)
+
+An aside, off the main snooping thread: it tests whether a model's success rests on the *signal* or on an accident of the coordinate axes.
+
+**The construction.** Take Case 2 (`y = sign(x₁)`), label it from the original features, then rotate the whole dataset by a random isometry `R` — an orthogonal matrix (a rotation, possibly with a reflection). The labelling rule is unchanged; the true boundary is the same hyperplane, only no longer aligned with any axis.
+
+**Why the rotation changes nothing that should matter.** An orthogonal map preserves every distance and inner product (`‖Ra − Rb‖ = ‖a − b‖`), and the isotropic Gaussian is itself rotation-invariant. So the rotated data has the same distribution, the same separability, and the same best-achievable accuracy as Case 2 — only the alignment between the (fixed) boundary and the axes has changed.
+
+**Why it still separates the methods.** Any *coordinate-free* method must therefore score identically on Case 2 and Case 3, while any method that leans on the axes must move. Measured on the four sklearn families (test accuracy):
+
+![Isometry: kNN, logistic regression and the linear SVM are unchanged by the rotation; only the axis-aligned tree drops.](figures/isometry.svg)
+
+| | kNN | logreg | SVM | tree |
+|---|---|---|---|---|
+| Case 2 (axis-aligned) | 0.805 | 0.989 | 0.986 | 1.000 |
+| Case 3 (rotated) | 0.805 | 0.989 | 0.986 | 0.709 |
+| change | +0.000 | +0.000 | +0.000 | **−0.291** |
+
+kNN (distances only), logistic regression and the linear SVM (rotation-equivariant) are untouched; only the axis-aligned decision tree drops, because it can approximate an oblique boundary only with a staircase of axis-parallel boxes. The tree's fall exposes that it was leaning on a coordinate artifact, not on the signal. Reproduce from `notebooks/01_core_snooping.ipynb`.

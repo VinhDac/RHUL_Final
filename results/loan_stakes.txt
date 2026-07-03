@@ -1,0 +1,3 @@
+loan winner (search N=50): test acc = 0.815
+  real defaults in test = 2126
+  wrongly APPROVED (default but predicted safe) = 1226 = 58% of them

@@ -1,0 +1,12 @@
+LOAN X=(30000, 23) default=0.221 majority=0.779
+  logreg test=0.821  (majority 0.787) -> signal?
+    loan N=  1 gap=+0.0058 (+/-0.0250)
+    loan N=  2 gap=+0.0100 (+/-0.0243)
+    loan N=  5 gap=+0.0220 (+/-0.0235)
+    loan N= 10 gap=+0.0229 (+/-0.0242)
+    loan N= 20 gap=+0.0293 (+/-0.0159)
+    loan N= 50 gap=+0.0336 (+/-0.0164)
+    loan N=100 gap=+0.0354 (+/-0.0183)
+
+FINANCE X=(6658, 5) up=0.537 majority=0.537
+  logreg test=0.540  (majority 0.543) -> signal ~0?
