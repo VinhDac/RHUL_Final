@@ -628,7 +628,7 @@ believing.
 ---
 
 ## Appendix A — code provenance (build log)
-*Outside the 50-page limit (handbook §5.5); examiners may not read it — so the essential reasoning stays in the body. `lab.py` is implemented and verified: the table below maps the supervisor's design → the code → a measured check (every number reproduces from `python -m tests.test_lab`), then a worked example shows the three cases on data small enough to read by eye.*
+*Outside the 50-page limit (handbook §5.5); examiners may not read it — so the essential reasoning stays in the body. The numbers below are illustrative sanity checks (run `python -m tests.test_lab` / `test_mlp` / `test_pipeline`, which now exit non-zero on any failure); the canonical tables of §5–§6 are reproduced deterministically (`seed=0`) in the notebooks. All code lives under `snooping_backend/` (add the repo root to `sys.path`, as the notebooks do): `config.py` (canonical split sizes — one source of truth), `lab.py` (data), `mlp.py` (the searched MLP), `models.py` (the sklearn garden), `pipeline.py` (the gap machine), `experiments.py` (the E-2 and H5 search loops), and `data_loan.py` / `data_finance.py` (real data, frozen to `data/*.csv`).*
 
 ### `lab.py` — supervisor's design ↔ code ↔ verified number
 
@@ -637,6 +637,7 @@ believing.
 | *"a matrix of Gaussian samples … each row is one sample"* | `make_X`: `rng.standard_normal((n, d))` | column mean ≤ 0.063; \|std − 1\| ≤ 0.03 |
 | *"Random labels"* (Case 1) | `labels_random(n, rng)` — **never receives `X`** | balance 0.488; independent of `X` by construction |
 | *"label_j = sign(X_{j,1})"* (Case 2) | `labels_sign`: `(X[:, 0] > 0)` | `y == (feature 0 > 0)` exactly; balance 0.506 |
+| XOR — `y = sign(x₁·x₂)` (Case 4, §5) | `labels_xor`: `(X[:,0]>0) ^ (X[:,1]>0)` | balance ~0.5; differs from the linear rule (nonlinear) |
 | *"multiply X by a random isometry, X′ = XR (rotation ± reflection)"* (Case 3) | label **first** from original `X` → `R = random_isometry` (the `q` of QR) → `rotate(X, R)` = `X @ R` | `R · Rᵀ = I` (err 2.2e-16); distances preserved (err 1.1e-14) |
 | *"inject exactly-known label noise"* (§6.1) | `inject_noise(y, flip_y, rng)` — `flip_y = 0` is a no-op | flipped fraction 0.10 at `flip_y = 0.1` |
 | split: validation **small** (the snoop), sealed test **large** (the truth) | `make_dataset(case, d, flip_y, sizes, rng)` — explicit row slices from `sizes` | shapes (600,10) / (200,10) / (200,10) match `sizes` |
@@ -727,7 +728,7 @@ The warning case (§6.5): signal ≈ 0, **walk-forward** split. Same gap machine
 | download ^GSPC daily; k=5 lagged-return features + next-day direction + aligned returns | `load_finance(ticker, start, k)` | X = (6654, 5), y ∈ {0,1}, r (returns) |
 | up-day rate (slight drift) | — | 0.537 |
 | WALK-FORWARD provider (train old / val mid / test newest; **no shuffle**) | `finance_provider(X, y, sizes)` | splits (4000)/(200)/(1000), chronological |
-| signal ≈ 0 (the point) | sklearn `LogisticRegression` baseline | logreg test **0.540 ≈ majority 0.544** → no edge |
+| signal ≈ 0 (the point) | sklearn `LogisticRegression` baseline | logreg test **0.540 ≈ majority 0.543** → no edge |
 
 **Tool source:** `yfinance` — <https://github.com/ranaroussi/yfinance>. Needs network; fetched once and reused.
 

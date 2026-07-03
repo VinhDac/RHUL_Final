@@ -250,7 +250,8 @@ Cụm: chi phối gap (6.1–6.4) → đời thật (6.5) → thuốc (6.6). **N
 - **Phase 3 chunk 1 ✅:** backprop→Appendix B · isometry→Appendix C · roadmap cập nhật · 0 scaffold ✅ sót · token Việt/Phần dọn · §6 renumber sạch.
 - **Phase 3 chunk 2 ✅:** `figures/make_figures.py` regen **8 figure canonical** (headline/optimal/noise/capacity+Case4/protocol/isometry/cases_2d, giữ exam); xóa 4 stale; mọi ref resolve.
 - **Phase 3 chunk 3 ✅:** `experiments.py` (formalize E-2 `hidden_n_levels` + H5 `remedy_AB`); 3 notebook (01 core/AppC · 02 real · 03 extensions) rebuilt sạch, gọi backend + config, deterministic seed=0 → chạy reproduce Core.md. Mọi code cell compile + fast cells verify OK. *(Notebook chưa embed output — reader chạy; sweep vài phút/cái.)*
-- **Đang làm — chunk 4:** Appendix A provenance (import root, số canonical, thêm config/experiments rows) + tests (run_once/gap_kfold coverage, print-test exit(1) khi FAIL).
+- **Phase 3 chunk 4 ✅:** Appendix A (import root + module map + numbers-note + Case 4 row, finance 0.544→0.543); tests `lab/mlp/pipeline` → **`sys.exit(1)` khi FAIL** + coverage run_once/gap_kfold + Case-4, cả 3 PASS. **→ PHASE 3 XONG.**
+- **Còn lại:** Phase 4 (README primer/warnings — Layout đã sửa) · Phase 5 (audit người-mới cuối, workflow) · §0/§8/§9 write-last.
 - **[Phase 3 — đừng rơi] Chuyển nội dung isometry (từ §4 cũ) → appendix** (đại số orthogonal + kNN/logreg/SVM bất biến, tree tụt); §4 body chỉ trỏ.
 - **[Phase 3 — đừng rơi] Sinh `figures/cases_2d.svg`** (3 panel 2D: random/dọc/bàn cờ) từ notebook; §4 đang trỏ.
 - **Đang làm:** §5 (cần số → chạy foreground-lean).
