@@ -12,11 +12,12 @@ DISCIPLINE: the sealed test is used ONLY to reveal, never to select / tune /
 early-stop. Any leak invalidates the measurement.
 
 ------------------------------------------------------------------------------
-  run_once(case, N, sizes, d, flip_y, rng, epochs)   -> implemented below
-        -> dict(apparent, true, gap, config)
-      one full split -> search -> select -> reveal.
-
-  repeat / sweep / log_run  -> Phan 5 (the headline sweep + logging).
+  run_once(make_splits, N, rng, epochs, sample) -> dict(apparent, true, gap, config)
+        one full split -> search N configs -> select best-on-val -> reveal test once.
+  sweep(make_splits, N_values, rng, R, ...)     -> {N: {apparent, true, gap, gap_std}}
+        the headline: mean gap over R repeats, cumulative best-of-first-N.
+  gap_kfold(make_splits, N, rng, k, ...)        -> dict(apparent, true, gap)   (H4)
+  synthetic_splits(case, d, flip_y, sizes)      -> a make_splits provider.
 ------------------------------------------------------------------------------
 """
 import numpy as np

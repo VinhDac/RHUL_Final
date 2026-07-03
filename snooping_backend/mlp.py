@@ -3,7 +3,7 @@
 A small PyTorch MLP whose configuration is a few knobs we search over for the
 winner's curse (search N configs, keep best-on-validation). For the gate the
 searched knobs are `width` and `lr`; depth is one hidden layer, optimizer is SGD,
-no regularisation (those join later - see Core.md SS6).
+no regularisation (those join later - see Core.md section 6).
 
 The maths (forward pass + the SGD update  w <- w - lr * grad,  and L2 if added
 later) is derived in the dissertation; PyTorch autograd only executes it.

@@ -9,15 +9,24 @@ Real, messy data with stakes (bad loans wrongly approved). The SAME gap machine
 import numpy as np
 
 
-def load_loan():
-    """Fetch UCI 'default of credit card clients' (id 350); return (X, y).
+def load_loan(cache="data/loan_uci350.csv"):
+    """Load UCI 'default of credit card clients' (id 350), FROZEN to a CSV on first fetch.
 
-    X = all features as floats; y = default next month (1) / not (0).
+    First run fetches via ucimlrepo and writes `cache`; later runs read `cache`
+    (deterministic, offline). X = features (float); y = default next month (1) / not (0).
     """
+    import os
+    import pandas as pd
+    if cache and os.path.exists(cache):
+        arr = pd.read_csv(cache).to_numpy()
+        return arr[:, :-1].astype(float), arr[:, -1].astype(int)
     from ucimlrepo import fetch_ucirepo
     ds = fetch_ucirepo(id=350)
     X = ds.data.features.to_numpy(dtype=float)
     y = ds.data.targets.to_numpy().ravel().astype(int)
+    if cache:
+        os.makedirs(os.path.dirname(cache), exist_ok=True)
+        pd.DataFrame(np.column_stack([X, y])).to_csv(cache, index=False)   # freeze it
     return X, y
 
 
