@@ -56,7 +56,24 @@ Local context (the project's own material, not external authorities):
 ---
 
 ## 0. Abstract
-✍️ *Write last — a short summary of the work (handbook §5.4(1)).*
+
+Searching many model configurations and keeping the best validation score is standard
+practice — but a validation score is *true performance + luck*, so keeping the best of
+N lands on the luckiest, not the best, and the reported score is inflated. This
+dissertation *measures* that inflation — the gap between the apparent (best-validation)
+and true (sealed-test) score — rather than bounding it with a formula. In a synthetic
+laboratory where the truth is known by construction, the gap grows with the search,
+from ≈ 0 to +0.08 as N reaches 200. It is worst in deep learning, whose hidden knobs —
+the stopping epoch and the random seed — inflate the *effective* number of
+configurations searched far beyond the handful one counts (a search of 5 carries the
+gap of ~150). Varying one knob at a time shows the gap is driven by the size and
+blindness of the search and by label noise, but *not* by model capacity (refuted even
+on a nonlinear problem); an honest, lower-variance protocol cuts it to a third. The
+same effect appears on real data — muted where signal is real (loan default), pure luck
+where it is absent (financial prices). Finally, a head-to-head shows an honest,
+restrained procedure yields both a better true model and a number one can trust. The
+lesson: trust is a property of the *process* that produced a number, not of the number
+itself; the gap is the trust lost per unit of searching.
 
 ## 1. Introduction — the problem
 
@@ -92,8 +109,14 @@ using a test set kept sealed and opened exactly once. The gap is positive, it gr
 with the search, and it is the amount of trust lost per unit of searching. (Winner's
 curse, selection bias, data snooping: three names for this one phenomenon.)
 
-> *To add (handbook §5.3): an explicit aims & objectives list, and one line on how
-> this work helps my future career.*
+**Aims and objectives.** This project sets out to (1) *measure* the snooping gap
+exactly in a controlled lab where the truth is known; (2) find what drives it — the
+size and blindness of the search, and label noise — and what does not (model
+capacity); (3) test whether it survives on real, high-stakes data; and (4) give a
+practical, honest remedy. For my own development it is training in the one discipline
+that separates a real result from a lucky one — the habit any trustworthy data-science
+or machine-learning role depends on.
+
 > Sources: framing follows the approved plan (`Plan`); the winner's-curse claim is
 > *derived* (§2.2); the hidden-search claim is *measured* (§6.3).
 
@@ -617,10 +640,29 @@ is least — and an honest, restrained process is what keeps a reported number w
 believing.
 
 ## 8. Self-assessment / appraisal
-✍️ *Write last (MANDATORY — handbook §5.3, §5.4(7)) — how the project went, what I did right/wrong, what I learnt about planning and executing a project, where next.*
+
+*[To complete — handbook §5.3, §5.4(7): a personal appraisal of how the project went. Prompts drawn from this project:]*
+
+- **What went well** — measuring rather than predicting the gap; earning the "deep learning" framing with the hidden-search experiment (§6.3); reporting H3 *refuted* against my own expectation (§6.2).
+- **What I would do differently** — fix one source of truth for split sizes and freeze the data from the start (§Appendix A), rather than discovering the report-vs-code drift late.
+- **What I learnt about planning and executing a project** — *[your reflection]*.
+- **Where next** — adaptive/sequential snooping across a *reused* test set (the reusable-holdout problem); a calibrated discount rule read off the synthetic surface (§6.6).
 
 ## 9. How to use my project
-✍️ *Write last (handbook §5.4(10)) — the GitHub repo (https://github.com/VinhDac/RHUL_Final), the notebooks, and exactly how to reproduce the headline figure.*
+
+The project is at <https://github.com/VinhDac/RHUL_Final>. Start with `README.md` (a
+one-page map) and this report, `Core.md`. Everything reproduces **offline** and
+deterministically (`seed=0`): the input data is frozen to `data/*.csv`.
+
+1. `pip install -r requirements.txt`
+2. `python -m tests.test_lab && python -m tests.test_mlp && python -m tests.test_pipeline` — fast fail-loud checks.
+3. Run all cells in the notebooks:
+   - `01_core_snooping.ipynb` — §5 (headline, optimal budget, Case 4) + isometry (Appendix C)
+   - `02_real_data.ipynb` — §6.5 (loan, finance)
+   - `03_extensions.ipynb` — §6.1–§6.4, §6.6 (noise, capacity, hidden search, protocol, remedy)
+   - `python figures/make_figures.py` regenerates every figure.
+
+The parameter sweeps take a few minutes each on CPU.
 
 ## Bibliography
 *Built when the background section is written (handbook §5.4(9)) — related work only, kept minimal.*
@@ -637,7 +679,7 @@ believing.
 | *"a matrix of Gaussian samples … each row is one sample"* | `make_X`: `rng.standard_normal((n, d))` | column mean ≤ 0.063; \|std − 1\| ≤ 0.03 |
 | *"Random labels"* (Case 1) | `labels_random(n, rng)` — **never receives `X`** | balance 0.488; independent of `X` by construction |
 | *"label_j = sign(X_{j,1})"* (Case 2) | `labels_sign`: `(X[:, 0] > 0)` | `y == (feature 0 > 0)` exactly; balance 0.506 |
-| XOR — `y = sign(x₁·x₂)` (Case 4, §5) | `labels_xor`: `(X[:,0]>0) ^ (X[:,1]>0)` | balance ~0.5; differs from the linear rule (nonlinear) |
+| XOR — `y = 1` iff exactly one of `x₁, x₂ > 0` (Case 4, §5) | `labels_xor`: `(X[:,0]>0) ^ (X[:,1]>0)` | balance ~0.5; differs from the linear rule (nonlinear) |
 | *"multiply X by a random isometry, X′ = XR (rotation ± reflection)"* (Case 3) | label **first** from original `X` → `R = random_isometry` (the `q` of QR) → `rotate(X, R)` = `X @ R` | `R · Rᵀ = I` (err 2.2e-16); distances preserved (err 1.1e-14) |
 | *"inject exactly-known label noise"* (§6.1) | `inject_noise(y, flip_y, rng)` — `flip_y = 0` is a no-op | flipped fraction 0.10 at `flip_y = 0.1` |
 | split: validation **small** (the snoop), sealed test **large** (the truth) | `make_dataset(case, d, flip_y, sizes, rng)` — explicit row slices from `sizes` | shapes (600,10) / (200,10) / (200,10) match `sizes` |
@@ -679,7 +721,7 @@ Case 1 (random labels)     : width 16 -> test 0.495 | width 128 -> test 0.500   
                              train 0.665 / 0.668 -> fits some noise; clear capacity effect = §6.2
 ```
 
-**Tool sources:** PyTorch API — `nn.Linear`, `nn.ReLU`, `nn.CrossEntropyLoss`, `torch.optim.SGD` (<https://pytorch.org/docs/stable/>). The backprop and SGD **mathematics** is *derived* in §6.4 — that derivation is the grounding; the library only executes it.
+**Tool sources:** PyTorch API — `nn.Linear`, `nn.ReLU`, `nn.CrossEntropyLoss`, `torch.optim.SGD` (<https://pytorch.org/docs/stable/>). The backprop and SGD **mathematics** is *derived* in Appendix B — that derivation is the grounding; the library only executes it.
 
 ### `pipeline.py` — the gap machine ↔ code ↔ verified number
 
@@ -725,7 +767,7 @@ The warning case (§6.5): signal ≈ 0, **walk-forward** split. Same gap machine
 
 | What | Code | Verified — number |
 |---|---|---|
-| download ^GSPC daily; k=5 lagged-return features + next-day direction + aligned returns | `load_finance(ticker, start, k)` | X = (6654, 5), y ∈ {0,1}, r (returns) |
+| download ^GSPC daily; k=5 lagged-return features + next-day direction + aligned returns | `load_finance(ticker, start, k)` | X = (6658, 5), y ∈ {0,1}, r (returns) |
 | up-day rate (slight drift) | — | 0.537 |
 | WALK-FORWARD provider (train old / val mid / test newest; **no shuffle**) | `finance_provider(X, y, sizes)` | splits (4000)/(200)/(1000), chronological |
 | signal ≈ 0 (the point) | sklearn `LogisticRegression` baseline | logreg test **0.540 ≈ majority 0.543** → no edge |

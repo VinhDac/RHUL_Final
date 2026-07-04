@@ -100,7 +100,7 @@ def synthetic_splits(case, d, flip_y, sizes):
 
 
 def gap_kfold(make_splits, N, rng, k=5, epochs=300, sample=sample_config):
-    """Honest protocol (H4, section 6.3): score each config by k-fold CV on the train+val
+    """Honest protocol (H4, section 6.4): score each config by k-fold CV on the train+val
     pool, keep the best, refit on the full pool, reveal the sealed test once. A k-fold
     estimate is far less noisy than a single small validation split, so the gap shrinks.
     Same signature shape as run_once; returns dict(apparent, true, gap).
