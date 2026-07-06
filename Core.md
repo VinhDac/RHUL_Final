@@ -423,8 +423,8 @@ the gap stays **flat**, with no trend:
 
 | width                | 4    | 8    | 16   | 32   | 64   | 128  | 256  |
 | -------------------- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
-| gap, Case 2 (linear) | .028 | .026 | .022 | .029 | .009 | .040 | .029 |
-| gap, Case 4 (XOR)    | .027 | .019 | .012 | .030 | .024 | .047 | .034 |
+| gap, Case 2 (linear) | .022 | .019 | .029 | .023 | .031 | .040 | .024 |
+| gap, Case 4 (XOR)    | .018 | .025 | .037 | .027 | .033 | .048 | .047 |
 
 The second row is the *fair* test: a skeptic could say Case 2 is linear, so a small
 net already fits it and capacity was never needed. So we re-ran on Case 4 (XOR), where

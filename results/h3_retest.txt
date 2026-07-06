@@ -1,18 +1,21 @@
-H3 re-test (canonical R=10): gap vs MLP width, +30% noise
+H3 re-test -- reproduces notebooks/03_extensions.ipynb (H3 cell); seed=0, N=20, R=10, 30% label noise, n_test=100000.
+gap vs MLP hidden width -- flat, no trend (capacity does NOT widen the gap; H3 refuted).
 
-Case 2 (linear)      :
-   width=   4   gap = +0.0278  (+/-0.0331)
-   width=   8   gap = +0.0258  (+/-0.0252)
-   width=  16   gap = +0.0218  (+/-0.0317)
-   width=  32   gap = +0.0289  (+/-0.0242)
-   width=  64   gap = +0.0088  (+/-0.0382)
-   width= 128   gap = +0.0395  (+/-0.0389)
-   width= 256   gap = +0.0288  (+/-0.0245)
+Case 2 (linear):
+   width=   4   gap = +0.022
+   width=   8   gap = +0.019
+   width=  16   gap = +0.029
+   width=  32   gap = +0.023
+   width=  64   gap = +0.031
+   width= 128   gap = +0.040
+   width= 256   gap = +0.024
 
-Case 4 (XOR nonlinear) :
-   width=   4   gap = +0.0270  (+/-0.0259)
-   width=   8   gap = +0.0193  (+/-0.0160)
-   width=  16   gap = +0.0118  (+/-0.0381)
-   width=  32   gap = +0.0298  (+/-0.0298)
-   width=  64   gap = +0.0241  (+/-0.0436)
-   width= 128   gap = +0.0472  (+/-0.0321)
+Case 4 (XOR nonlinear):
+   width=   4   gap = +0.018
+   width=   8   gap = +0.025
+   width=  16   gap = +0.037
+   width=  32   gap = +0.027
+   width=  64   gap = +0.033
+   width= 128   gap = +0.048
+   width= 256   gap = +0.047
+DONE
