@@ -10,26 +10,26 @@
 
 **Reading order:** §1–§7 is the argument, written to be read once through. §0 (abstract), §8 (self-assessment) and §9 (how-to-use) are written last. The appendices hold the full derivations and code provenance, outside the page limit.
 
-| # | Section | Handbook req (§5.4) |
-|---|---------|---------------------|
-| 0 | Abstract | (1) — *write last* |
-| 1 | Introduction — the problem, aims & objectives | (2) |
-| 2 | Background — train/val/test, the winner's curse, why a synthetic lab, the arc | (3) |
-| 3 | Method — the one machine | (5) |
-| 4 | The synthetic lab — designing the truth (Cases 1, 2, 4) | (5) |
-| 5 | Core results — the gap, measured | (6) |
-| 6 | Extensions and the real-data comparison | (5),(6) |
-| 6.1 | &nbsp;&nbsp;Label noise (H2) | (6) |
-| 6.2 | &nbsp;&nbsp;Model capacity (H3 — refuted) | (6) |
-| 6.3 | &nbsp;&nbsp;The knobs we don't count — hidden search in deep learning (Hd) | (6) |
-| 6.4 | &nbsp;&nbsp;An honest protocol shrinks the gap (H4) | (6) |
-| 6.5 | &nbsp;&nbsp;Real data — loan default; finance ^GSPC | (6) |
-| 6.6 | &nbsp;&nbsp;The remedy — an honest procedure you can trust (H5) | (6) |
-| 7 | Discussion — where the thesis lands | (6) |
-| 8 | Self-assessment / appraisal | (7) — *write last* |
-| 9 | How to use my project | (10) — *write last* |
-| — | Bibliography | (9) |
-| — | Appendices A (code provenance), B (the MLP's mathematics), C (the isometry control) | (11) |
+| #   | Section                                                                             | Handbook req (§5.4)  |
+| --- | ----------------------------------------------------------------------------------- | --------------------- |
+| 0   | Abstract                                                                            | (1) —*write last*  |
+| 1   | Introduction — the problem, aims & objectives                                      | (2)                   |
+| 2   | Background — train/val/test, the winner's curse, why a synthetic lab, the arc      | (3)                   |
+| 3   | Method — the one machine                                                           | (5)                   |
+| 4   | The synthetic lab — designing the truth (Cases 1, 2, 4)                            | (5)                   |
+| 5   | Core results — the gap, measured                                                   | (6)                   |
+| 6   | Extensions and the real-data comparison                                             | (5),(6)               |
+| 6.1 | &nbsp;&nbsp;Label noise (H2)                                                        | (6)                   |
+| 6.2 | &nbsp;&nbsp;Model capacity (H3 — refuted)                                          | (6)                   |
+| 6.3 | &nbsp;&nbsp;The knobs we don't count — hidden search in deep learning (Hd)         | (6)                   |
+| 6.4 | &nbsp;&nbsp;An honest protocol shrinks the gap (H4)                                 | (6)                   |
+| 6.5 | &nbsp;&nbsp;Real data — loan default; finance ^GSPC                                | (6)                   |
+| 6.6 | &nbsp;&nbsp;The remedy — an honest procedure you can trust (H5)                    | (6)                   |
+| 7   | Discussion — where the thesis lands                                                | (6)                   |
+| 8   | Self-assessment / appraisal                                                         | (7) —*write last*  |
+| 9   | How to use my project                                                               | (10) —*write last* |
+| —  | Bibliography                                                                        | (9)                   |
+| —  | Appendices A (code provenance), B (the MLP's mathematics), C (the isometry control) | (11)                  |
 
 > **The arc, in one line.** Measure the gap exactly where the truth is known (synthetic, §3–§5), test whether it survives in the wild (loan and finance, §6.5), and close with a remedy (§6.6): **measure → confirm → cure**. The conclusion is the comparison across the signal axis, not any single dataset.
 
@@ -45,35 +45,17 @@ The claims here are grounded three ways, in order of how much of the work they c
 
 Local context (the project's own material, not external authorities):
 
-| Tag | Source | Used for |
-|-----|--------|----------|
-| `Plan` | the student's own approved project plan — body of `Plan/Plan_2.docx` (everything **before** the "Feedback:" line) | the project's framing and design rationale (§1, §2.3, §2.4) |
-| `Supervisor` | the **feedback block** in `Plan/Plan_2.docx` (after "Feedback:") | the Gaussian X + three label cases (§4); `make_X` (Appendix A) |
-| `Course` | `Docs/Lesson materials/` (Week 1–3) | the standard supervised-learning setup (§2.1) |
+| Tag            | Source                                                                                                                    | Used for                                                         |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `Plan`       | the student's own approved project plan — body of`Plan/Plan_2.docx` (everything **before** the "Feedback:" line) | the project's framing and design rationale (§1, §2.3, §2.4)   |
+| `Supervisor` | the**feedback block** in `Plan/Plan_2.docx` (after "Feedback:")                                                   | the Gaussian X + three label cases (§4);`make_X` (Appendix A) |
+| `Course`     | `Docs/Lesson materials/` (Week 1–3)                                                                                    | the standard supervised-learning setup (§2.1)                   |
 
 > **On the literature.** The handbook requires a background/literature survey and a bibliography (§5.4(3),(9)). Any literature appears as honest *related work* — context that situates the contribution — and never as proof of a claim the project can derive or measure itself. It is added when the background section is written, kept minimal.
 
 ---
 
 ## 0. Abstract
-
-Searching many model configurations and keeping the best validation score is standard
-practice — but a validation score is *true performance + luck*, so keeping the best of
-N lands on the luckiest, not the best, and the reported score is inflated. This
-dissertation *measures* that inflation — the gap between the apparent (best-validation)
-and true (sealed-test) score — rather than bounding it with a formula. In a synthetic
-laboratory where the truth is known by construction, the gap grows with the search,
-from ≈ 0 to +0.08 as N reaches 200. It is worst in deep learning, whose hidden knobs —
-the stopping epoch and the random seed — inflate the *effective* number of
-configurations searched far beyond the handful one counts (a search of 5 carries the
-gap of ~150). Varying one knob at a time shows the gap is driven by the size and
-blindness of the search and by label noise, but *not* by model capacity (refuted even
-on a nonlinear problem); an honest, lower-variance protocol cuts it to a third. The
-same effect appears on real data — muted where signal is real (loan default), pure luck
-where it is absent (financial prices). Finally, a head-to-head shows an honest,
-restrained procedure yields both a better true model and a number one can trust. The
-lesson: trust is a property of the *process* that produced a number, not of the number
-itself; the gap is the trust lost per unit of searching.
 
 ## 1. Introduction — the problem
 
@@ -130,6 +112,7 @@ data from the same source. Call it S. Everything here is, in the end, a statemen
 about S — which we never see directly, only estimate.
 
 **Three sets, three jobs.** To estimate S honestly, the data is split three ways:
+
 - **Training set** — used to *fit* the model. Its error is optimistic: the model has
   already seen these points, so low training error can mean it learned the signal
   *or* just memorised the answers. It is not a measure of S.
@@ -193,6 +176,7 @@ data *"the gap I measure is blurred by the very noise I am trying to study."*)
 **Writing the data ourselves removes the wobble.** When we generate the data, we know
 the labelling rule exactly, so true performance stops being estimated and becomes
 *controlled*. That buys three things real data cannot:
+
 - **Exact truth** — we can make the test set as large as we like (100 000 rows), so
   its estimate of the truth has almost no sampling error and the gap is measured
   exactly (§3 makes this precise).
@@ -215,6 +199,7 @@ effect bites in practice (*external validity*). Only real data shows the second.
 
 So the project runs the *same* machine across three datasets on one axis of signal
 strength:
+
 - **Synthetic** — truth known; the gap measured exactly, the mechanism isolated. (§3–§5)
 - **Loan default** (UCI) — real and messy, with stakes; does the gap appear on its
   own? *Strong signal.* (§6.5)
@@ -248,6 +233,7 @@ reports the truth; and because the top mark climbs fast then ever more slowly, w
 N at 1, 2, 5, 10, 20, … rather than 1, 2, 3, 4.
 
 **The one machine.** Every experiment runs the *same* procedure on a fresh dataset:
+
 1. **Split** into three parts — training, a small validation set (so its score is
    noisy), and a large sealed test.
 2. **Search** N configurations — settings of a small neural network, drawn at random.
@@ -352,10 +338,10 @@ from ≈ 0 to **+0.080**:
 
 ![Headline: apparent climbs with N while true stays at 0.5; the gap is the drop.](figures/headline_gap_vs_N.svg)
 
-| N | 1 | 2 | 5 | 10 | 20 | 50 | 100 | 200 |
-|---|---|---|---|---|---|---|---|---|
-| apparent | .509 | .524 | .531 | .551 | .556 | .564 | .577 | .581 |
-| true | .501 | .501 | .500 | .500 | .500 | .500 | .500 | .501 |
+| N             | 1     | 2     | 5     | 10    | 20    | 50    | 100   | 200             |
+| ------------- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | --------------- |
+| apparent      | .509  | .524  | .531  | .551  | .556  | .564  | .577  | .581            |
+| true          | .501  | .501  | .500  | .500  | .500  | .500  | .500  | .501            |
 | **gap** | +.009 | +.023 | +.031 | +.051 | +.057 | +.063 | +.077 | **+.080** |
 
 This is the winner's curse of §2.2, now *measured* rather than argued: keep the best
@@ -370,10 +356,10 @@ rises, peaks around N ≈ 50 (0.766), then flattens and dips slightly (0.760 at 
 
 ![Optimal budget: true peaks near N≈50 then flattens, while apparent keeps rising.](figures/optimal_budget.svg)
 
-| N | 1 | 5 | 20 | 50 | 100 | 200 |
-|---|---|---|---|---|---|---|
-| apparent | .700 | .762 | .779 | .789 | .798 | .800 |
-| true | .694 | .742 | .759 | **.766** | .759 | .760 |
+| N        | 1    | 5    | 20   | 50             | 100  | 200  |
+| -------- | ---- | ---- | ---- | -------------- | ---- | ---- |
+| apparent | .700 | .762 | .779 | .789           | .798 | .800 |
+| true     | .694 | .742 | .759 | **.766** | .759 | .760 |
 
 So there is an **optimal search budget** (here around N ≈ 50): past it, extra search
 buys apparent inflation, not a better model. (The dip in true is small, within
@@ -386,9 +372,9 @@ linear models sit at chance while the MLP learns a rule no straight line can dra
 (Even distance- and axis-based methods struggle once the two signal features are
 buried among eighteen noise features; only the MLP captures it cleanly.)
 
-| | logreg | SVM | kNN | tree | **MLP** |
-|---|---|---|---|---|---|
-| Case 4 (XOR) test accuracy | 0.50 | 0.50 | 0.64 | 0.72 | **0.97** |
+|                            | logreg | SVM  | kNN  | tree | **MLP**  |
+| -------------------------- | ------ | ---- | ---- | ---- | -------------- |
+| Case 4 (XOR) test accuracy | 0.50   | 0.50 | 0.64 | 0.72 | **0.97** |
 
 **Fit is not generalisation.** One last reading of Case 1 makes the whole point in
 miniature: a flexible model can fit the random training labels almost perfectly, yet
@@ -410,9 +396,9 @@ monotonically, from ≈ 0 on clean labels to **+0.057** when half the labels are
 
 ![The gap vs injected label noise.](figures/gap_vs_noise.svg)
 
-| flip_y | 0.0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 |
-|---|---|---|---|---|---|---|
-| gap | +.008 | +.005 | +.011 | +.026 | +.041 | +.057 |
+| flip_y | 0.0   | 0.1   | 0.2   | 0.3   | 0.4   | 0.5   |
+| ------ | ----- | ----- | ----- | ----- | ----- | ----- |
+| gap    | +.008 | +.005 | +.011 | +.026 | +.041 | +.057 |
 
 **Why.** With clean labels the model saturates near 100%, so there is no room for the
 best-of-N validation score to overshoot, and the gap is near zero. As noise pushes
@@ -435,10 +421,10 @@ the gap stays **flat**, with no trend:
 
 ![Gap vs hidden width: flat on both cases.](figures/gap_vs_capacity.svg)
 
-| width | 4 | 8 | 16 | 32 | 64 | 128 | 256 |
-|---|---|---|---|---|---|---|---|
+| width                | 4    | 8    | 16   | 32   | 64   | 128  | 256  |
+| -------------------- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
 | gap, Case 2 (linear) | .028 | .026 | .022 | .029 | .009 | .040 | .029 |
-| gap, Case 4 (XOR) | .027 | .019 | .012 | .030 | .024 | .047 | .034 |
+| gap, Case 4 (XOR)    | .027 | .019 | .012 | .030 | .024 | .047 | .034 |
 
 The second row is the *fair* test: a skeptic could say Case 2 is linear, so a small
 net already fits it and capacity was never needed. So we re-ran on Case 4 (XOR), where
@@ -464,11 +450,11 @@ learning's real danger is the search we *don't* count.
 at 6 epochs and keep the best-looking one (ordinary early stopping). Each addition
 multiplies the *effective* number of models searched:
 
-| what we count | effective N | gap |
-|---|---|---|
-| 5 configurations only | 5 | +0.033 |
-| + best of 5 seeds | 25 | +0.055 |
-| + best of 6 epoch-checkpoints | 150 | **+0.072** |
+| what we count                 | effective N | gap              |
+| ----------------------------- | ----------- | ---------------- |
+| 5 configurations only         | 5           | +0.033           |
+| + best of 5 seeds             | 25          | +0.055           |
+| + best of 6 epoch-checkpoints | 150         | **+0.072** |
 
 **The punchline.** The same 5 configurations we *think* we tried carry the gap of about
 150 — a three-fold jump — once the uncounted seeds and epochs are counted. And each row
@@ -497,10 +483,10 @@ the gap to about a third:
 
 ![Gap vs N: a single small split vs 5-fold cross-validation.](figures/gap_vs_protocol.svg)
 
-| N | 1 | 5 | 20 | 50 |
-|---|---|---|---|---|
+| N            | 1      | 5     | 20    | 50    |
+| ------------ | ------ | ----- | ----- | ----- |
 | single split | −.004 | +.039 | +.067 | +.071 |
-| 5-fold CV | −.003 | +.015 | +.022 | +.024 |
+| 5-fold CV    | −.003 | +.015 | +.022 | +.024 |
 
 **Why.** The mechanism is the same winner's curse, dampened: averaging over folds cuts
 the variance of each validation estimate, so the maximum of N draws overshoots less.
@@ -554,15 +540,16 @@ we make it concrete: build two models on the same data — one the aggressive wa
 the honest way — and open the sealed test on both.
 
 **The head-to-head (Case 2 with 20% noise).**
+
 - **A, aggressive** — search 20 configurations and, for each, keep the best of 3 seeds
   and 6 training epochs (the hidden knobs of §6.3), choosing on a small validation set.
 - **B, honest** — search only 10 configurations, each scored by 5-fold cross-validation,
   with no per-configuration seed or epoch fishing.
 
-| | apparent (reported) | true (sealed test) | gap |
-|---|---|---|---|
-| A — aggressive | 0.805 | 0.753 | **+0.052** |
-| B — honest | 0.762 | 0.765 | **−0.003** |
+|                 | apparent (reported) | true (sealed test) | gap               |
+| --------------- | ------------------- | ------------------ | ----------------- |
+| A — aggressive | 0.805               | 0.753              | **+0.052**  |
+| B — honest     | 0.762               | 0.765              | **−0.003** |
 
 **A looks better and is worse.** A reports the prettier number (0.805 vs 0.762), so a
 practitioner comparing the two on their reported scores would ship A. But A's *true*
@@ -641,16 +628,10 @@ believing.
 
 ## 8. Self-assessment / appraisal
 
-*[To complete — handbook §5.3, §5.4(7): a personal appraisal of how the project went. Prompts drawn from this project:]*
-
-- **What went well** — measuring rather than predicting the gap; earning the "deep learning" framing with the hidden-search experiment (§6.3); reporting H3 *refuted* against my own expectation (§6.2).
-- **What I would do differently** — fix one source of truth for split sizes and freeze the data from the start (§Appendix A), rather than discovering the report-vs-code drift late.
-- **What I learnt about planning and executing a project** — *[your reflection]*.
-- **Where next** — adaptive/sequential snooping across a *reused* test set (the reusable-holdout problem); a calibrated discount rule read off the synthetic surface (§6.6).
 
 ## 9. How to use my project
 
-The project is at <https://github.com/VinhDac/RHUL_Final>. Start with `README.md` (a
+The project is at [https://github.com/VinhDac/RHUL_Final](https://github.com/VinhDac/RHUL_Final). Start with `README.md` (a
 one-page map) and this report, `Core.md`. Everything reproduces **offline** and
 deterministically (`seed=0`): the input data is frozen to `data/*.csv`.
 
@@ -665,26 +646,29 @@ deterministically (`seed=0`): the input data is frozen to `data/*.csv`.
 The parameter sweeps take a few minutes each on CPU.
 
 ## Bibliography
+
 *Built when the background section is written (handbook §5.4(9)) — related work only, kept minimal.*
 
 ---
 
 ## Appendix A — code provenance (build log)
+
 *Outside the 50-page limit (handbook §5.5); examiners may not read it — so the essential reasoning stays in the body. The numbers below are illustrative sanity checks (run `python -m tests.test_lab` / `test_mlp` / `test_pipeline`, which now exit non-zero on any failure); the canonical tables of §5–§6 are reproduced deterministically (`seed=0`) in the notebooks. All code lives under `snooping_backend/` (add the repo root to `sys.path`, as the notebooks do): `config.py` (canonical split sizes — one source of truth), `lab.py` (data), `mlp.py` (the searched MLP), `models.py` (the sklearn garden), `pipeline.py` (the gap machine), `experiments.py` (the E-2 and H5 search loops), and `data_loan.py` / `data_finance.py` (real data, frozen to `data/*.csv`).*
 
 ### `lab.py` — supervisor's design ↔ code ↔ verified number
 
-| Supervisor / Plan | Code (`lab.py`) | Verified — number (`python -m tests.test_lab`) |
-|---|---|---|
-| *"a matrix of Gaussian samples … each row is one sample"* | `make_X`: `rng.standard_normal((n, d))` | column mean ≤ 0.063; \|std − 1\| ≤ 0.03 |
-| *"Random labels"* (Case 1) | `labels_random(n, rng)` — **never receives `X`** | balance 0.488; independent of `X` by construction |
-| *"label_j = sign(X_{j,1})"* (Case 2) | `labels_sign`: `(X[:, 0] > 0)` | `y == (feature 0 > 0)` exactly; balance 0.506 |
-| XOR — `y = 1` iff exactly one of `x₁, x₂ > 0` (Case 4, §5) | `labels_xor`: `(X[:,0]>0) ^ (X[:,1]>0)` | balance ~0.5; differs from the linear rule (nonlinear) |
-| *"multiply X by a random isometry, X′ = XR (rotation ± reflection)"* (Case 3) | label **first** from original `X` → `R = random_isometry` (the `q` of QR) → `rotate(X, R)` = `X @ R` | `R · Rᵀ = I` (err 2.2e-16); distances preserved (err 1.1e-14) |
-| *"inject exactly-known label noise"* (§6.1) | `inject_noise(y, flip_y, rng)` — `flip_y = 0` is a no-op | flipped fraction 0.10 at `flip_y = 0.1` |
-| split: validation **small** (the snoop), sealed test **large** (the truth) | `make_dataset(case, d, flip_y, sizes, rng)` — explicit row slices from `sizes` | shapes (600,10) / (200,10) / (200,10) match `sizes` |
+| Supervisor / Plan                                                                     | Code (`lab.py`)                                                                                                     | Verified — number (`python -m tests.test_lab`)                 |
+| ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| *"a matrix of Gaussian samples … each row is one sample"*                          | `make_X`: `rng.standard_normal((n, d))`                                                                           | column mean ≤ 0.063;\|std − 1\| ≤ 0.03                         |
+| *"Random labels"* (Case 1)                                                          | `labels_random(n, rng)` — **never receives `X`**                                                           | balance 0.488; independent of`X` by construction                |
+| *"label_j = sign(X_{j,1})"* (Case 2)                                                | `labels_sign`: `(X[:, 0] > 0)`                                                                                    | `y == (feature 0 > 0)` exactly; balance 0.506                   |
+| XOR —`y = 1` iff exactly one of `x₁, x₂ > 0` (Case 4, §5)                     | `labels_xor`: `(X[:,0]>0) ^ (X[:,1]>0)`                                                                           | balance ~0.5; differs from the linear rule (nonlinear)            |
+| *"multiply X by a random isometry, X′ = XR (rotation ± reflection)"* (Case 3)     | label**first** from original `X` → `R = random_isometry` (the `q` of QR) → `rotate(X, R)` = `X @ R` | `R · Rᵀ = I` (err 2.2e-16); distances preserved (err 1.1e-14) |
+| *"inject exactly-known label noise"* (§6.1)                                        | `inject_noise(y, flip_y, rng)` — `flip_y = 0` is a no-op                                                         | flipped fraction 0.10 at`flip_y = 0.1`                          |
+| split: validation**small** (the snoop), sealed test **large** (the truth) | `make_dataset(case, d, flip_y, sizes, rng)` — explicit row slices from `sizes`                                   | shapes (600,10) / (200,10) / (200,10) match`sizes`              |
 
 **Worked example** — 6 samples, small enough to read the labelling rules by eye (seed 1); the isometry consequence is on a larger sample (n = 7000, d = 5, seed 0):
+
 ```
 feature 0 : [ 0.35 -1.30 -0.54  0.29 -0.74  0.60]
 Case 1 y  : [   1     0     1     0     0     1  ]   coin flip — labels_random never sees X
@@ -692,58 +676,63 @@ Case 2 y  : [   1     0     0     1     0     1  ]   = (feature 0 > 0)
 Case 3 y  : [   1     0     0     1     0     1  ]   same labels (from original X), then rotated
             distance preserved 1.65 -> 1.65   ·   kNN 0.953 = 0.953   ·   tree 0.998 -> 0.810
 ```
+
 The last line is the isometry insight (§4): an orthogonal map preserves every distance, so the distance-based kNN is identical across Case 2 ↔ 3, while the axis-aligned tree drops; measured in full in §5.
 
 **Tool sources** (official docs, cited where the code uses them):
-- `make_X` — numpy `Generator.standard_normal`: <https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.standard_normal.html>
-- `labels_random` — numpy `Generator.integers` (half-open `[0, 2)` → `{0, 1}`): <https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.integers.html>
-- `labels_sign` — the `> 0` form vs numpy `sign` (dodges the `sign(0) = 0` tie): <https://numpy.org/doc/stable/reference/generated/numpy.sign.html>
-- `random_isometry` — numpy `linalg.qr` (`q` orthonormal → an orthogonal `R`): <https://numpy.org/doc/stable/reference/generated/numpy.linalg.qr.html>
-- `inject_noise` — numpy `Generator.choice` (distinct indices, `replace=False`): <https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.choice.html>
+
+- `make_X` — numpy `Generator.standard_normal`: [https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.standard_normal.html](https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.standard_normal.html)
+- `labels_random` — numpy `Generator.integers` (half-open `[0, 2)` → `{0, 1}`): [https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.integers.html](https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.integers.html)
+- `labels_sign` — the `> 0` form vs numpy `sign` (dodges the `sign(0) = 0` tie): [https://numpy.org/doc/stable/reference/generated/numpy.sign.html](https://numpy.org/doc/stable/reference/generated/numpy.sign.html)
+- `random_isometry` — numpy `linalg.qr` (`q` orthonormal → an orthogonal `R`): [https://numpy.org/doc/stable/reference/generated/numpy.linalg.qr.html](https://numpy.org/doc/stable/reference/generated/numpy.linalg.qr.html)
+- `inject_noise` — numpy `Generator.choice` (distinct indices, `replace=False`): [https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.choice.html](https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.choice.html)
 - `rotate` / `make_dataset` — matrix product `@` and explicit row slicing; standard, no citation needed.
 
 ### `mlp.py` — the deep-learning instrument ↔ code ↔ verified number
 
 The MLP is the headline instrument (§3); verified by `python -m tests.test_mlp`.
 
-| Design (§3) | Code (`mlp.py`) | Verified — number (`python -m tests.test_mlp`) |
-|---|---|---|
-| one hidden layer, ReLU, 2 logits | `make_mlp(d, width)`: `Linear(d,width) → ReLU → Linear(width,2)` | trains (~2.7s for 4 fits) |
-| full-batch GD, cross-entropy | `train(X, y, width, lr)`: `optim.SGD` + `CrossEntropyLoss`, `epochs=300` | loss descends; numbers below |
-| config = (width, lr), searched | function args `width`, `lr` | search space = `sample_config` (§3) |
-| Case 2 learnable → `S → 1` | — | width 16 / 128 → **test 0.991 / 0.982** |
-| Case 1 random → `S = 0.5` (no generalisation) | — | width 16 / 128 → **test 0.495 / 0.500**; train 0.665 / 0.668 (fits some noise) |
+| Design (§3)                                    | Code (`mlp.py`)                                                                | Verified — number (`python -m tests.test_mlp`)                                    |
+| ----------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| one hidden layer, ReLU, 2 logits                | `make_mlp(d, width)`: `Linear(d,width) → ReLU → Linear(width,2)`           | trains (~2.7s for 4 fits)                                                            |
+| full-batch GD, cross-entropy                    | `train(X, y, width, lr)`: `optim.SGD` + `CrossEntropyLoss`, `epochs=300` | loss descends; numbers below                                                         |
+| config = (width, lr), searched                  | function args`width`, `lr`                                                   | search space =`sample_config` (§3)                                                |
+| Case 2 learnable →`S → 1`                   | —                                                                               | width 16 / 128 →**test 0.991 / 0.982**                                        |
+| Case 1 random →`S = 0.5` (no generalisation) | —                                                                               | width 16 / 128 →**test 0.495 / 0.500**; train 0.665 / 0.668 (fits some noise) |
 
 **Worked example** (`n_train = 2000, d = 20, n_test = 20000, seed 0`):
+
 ```
 Case 2 (y = sign feature 0): width 16 -> test 0.991 | width 128 -> test 0.982   learns the signal
 Case 1 (random labels)     : width 16 -> test 0.495 | width 128 -> test 0.500   no generalisation
                              train 0.665 / 0.668 -> fits some noise; clear capacity effect = §6.2
 ```
 
-**Tool sources:** PyTorch API — `nn.Linear`, `nn.ReLU`, `nn.CrossEntropyLoss`, `torch.optim.SGD` (<https://pytorch.org/docs/stable/>). The backprop and SGD **mathematics** is *derived* in Appendix B — that derivation is the grounding; the library only executes it.
+**Tool sources:** PyTorch API — `nn.Linear`, `nn.ReLU`, `nn.CrossEntropyLoss`, `torch.optim.SGD` ([https://pytorch.org/docs/stable/](https://pytorch.org/docs/stable/)). The backprop and SGD **mathematics** is *derived* in Appendix B — that derivation is the grounding; the library only executes it.
 
 ### `pipeline.py` — the gap machine ↔ code ↔ verified number
 
 `run_once` implements the six steps of §3; it is **data-agnostic** — it takes a `make_splits(rng)` provider, so the *same* machine runs on the synthetic lab and (later) on real data. Verified by `python -m tests.test_pipeline`.
 
-| §3 step | Code (`run_once`) | Discipline / number |
-|---|---|---|
+| §3 step                      | Code (`run_once`)                                                                                      | Discipline / number          |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------- |
 | split (val small, test large) | `make_splits(rng)` — e.g. `synthetic_splits(case, d, flip_y, sizes)`; loan/finance supply their own | n_val = 200, n_test = 10 000 |
-| search N, score on val | loop: `sample_config` → `train` → `accuracy(·, X_val)` | apparent climbs with N |
-| keep best on val | `if val > best_val` — **selection on validation only** | — |
-| reveal test once, on winner | **one** `accuracy(best_model, X_test, ·)`, outside the loop | true ≈ 0.50 on Case 1 |
-| gap = apparent − true | `best_val - true` | grows with N (below) |
+| search N, score on val        | loop:`sample_config` → `train` → `accuracy(·, X_val)`                                           | apparent climbs with N       |
+| keep best on val              | `if val > best_val` — **selection on validation only**                                          | —                           |
+| reveal test once, on winner   | **one** `accuracy(best_model, X_test, ·)`, outside the loop                                     | true ≈ 0.50 on Case 1       |
+| gap = apparent − true        | `best_val - true`                                                                                      | grows with N (below)         |
 
 `sweep(make_splits, N_values, rng, R)` runs this **cumulatively** over a grid of N — one config pool per repeat, best-of-the-first-N by validation, test revealed only on each winner — and averages; that is the headline (§5).
 
 **Worked example** — `sweep` on Case 1 random labels (n_val = 200, n_test = 10 000, mean of R = 6):
+
 ```
  N     apparent   true      gap
  1       0.514   0.498   +0.017
  5       0.546   0.501   +0.045
 20       0.568   0.500   +0.068     apparent climbs, true stays ~0.50
 ```
+
 `true` holds at 0.50 (no generalisation, by construction) while `apparent` rises with N, so the gap grows — the winner's curse, **measured** rather than predicted. The full headline (larger N, more repeats) is plotted in the notebook, §5.
 
 **Tool sources:** none new — `run_once` composes `lab` + `mlp` (already cited). The sealed-test discipline is *visible in the code*: exactly one `accuracy(…, X_test)`, outside the search loop.
@@ -752,27 +741,27 @@ Case 1 (random labels)     : width 16 -> test 0.495 | width 128 -> test 0.500   
 
 Real data for the external-validity half (§6.5). The gap machine is unchanged; this only supplies a `make_splits` provider (it feeds `run_once` / `sweep` exactly like `synthetic_splits`).
 
-| What | Code | Verified — number |
-|---|---|---|
-| fetch UCI 'default of credit card clients' (id 350) | `load_loan()`: `fetch_ucirepo(id=350)` | X = (30000, 23), y ∈ {0,1} |
-| class balance (imbalanced) | — | default rate 0.221 → chance ≈ **majority 0.786**, not 0.5 |
-| provider, standardise on TRAIN only (no leak) | `loan_provider(X, y, sizes)` | train col mean ≈ 0, std ≈ 1 |
-| real signal present? | sklearn `LogisticRegression` baseline | logreg test **0.819 > majority 0.786** → signal |
+| What                                                | Code                                       | Verified — number                                               |
+| --------------------------------------------------- | ------------------------------------------ | ---------------------------------------------------------------- |
+| fetch UCI 'default of credit card clients' (id 350) | `load_loan()`: `fetch_ucirepo(id=350)` | X = (30000, 23), y ∈ {0,1}                                      |
+| class balance (imbalanced)                          | —                                         | default rate 0.221 → chance ≈**majority 0.786**, not 0.5 |
+| provider, standardise on TRAIN only (no leak)       | `loan_provider(X, y, sizes)`             | train col mean ≈ 0, std ≈ 1                                    |
+| real signal present?                                | sklearn`LogisticRegression` baseline     | logreg test**0.819 > majority 0.786** → signal            |
 
-**Tool source:** `ucimlrepo.fetch_ucirepo` — <https://github.com/uci-ml-repo/ucimlrepo>. Needs network; fetched once and reused (not a per-run test).
+**Tool source:** `ucimlrepo.fetch_ucirepo` — [https://github.com/uci-ml-repo/ucimlrepo](https://github.com/uci-ml-repo/ucimlrepo). Needs network; fetched once and reused (not a per-run test).
 
 ### `data_finance.py` — finance ^GSPC ↔ code ↔ verified number
 
 The warning case (§6.5): signal ≈ 0, **walk-forward** split. Same gap machine; this only supplies a chronological `make_splits` provider (no future leaks into training).
 
-| What | Code | Verified — number |
-|---|---|---|
-| download ^GSPC daily; k=5 lagged-return features + next-day direction + aligned returns | `load_finance(ticker, start, k)` | X = (6658, 5), y ∈ {0,1}, r (returns) |
-| up-day rate (slight drift) | — | 0.537 |
-| WALK-FORWARD provider (train old / val mid / test newest; **no shuffle**) | `finance_provider(X, y, sizes)` | splits (4000)/(200)/(1000), chronological |
-| signal ≈ 0 (the point) | sklearn `LogisticRegression` baseline | logreg test **0.540 ≈ majority 0.543** → no edge |
+| What                                                                                    | Code                                   | Verified — number                                      |
+| --------------------------------------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------- |
+| download ^GSPC daily; k=5 lagged-return features + next-day direction + aligned returns | `load_finance(ticker, start, k)`     | X = (6658, 5), y ∈ {0,1}, r (returns)                  |
+| up-day rate (slight drift)                                                              | —                                     | 0.537                                                   |
+| WALK-FORWARD provider (train old / val mid / test newest;**no shuffle**)          | `finance_provider(X, y, sizes)`      | splits (4000)/(200)/(1000), chronological               |
+| signal ≈ 0 (the point)                                                                 | sklearn`LogisticRegression` baseline | logreg test**0.540 ≈ majority 0.543** → no edge |
 
-**Tool source:** `yfinance` — <https://github.com/ranaroussi/yfinance>. Needs network; fetched once and reused.
+**Tool source:** `yfinance` — [https://github.com/ranaroussi/yfinance](https://github.com/ranaroussi/yfinance). Needs network; fetched once and reused.
 
 ---
 
@@ -824,10 +813,10 @@ An aside, off the main snooping thread: it tests whether a model's success rests
 
 ![Isometry: kNN, logistic regression and the linear SVM are unchanged by the rotation; only the axis-aligned tree drops.](figures/isometry.svg)
 
-| | kNN | logreg | SVM | tree |
-|---|---|---|---|---|
-| Case 2 (axis-aligned) | 0.805 | 0.989 | 0.986 | 1.000 |
-| Case 3 (rotated) | 0.805 | 0.989 | 0.986 | 0.709 |
-| change | +0.000 | +0.000 | +0.000 | **−0.291** |
+|                       | kNN    | logreg | SVM    | tree              |
+| --------------------- | ------ | ------ | ------ | ----------------- |
+| Case 2 (axis-aligned) | 0.805  | 0.989  | 0.986  | 1.000             |
+| Case 3 (rotated)      | 0.805  | 0.989  | 0.986  | 0.709             |
+| change                | +0.000 | +0.000 | +0.000 | **−0.291** |
 
 kNN (distances only), logistic regression and the linear SVM (rotation-equivariant) are untouched; only the axis-aligned decision tree drops, because it can approximate an oblique boundary only with a staircase of axis-parallel boxes. The tree's fall exposes that it was leaning on a coordinate artifact, not on the signal. Reproduce from `notebooks/01_core_snooping.ipynb`.
