@@ -1,10 +1,3 @@
+# The experiments in code/ use numpy alone. The hand-written MLP, the datasets
+# (frozen CSVs and a cached .npz), and every table in the report need nothing else.
 numpy
-scikit-learn
-matplotlib
-pandas
-jupyter
-ipywidgets
-torch          # MLP spine (Apple Silicon -> arm64 wheel + MPS)
-
-ucimlrepo      # UCI loan default (R1)
-yfinance       # finance ^GSPC (R3)

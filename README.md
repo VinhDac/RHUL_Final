@@ -1,66 +1,55 @@
 # Data Snooping in Deep Learning
 
-Measure how much of a model's apparent improvement from searching configurations
-is real, and how much is luck.
+A Master's dissertation on why a model's reported score cannot be trusted on its own,
+and what to trust instead.
 
-A validation score is only a noisy guess at true performance
-(`validation = true + luck`). Searching N configurations and keeping the best
-validation score keeps the *luckiest*, not the *best*, so that score is inflated
-— and the inflation grows with the search. We **measure** the inflation with a
-sealed test set, opened once:
+The argument runs in two branches that meet at one conclusion. Snooping: chasing a
+better number by trying too many configurations, and by using methods whose hidden
+assumptions do not fit the problem. Deep learning: the black box where that search is
+largest and least counted. Both land in the same place. We cannot trust the GOAL (the
+number), only the PROCEDURE that produced it, with its assumptions made clear and
+matched to the situation.
 
-```
-gap = best_validation_score − sealed_test_score
-```
-
-A *configuration* is a model plus its settings (architecture, width, learning rate).
-Picture ten students who know nothing sitting a short quiz: by luck the best scores
-80%, but a long final reveals the truth, 50%. Configurations are the students, the
-small validation set is the short quiz, the sealed test is the long final, and the
-`gap` is the drop — a *larger* gap is *worse* (more of the reported score was luck).
-
-## The argument at a glance
-
-Read top to bottom — each arrow is one reasoning step; the two amber links
-(deep-learning amplification and the cure) are what make the effect matter.
-
-![Logic flow of the thesis — score = truth + luck; searching keeps the luckiest (winner's curse); deep learning amplifies it through hidden knobs (epochs, seed); measured exactly in a synthetic lab with a sealed test; confirmed on real data (loan, finance); cured by an honest, restrained procedure. Trust is a property of the process, not the number.](figures/logic_flow.svg)
-
-## How to read this
-
-`Core.md` is the report — read it top to bottom; it stands on its own. For more
-depth, the appendix derives the maths in full; to reproduce any number, the
-notebooks and `snooping_backend/` code are linked from the point that uses them.
-Core.md is the spine — the code supports it, not the other way round.
+Every claim is grounded twice: derived in place from first-year probability, and
+measured by a small experiment you can rerun. Nothing depends on a result you cannot
+check.
 
 ## Layout
 
 | Path | Purpose |
 |------|---------|
-| `Core.md` | the core report (reasoning first → PDF for the supervisor) |
-| `snooping_backend/config.py` | canonical split sizes — the single source of truth |
-| `snooping_backend/lab.py` | synthetic lab: Gaussian X, the labelling cases, noise, splits |
-| `snooping_backend/mlp.py` | the searched instrument — a small PyTorch MLP (knobs: width, lr) |
-| `snooping_backend/models.py` | the sklearn garden (fixed-setting kNN/tree/logreg/SVM) — Case-4 demo + isometry appendix |
-| `snooping_backend/pipeline.py` | the machine: search → keep best on validation → reveal on sealed test → gap |
-| `snooping_backend/experiments.py` | the E-2 (hidden search) and H5 (remedy) experiments |
-| `snooping_backend/data_loan.py`, `data_finance.py` | real-data providers (loan default, finance) |
-| `tests/` | fail-loud sanity checks (lab, mlp, pipeline) — exit non-zero on any failure |
-| `data/` | input data frozen to CSV — offline, reproducible runs |
-| `notebooks/` | runnable experiments + figures |
-| `figures/` | output plots |
+| `Core.md` | the dissertation, read top to bottom; it stands on its own |
+| `KEY_CORE.html` | the flowchart the dissertation follows (its source of structure) |
+| `code/` | the experiments, numpy only, each one short and self-contained |
+| `data/` | the frozen datasets |
+| `Plan/` | the approved project plan |
+| `Docs/` | course materials |
+
+Inside `code/` (run each from the repo root, e.g. `python code/lab_demo.py`):
+
+| File | Section | What it does |
+|------|---------|--------------|
+| `code/lab_demo.py` | §2.2, Appendix B | the synthetic gap lab; the hand-written MLP lives here and the other scripts import it |
+| `code/loan_split.py` | §2.3-A | the i.i.d. control: every split agrees, so shuffle is correct |
+| `code/finance_split.py` | §2.3-A | time order: shuffle leaks the future, walk-forward is honest |
+| `code/har_split.py` | §2.3-A | grouped rows: record-wise recognises people, subject-wise is honest |
+| `code/scaling_split.py` | §2.3-B | standardising a drifting feature quietly kills a real model |
+| `code/data_peek.py` | Appendix C | prints the raw head of each of the three datasets |
 
 ## Run
 
-From the repo root:
+Only numpy is needed. From the repo root:
 
 ```
 pip install -r requirements.txt
-python -m tests.test_lab && python -m tests.test_mlp && python -m tests.test_pipeline
-jupyter notebook              # then open notebooks/01_core_snooping.ipynb
+python code/lab_demo.py
+python code/loan_split.py
+python code/finance_split.py
+python code/har_split.py
+python code/scaling_split.py
 ```
 
-The input data is frozen to `data/*.csv` (committed), so everything runs **offline**
-and reproducibly (`seed=0`); only regenerating that frozen data needs the internet.
-The parameter sweeps in the notebooks take a few minutes each on CPU. Notebooks add
-the repo root to `sys.path` so they can `import snooping_backend`.
+Everything is deterministic (`seed = 0`) and runs offline. The loan and market data are
+frozen CSVs in `data/`. The activity data (UCI Human Activity Recognition, archive
+dataset 240) is cached to `data/har.npz`; if that cache is missing, download and unzip
+the dataset into `data/UCI HAR Dataset/` and `code/har_split.py` will rebuild it.

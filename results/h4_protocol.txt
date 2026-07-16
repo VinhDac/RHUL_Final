@@ -1,6 +1,0 @@
-H4 PROTOCOL: gap single-split vs 5-fold CV (Case 1, R=6)
-  N=  1   single split = -0.0039   5-fold CV = -0.0026
-  N=  5   single split = +0.0389   5-fold CV = +0.0147
-  N= 20   single split = +0.0670   5-fold CV = +0.0220
-  N= 50   single split = +0.0710   5-fold CV = +0.0238
-DONE

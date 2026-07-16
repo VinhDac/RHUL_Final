@@ -405,7 +405,7 @@ So we do not lean on the formula as truth. We use it to see the mechanism, and w
 
 *Outside the page limit; the measurement half of the grounding. Appendix A shows why the formulas hold; this shows the code that measured the real gap, and that running it reproduces the numbers in §2.2.*
 
-The whole lab is one short file, `lab_demo.py` (repo root), that runs on numpy alone, `python lab_demo.py`, with `seed = 0`, so every number below reproduces exactly. Here it is in the five pieces of §2.2. The helper functions (`init`, `forward`, `softmax`, `accuracy`, `sample_config`) are in the file; `forward` is just `h = ReLU(X·W1 + b1)` then `z = h·W2 + b2`, and `sample_config` draws a width from {4, 8, 16, 32, 64} and a learning rate around 0.01–0.3.
+The whole lab is one short file, `code/lab_demo.py`, that runs on numpy alone, `python code/lab_demo.py`, with `seed = 0`, so every number below reproduces exactly. Here it is in the five pieces of §2.2. The helper functions (`init`, `forward`, `softmax`, `accuracy`, `sample_config`) are in the file; `forward` is just `h = ReLU(X·W1 + b1)` then `z = h·W2 + b2`, and `sample_config` draws a width from {4, 8, 16, 32, 64} and a learning rate around 0.01–0.3.
 
 **Piece 1: the no-signal data.** Random features; labels that are coin flips, drawn without ever looking at the features. Split into train, a small validation set (200), and a large sealed test (10 000).
 
@@ -513,13 +513,13 @@ Same shape, but the measured value sits a little under the formula. The formula 
 
 Reusing the test inflates it too, 0.500 to 0.512, so selecting on the test poisons it like any other set. It moves less than the validation only because the test is larger (its σ is seven times smaller). The lesson: selection is the poison, not the set; the test's honesty lives in looking once, on a set large enough to be quiet.
 
-So the whole result is one line: a gap of +0.077 at N = 100, out of data with no signal at all, growing with the search, and the same curse hits any set we select on, the sealed test included. Rerun `python lab_demo.py` to reproduce every number here.
+So the whole result is one line: a gap of +0.077 at N = 100, out of data with no signal at all, growing with the search, and the same curse hits any set we select on, the sealed test included. Rerun `python code/lab_demo.py` to reproduce every number here.
 
 ---
 
 ## Appendix C: the three datasets, up close
 
-*Outside the page limit. §2.3 leans on these three for the rest of the report, so here they are as they actually arrive: where each came from, what the raw rows hold, what makes its structure the structure we claim it is, and how each becomes the task we run. Every number below is read straight off `python data_peek.py`.*
+*Outside the page limit. §2.3 leans on these three for the rest of the report, so here they are as they actually arrive: where each came from, what the raw rows hold, what makes its structure the structure we claim it is, and how each becomes the task we run. Every number below is read straight off `python code/data_peek.py`.*
 
 ### Loan: UCI credit-card default
 
@@ -593,7 +593,7 @@ Honest limits: thirty people, all healthy adults, one phone in one position.
 
 ## Appendix D: the code for the real-data split experiments
 
-*Outside the page limit. §2.3 changes one thing at a time on real data; this is the code that did it and the output it printed. Four short files in the repo root, numpy only, all reusing the same MLP from `lab_demo.py`: `loan_split.py`, `finance_split.py`, `har_split.py` for the split (A), and `scaling_split.py` for the scaling (B). Each prints the table quoted in the body.*
+*Outside the page limit. §2.3 changes one thing at a time on real data; this is the code that did it and the output it printed. Four short files in `code/`, numpy only, all reusing the same MLP from `code/lab_demo.py`: `code/loan_split.py`, `code/finance_split.py`, `code/har_split.py` for the split (A), and `code/scaling_split.py` for the scaling (B). Each prints the table quoted in the body.*
 
 **The shared shape.** Every experiment is the same three thoughts: load a real dataset, build two splits, run the identical MLP under each. Only the split differs. Features are standardised with the mean and standard deviation of the training side only, so the standardising itself never leaks (that is §2.3-B's problem, deliberately kept out of this one).
 
@@ -699,7 +699,7 @@ This is the one place the network is not literally the §2.2 model: HAR has six 
 
 One warning worth recording, because it nearly fooled us. With 561 features a learning rate of 0.5 (the value the market task uses) makes the training diverge: the accuracies come back as noise between 0.0 and 0.35, and the split comparison becomes meaningless. At 0.1 the model trains cleanly (0.98 on its own training set). We only found this by checking that the model learns at all before trusting any comparison between splits. A split experiment on a model that is not training is measuring nothing.
 
-**Piece 4: scaling, and a world that moves (§2.3-B).** The file is `scaling_split.py`. Here the task, the label and the split never move; only the feature's unit and the scaling do. The label is always built from the percent size, so it stays stationary and exactly balanced whichever feature the model is fed, which is what makes the three rows comparable.
+**Piece 4: scaling, and a world that moves (§2.3-B).** The file is `code/scaling_split.py`. Here the task, the label and the split never move; only the feature's unit and the scaling do. The label is always built from the percent size, so it stays stationary and exactly balanced whichever feature the model is fed, which is what makes the three rows comparable.
 
 ```python
 def load(kind="percent"):
@@ -743,7 +743,7 @@ dollars (drifts)       | rolling  | mean 0.549   sd 0.007
 
 The first block is the mechanism and the second is the damage. Nothing in this experiment leaks: the split is chronological in all three rows, and the rolling scaler is causal. The 0.512 is what the textbook rule does to a working model when the feature underneath it drifts.
 
-**Reproduce.** `python loan_split.py`, `python finance_split.py`, `python har_split.py`, `python scaling_split.py`. The loan and market data are frozen in `data/`. HAR is downloaded once from the UCI archive (id 240) and cached to `data/har.npz`.
+**Reproduce.** `python code/loan_split.py`, `python code/finance_split.py`, `python code/har_split.py`, `python code/scaling_split.py`. The loan and market data are frozen in `data/`. HAR is downloaded once from the UCI archive (id 240) and cached to `data/har.npz`.
 
 ---
 

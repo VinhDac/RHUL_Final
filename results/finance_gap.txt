@@ -1,7 +1,0 @@
-FINANCE gap vs N (fixed walk-forward split, R=6) -- apparent = searched 'edge', true = out-of-sample:
-  N=  1  apparent=0.537  true=0.531  gap=+0.0070 (+/-0.0133)
-  N=  5  apparent=0.553  true=0.535  gap=+0.0188 (+/-0.0117)
-  N= 20  apparent=0.563  true=0.533  gap=+0.0303 (+/-0.0089)
-  N= 50  apparent=0.566  true=0.533  gap=+0.0328 (+/-0.0115)
-  N=100  apparent=0.572  true=0.533  gap=+0.0383 (+/-0.0056)
-DONE

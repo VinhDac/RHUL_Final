@@ -5,6 +5,6 @@ __pycache__/
 .venv/
 venv/
 
-# generated artifacts (keep the folders via .gitkeep, ignore the contents)
-results/*.csv
-figures/*.png
+# the raw UCI HAR download; the cache data/har.npz is what the code uses
+data/UCI HAR Dataset/
+data/__MACOSX/
