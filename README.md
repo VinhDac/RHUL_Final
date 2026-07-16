@@ -3,12 +3,20 @@
 A Master's dissertation on why a model's reported score cannot be trusted on its own,
 and what to trust instead.
 
-The argument runs in two branches that meet at one conclusion. Snooping: chasing a
-better number by trying too many configurations, and by using methods whose hidden
-assumptions do not fit the problem. Deep learning: the black box where that search is
-largest and least counted. Both land in the same place. We cannot trust the GOAL (the
-number), only the PROCEDURE that produced it, with its assumptions made clear and
-matched to the situation.
+It is written as a journey rather than a proof. We start where everyone starts, by the
+book: follow every textbook rule for an honest number, and believe what it gives us.
+Then we watch that trust come apart. First on pure noise, where trying enough
+configurations inflates the score all by itself. Then on three real datasets, where the
+same by-the-book recipe betrays us three separate ways: the split leaks the future or
+the person, the frozen scaler quietly kills a working model when the world drifts, and
+accuracy hides a model that catches almost none of the defaulters it was built to find.
+Each safeguard we reach for turns in our hand.
+
+The way out is not a better number or a cleverer method. It is to stop trusting the
+score and trust the way it was made: a procedure whose assumptions are stated, checked,
+and matched to the data in front of us. Underneath that, the real thing we trust is
+understanding; the careless practitioner and the honest one run the same steps, and only
+understanding tells them apart.
 
 Every claim is grounded twice: derived in place from first-year probability, and
 measured by a small experiment you can rerun. Nothing depends on a result you cannot
@@ -34,6 +42,7 @@ Inside `code/` (run each from the repo root, e.g. `python code/lab_demo.py`):
 | `code/finance_split.py` | §2.3-A | time order: shuffle leaks the future, walk-forward is honest |
 | `code/har_split.py` | §2.3-A | grouped rows: record-wise recognises people, subject-wise is honest |
 | `code/scaling_split.py` | §2.3-B | standardising a drifting feature quietly kills a real model |
+| `code/metric_loan.py` | §2.3-C | the metric: accuracy looks fine while the model misses most defaulters; balanced accuracy is honest |
 | `code/data_peek.py` | Appendix C | prints the raw head of each of the three datasets |
 
 ## Run
@@ -47,6 +56,7 @@ python code/loan_split.py
 python code/finance_split.py
 python code/har_split.py
 python code/scaling_split.py
+python code/metric_loan.py
 ```
 
 Everything is deterministic (`seed = 0`) and runs offline. The loan and market data are
