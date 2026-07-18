@@ -1,0 +1,44 @@
+<svg width="100%" viewBox="0 0 680 160" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>The same five steps, and the hidden assumption in each</title>
+<desc>The same five-step pipeline, Frame the data, Split, Scale, Build and search, Measure, now with a tag under each of the four working steps showing what it quietly assumed: split assumes rows are interchangeable, scale assumes the world stands still, build and search assumes more search means better, measure assumes the classes are balanced.</desc>
+<rect x="0" y="0" width="680" height="160" fill="#ffffff"/>
+<style>
+.ti{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#1a1a1a;font-size:15px;font-weight:600}
+.bl{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#1a1a1a;font-size:13px;font-weight:500}
+.tg{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#a9702f;font-size:11px}
+</style>
+<defs><marker id="ah" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#888888"/></marker></defs>
+<text class="ti" x="20" y="26" text-anchor="start">The same five steps, and what each quietly assumed</text>
+<rect x="16" y="42" width="115" height="44" rx="8" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
+<rect x="149" y="42" width="115" height="44" rx="8" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
+<rect x="282" y="42" width="115" height="44" rx="8" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
+<rect x="415" y="42" width="115" height="44" rx="8" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
+<rect x="548" y="42" width="115" height="44" rx="8" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
+<line x1="134" y1="64" x2="146" y2="64" stroke="#888888" stroke-width="1.5" marker-end="url(#ah)"/>
+<line x1="267" y1="64" x2="279" y2="64" stroke="#888888" stroke-width="1.5" marker-end="url(#ah)"/>
+<line x1="400" y1="64" x2="412" y2="64" stroke="#888888" stroke-width="1.5" marker-end="url(#ah)"/>
+<line x1="533" y1="64" x2="545" y2="64" stroke="#888888" stroke-width="1.5" marker-end="url(#ah)"/>
+<text class="bl" x="73" y="60" text-anchor="middle">Frame</text>
+<text class="bl" x="73" y="77" text-anchor="middle">the data</text>
+<text class="bl" x="206" y="68" text-anchor="middle">Split</text>
+<text class="bl" x="339" y="68" text-anchor="middle">Scale</text>
+<text class="bl" x="472" y="60" text-anchor="middle">Build &amp;</text>
+<text class="bl" x="472" y="77" text-anchor="middle">search</text>
+<text class="bl" x="605" y="68" text-anchor="middle">Measure</text>
+<line x1="206" y1="86" x2="206" y2="104" stroke="#e0b07a" stroke-width="1"/>
+<line x1="339" y1="86" x2="339" y2="104" stroke="#e0b07a" stroke-width="1"/>
+<line x1="472" y1="86" x2="472" y2="104" stroke="#e0b07a" stroke-width="1"/>
+<line x1="605" y1="86" x2="605" y2="104" stroke="#e0b07a" stroke-width="1"/>
+<rect x="149" y="104" width="115" height="44" rx="6" fill="#f6ecdc" stroke="#e0b07a" stroke-width="1"/>
+<rect x="282" y="104" width="115" height="44" rx="6" fill="#f6ecdc" stroke="#e0b07a" stroke-width="1"/>
+<rect x="415" y="104" width="115" height="44" rx="6" fill="#f6ecdc" stroke="#e0b07a" stroke-width="1"/>
+<rect x="548" y="104" width="115" height="44" rx="6" fill="#f6ecdc" stroke="#e0b07a" stroke-width="1"/>
+<text class="tg" x="206" y="122" text-anchor="middle">assumes rows are</text>
+<text class="tg" x="206" y="137" text-anchor="middle">interchangeable</text>
+<text class="tg" x="339" y="122" text-anchor="middle">assumes the world</text>
+<text class="tg" x="339" y="137" text-anchor="middle">stands still</text>
+<text class="tg" x="472" y="122" text-anchor="middle">assumes more search</text>
+<text class="tg" x="472" y="137" text-anchor="middle">means better</text>
+<text class="tg" x="605" y="122" text-anchor="middle">assumes classes</text>
+<text class="tg" x="605" y="137" text-anchor="middle">are balanced</text>
+</svg>

@@ -1,0 +1,49 @@
+<svg width="100%" viewBox="0 0 680 350" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>The model we build: a small neural network</title>
+<desc>Three columns of circles: a few input features on the left, a hidden layer with ReLU in the middle, and two outputs on the right turned into probabilities by softmax. Every input connects to every hidden unit, and every hidden unit to both outputs. A caption lists the knobs we set: width, depth, activation, learning rate, epochs, regularisation.</desc>
+<rect x="0" y="0" width="680" height="350" fill="#ffffff"/>
+<style>
+.ti{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#1a1a1a;font-size:16px;font-weight:600}
+.lab{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#555555;font-size:13px}
+.cap{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#8a8a8a;font-size:12px}
+.node{fill:#ffffff;stroke:#333333;stroke-width:1.5}
+.wire{stroke:#cfcfcf;stroke-width:1}
+</style>
+<text class="ti" x="340" y="32" text-anchor="middle">The model we build: a small network</text>
+<line class="wire" x1="145" y1="110" x2="325" y2="95"/>
+<line class="wire" x1="145" y1="110" x2="325" y2="155"/>
+<line class="wire" x1="145" y1="110" x2="325" y2="215"/>
+<line class="wire" x1="145" y1="110" x2="325" y2="275"/>
+<line class="wire" x1="145" y1="170" x2="325" y2="95"/>
+<line class="wire" x1="145" y1="170" x2="325" y2="155"/>
+<line class="wire" x1="145" y1="170" x2="325" y2="215"/>
+<line class="wire" x1="145" y1="170" x2="325" y2="275"/>
+<line class="wire" x1="145" y1="230" x2="325" y2="95"/>
+<line class="wire" x1="145" y1="230" x2="325" y2="155"/>
+<line class="wire" x1="145" y1="230" x2="325" y2="215"/>
+<line class="wire" x1="145" y1="230" x2="325" y2="275"/>
+<line class="wire" x1="355" y1="95" x2="535" y2="155"/>
+<line class="wire" x1="355" y1="95" x2="535" y2="215"/>
+<line class="wire" x1="355" y1="155" x2="535" y2="155"/>
+<line class="wire" x1="355" y1="155" x2="535" y2="215"/>
+<line class="wire" x1="355" y1="215" x2="535" y2="155"/>
+<line class="wire" x1="355" y1="215" x2="535" y2="215"/>
+<line class="wire" x1="355" y1="275" x2="535" y2="155"/>
+<line class="wire" x1="355" y1="275" x2="535" y2="215"/>
+<circle class="node" cx="130" cy="110" r="15"/>
+<circle class="node" cx="130" cy="170" r="15"/>
+<circle class="node" cx="130" cy="230" r="15"/>
+<text class="lab" x="130" y="272" text-anchor="middle">&#8942;</text>
+<circle class="node" cx="340" cy="95" r="15"/>
+<circle class="node" cx="340" cy="155" r="15"/>
+<circle class="node" cx="340" cy="215" r="15"/>
+<circle class="node" cx="340" cy="275" r="15"/>
+<circle class="node" cx="550" cy="155" r="15"/>
+<circle class="node" cx="550" cy="215" r="15"/>
+<text class="lab" x="130" y="305" text-anchor="middle">features</text>
+<text class="lab" x="340" y="315" text-anchor="middle">hidden layer, ReLU</text>
+<text class="lab" x="550" y="128" text-anchor="middle">softmax</text>
+<text class="lab" x="573" y="159" text-anchor="start">class 0</text>
+<text class="lab" x="573" y="219" text-anchor="start">class 1</text>
+<text class="cap" x="340" y="343" text-anchor="middle">knobs we set: width &#183; depth &#183; activation &#183; learning rate &#183; epochs &#183; regularisation</text>
+</svg>

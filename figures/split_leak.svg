@@ -1,0 +1,48 @@
+<svg width="100%" viewBox="0 0 680 200" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>Why shuffling leaks on a time series</title>
+<desc>Two rows of day-squares in date order. In the chronological split, the first days are training and the last days are test, one clean cut between past and future. In the random shuffle, training and test squares are scattered, so a day and the day right before it (its near-twin) end up on opposite sides of the split, letting the future leak into training.</desc>
+<rect x="0" y="0" width="680" height="200" fill="#ffffff"/>
+<style>
+.ti{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#1a1a1a;font-size:15px;font-weight:600}
+.lb{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#333333;font-size:13px;font-weight:500}
+.cp{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#666666;font-size:12px}
+.tr{fill:#6f8fc0}
+.te{fill:#d99457}
+</style>
+<text class="ti" x="20" y="26" text-anchor="start">Why shuffling leaks on a time series</text>
+<rect class="tr" x="500" y="15" width="13" height="13" rx="2"/>
+<text class="cp" x="518" y="26" text-anchor="start">train</text>
+<rect class="te" x="575" y="15" width="13" height="13" rx="2"/>
+<text class="cp" x="593" y="26" text-anchor="start">test</text>
+<text class="lb" x="20" y="72" text-anchor="start">Chronological</text>
+<rect class="tr" x="150" y="54" width="26" height="26" rx="3"/>
+<rect class="tr" x="182" y="54" width="26" height="26" rx="3"/>
+<rect class="tr" x="214" y="54" width="26" height="26" rx="3"/>
+<rect class="tr" x="246" y="54" width="26" height="26" rx="3"/>
+<rect class="tr" x="278" y="54" width="26" height="26" rx="3"/>
+<rect class="tr" x="310" y="54" width="26" height="26" rx="3"/>
+<rect class="tr" x="342" y="54" width="26" height="26" rx="3"/>
+<rect class="tr" x="374" y="54" width="26" height="26" rx="3"/>
+<rect class="tr" x="406" y="54" width="26" height="26" rx="3"/>
+<rect class="te" x="438" y="54" width="26" height="26" rx="3"/>
+<rect class="te" x="470" y="54" width="26" height="26" rx="3"/>
+<rect class="te" x="502" y="54" width="26" height="26" rx="3"/>
+<line x1="434" y1="50" x2="434" y2="84" stroke="#999999" stroke-width="1.5" stroke-dasharray="3 3"/>
+<text class="cp" x="339" y="100" text-anchor="middle">one clean cut: past, then future</text>
+<text class="lb" x="20" y="156" text-anchor="start">Shuffle</text>
+<path d="M310,132 L310,126 L368,126 L368,132" fill="none" stroke="#1a1a1a" stroke-width="1.2"/>
+<text class="cp" x="339" y="121" text-anchor="middle">near-twins, split apart</text>
+<rect class="tr" x="150" y="138" width="26" height="26" rx="3"/>
+<rect class="tr" x="182" y="138" width="26" height="26" rx="3"/>
+<rect class="te" x="214" y="138" width="26" height="26" rx="3"/>
+<rect class="tr" x="246" y="138" width="26" height="26" rx="3"/>
+<rect class="tr" x="278" y="138" width="26" height="26" rx="3"/>
+<rect class="tr" x="310" y="138" width="26" height="26" rx="3"/>
+<rect class="te" x="342" y="138" width="26" height="26" rx="3"/>
+<rect class="tr" x="374" y="138" width="26" height="26" rx="3"/>
+<rect class="tr" x="406" y="138" width="26" height="26" rx="3"/>
+<rect class="tr" x="438" y="138" width="26" height="26" rx="3"/>
+<rect class="te" x="470" y="138" width="26" height="26" rx="3"/>
+<rect class="tr" x="502" y="138" width="26" height="26" rx="3"/>
+<text class="cp" x="339" y="184" text-anchor="middle">shuffle scatters the neighbours across the cut</text>
+</svg>

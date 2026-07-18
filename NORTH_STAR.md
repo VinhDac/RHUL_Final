@@ -1,50 +1,62 @@
 # North Star
 
-*The compass for the whole dissertation. `KEY_CORE.html` holds the **bones** (what is true, and why). This holds the **spirit** (how it is told). When any paragraph feels wrong, come back here.*
+*The compass for the whole dissertation. When any paragraph feels wrong, come back here. `KEY_CORE.html` holds the underlying argument.*
 
 ## The one line
 
-We take the reader by the hand, from *"the number is obviously trustworthy"*, through *"the number lied to me, and now I don't know what is real"*, to *"now I understand what to trust, and why."* We walk it as fellow travelers who fell into every trap ourselves.
+An ordinary person builds a deep-learning model the normal way, by the book, step by step. At each step the by-the-book move looks bulletproof, and then hides an assumption that, on the wrong data, quietly breaks. Walking that failure together teaches the reader what to actually trust: not the number, but understanding, turned into a procedure.
 
 ## Who is telling it
 
-Not an expert on the summit pointing back down at the traps. A fellow traveler at the trailhead, who does the obvious thing, gets fooled, feels it, and works out the way, beside the reader, at the same time.
+A fellow traveller, not a professor. Someone very ordinary, doing ordinary things, who gets confused, gets it wrong, and works it out beside the reader. Our authority is "I fell for this too, and here is how I climbed out," never "I know better." This is a journey of discovery, not a lecture. We never make the reader memorise anything; we help them see.
 
-- The "we" genuinely does not know yet. The understanding arrives *after* the mistake, for us and the reader together.
-- We never warn the reader about a trap. We fall into it *with* them, so they feel the drop in their own stomach.
-- Our authority is not "I know better." It is "I fell for all of this, and here is how I climbed out." A person who is confused *with* you is more believable than one who lectures you.
+## The structure: the pipeline is the map
 
-## The reader's journey (do not skip a beat)
+Section 1 lays out the normal way to build a DL model as a pipeline, with a diagram, so the reader always knows where they are. Then we walk it, in pipeline order, station by station. Four stations hold a trap:
 
-1. **Comfort.** The obvious, by-the-book way. Every rule from the books, followed. The number looks earned. It feels safe.
-2. **The first small fall.** Something itches: even pure noise, searched hard enough, hands us a good number. We can still tell ourselves: *that was a toy; on real data, by the book, I am safe.*
-3. **The seduction.** On real data, disciplined, by the book, and it works. The textbook is vindicated. We trust it again, more than before.
-4. **The rug.** Then, still by the book, still disciplined, the number lies. And again. And again. Three different ways.
-5. **The valley.** Confusion, and we sit in it, we do not rush out. If shuffling lies, and looking twice lies, and even the honest test can be poisoned, then *is any number real? what is left? what do we even do?* This lostness is the point. The relief must be earned.
-6. **The climb.** From inside the confusion we ask what actually went wrong, and reach the fix ourselves. The method is a conclusion we arrive at, never a rule handed down.
-7. **The summit.** We understand: trust not the number but the way it was made, and that way is trustworthy only when it is built on real understanding of the data and the logic. Now we see *why.*
+1. **SPLIT** the data. Loan: it works, the book is vindicated. Market: it breaks (time). Phone: it breaks (people). Hidden assumption: the rows are interchangeable.
+2. **SCALE** the features. The drift collapse. Hidden assumption: the world stands still.
+3. **BUILD and SEARCH** (architecture, loss, regularise, train, keep the best). Even pure noise inflates when we keep the best of many tries, and deep learning snoops by itself through early stopping. Hidden assumption: a higher validation score means a better model.
+4. **MEASURE** (report a metric). Accuracy hides a useless model on rare cases. Hidden assumption: the classes are balanced and the two errors cost the same.
 
-## The voice
+Then a short bottom (every step hid an assumption, so the number cannot be trusted) and the summit (trust understanding made into a procedure). Note: the no-signal search lab lives at station 3, not at the opening. We open on real data.
 
-- Start from the simplest thing a curious person would actually think.
-- Every technical idea (σ, best-of-N, standardizing) arrives as the answer to a plain question we needed to ask, not as a setup placed on the table.
-- One small knot at a time. The reader unties it. We do not hand it pre-untied.
-- Short, plain words. No jargon before it is earned. No result before we have felt the need for it.
-- Surprise, doubt, being stuck: these are features. Show them.
-- **Never use the em dash character ( — ).** Use a comma, a colon, parentheses, or a full stop instead. (Ordinary hyphens in words like "by-the-book" or "walk-forward" are fine.)
+## The rhythm at each station: keep it light
+
+Every station is the same small beat: do the by-the-book move, watch it look fine, find the trap on the wrong data, understand why, reach the matched fix. State each beat once, plainly, and move on. Do not dwell, do not dramatise, do not keep saying "feel how strange this is." The map makes the walk feel like progress; heaviness makes it feel like a slog.
+
+## The voice, and the one rule above all: LIGHTNESS
+
+Section 0 is the standard for the whole piece: short, plain, familiar, curious, easy, never challenging the reader. The gravest failure mode of this project is the opposite, and we have already fallen into it once: long-winded, heavy, over-dramatic, hard to read. So:
+
+- When in doubt, CUT. The fix is almost always less, not more.
+- Short sentences. Plain words. No jargon before it is earned.
+- Let a picture carry the logic instead of a wall of prose.
+- Bring the concrete data into the story; do not exile it to an appendix and make the reader imagine it.
+- Never use the em dash character ( — ). Use a comma, a colon, parentheses, or a full stop.
+
+## Visuals carry the logic
+
+The maths and the mechanisms lean on pictures, not prose walls. The key diagrams: the MLP itself; the build pipeline; the winner's curse (a cloud of scores around 0.5, its maximum creeping right as we try more); a shuffle dropping a near-twin across the split; a feature drifting out from under a frozen scaler; a confusion matrix; a train-versus-validation loss curve for early stopping.
+
+## Datasets tell their own story
+
+Each dataset's lesson emerges FROM its raw data, never imposed. Show the actual rows first; let the reader notice the thing (two neighbouring days share four of five numbers; every window belongs to a person), and let that observation drive the question and the fix. Never "here is the trick, now here are the numbers."
+
+## Appendices show the transformation
+
+Code appendices show the data changing, step by step: print what one row is, and what it becomes after each line, so a learner sees the transformation instead of imagining it.
 
 ## What never changes / what changes completely
 
-- **Never changes (the bones):** the key core (two forces make the goal untrustable, so we trust the procedure); the labs; the three datasets; the formulas; the numbers; the honest science. Nothing true is softened for the story.
-- **Changes completely (the telling):** nearly every paragraph is re-voiced, from *"here is the truth, and here is the proof"* to *"let's try this… huh… what happened… what do we do?"*
+- **Never changes:** the underlying argument (each pipeline step hides an assumption, so the number cannot be trusted, so we trust understanding made into a procedure); the labs; the datasets; the formulas; the numbers.
+- **Changes:** the telling. Lighter, shorter, more visual, ordered along the pipeline.
 
 ## How we work together
 
-- Every time a choice comes up, offer **three concrete options** to pick from, never a yes/no. Lay out real alternatives; the user decides.
-- Move in tiny, sure steps. One small piece at a time, checked against this compass, locked before the next.
+- Every time a choice comes up, offer three concrete options. The user decides.
+- Tiny, sure steps. One small piece at a time, checked against this compass, locked before the next.
 
 ## The one test for any paragraph
 
-> Does this sound like a companion discovering it beside the reader, or a teacher who already knows the answer?
-
-If it is the teacher, rewrite it. And: *have we warned the reader about a trap instead of letting them fall in?* If so, we have spoiled the journey.
+Ask two things. Does it sound like a curious ordinary person discovering this beside the reader, or a professor who already knows? And: is it as short and light as Section 0, or has it gone heavy and long? If professor, or if heavy, rewrite it shorter.
