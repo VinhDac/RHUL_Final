@@ -1,0 +1,23 @@
+<svg width="100%" viewBox="0 0 680 288" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>Fitting the training data is not the same as learning</title>
+<desc>A chart over training time. The training loss falls and keeps falling. The validation loss falls at first, reaches a lowest point, then rises again. A dashed line marks that lowest point as early stopping, where the model generalises best. After it, in a shaded region, the training loss still improves while the validation loss gets worse: the model is memorising noise instead of learning.</desc>
+<rect x="0" y="0" width="680" height="288" fill="#ffffff"/>
+<style>
+.ti{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#1a1a1a;font-size:15px;font-weight:600}
+.ax{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#777777;font-size:12px}
+.lb{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:12px;font-weight:500}
+</style>
+<text class="ti" x="20" y="26" text-anchor="start">Fitting the training data is not the same as learning</text>
+<rect x="340" y="52" width="280" height="188" fill="#f6ecdc" opacity="0.55"/>
+<line x1="90" y1="240" x2="620" y2="240" stroke="#cccccc" stroke-width="1"/>
+<line x1="90" y1="52" x2="90" y2="240" stroke="#cccccc" stroke-width="1"/>
+<polyline points="90,80 160,135 240,175 320,200 400,214 480,222 600,230" fill="none" stroke="#5b7db1" stroke-width="2.5"/>
+<polyline points="90,88 160,145 240,182 320,196 360,196 440,178 520,152 600,128" fill="none" stroke="#d98b4a" stroke-width="2.5"/>
+<line x1="340" y1="52" x2="340" y2="240" stroke="#333333" stroke-width="1.3" stroke-dasharray="4 4"/>
+<text class="lb" x="336" y="48" text-anchor="end" fill="#333333">stop here: validation is best</text>
+<text class="lb" x="610" y="228" text-anchor="end" fill="#5b7db1">training loss (keeps dropping)</text>
+<text class="lb" x="610" y="120" text-anchor="end" fill="#a9702f">validation loss (climbing back up)</text>
+<text class="ax" x="482" y="76" text-anchor="middle" fill="#a9702f">overfitting: memorising noise</text>
+<text class="ax" x="355" y="264" text-anchor="middle">training time (epochs)</text>
+<text class="ax" x="86" y="48" text-anchor="end">loss</text>
+</svg>

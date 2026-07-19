@@ -25,6 +25,14 @@ Then a short bottom (every step hid an assumption, so the number cannot be trust
 
 Every station is the same small beat: do the by-the-book move, watch it look fine, find the trap on the wrong data, understand why, reach the matched fix. State each beat once, plainly, and move on. Do not dwell, do not dramatise, do not keep saying "feel how strange this is." The map makes the walk feel like progress; heaviness makes it feel like a slog.
 
+## Every section carries a key question
+
+Each section must surface at least one KEY QUESTION out loud, and let the reader feel it: a genuine doubt that interrogates the essence of what we are doing, not a rhetorical flourish. It is the emotional and intellectual spine of that section, the thing that makes the reader stop and think, and the section is the search for its answer. Examples: "An edge on the market? That is too easy, what is leaking in?" "A high accuracy, but did it catch the very people we built the model for?" "Does trying harder make a better model, or just a luckier number?" No section should read as a smooth statement of results; each should be driven by its own doubt.
+
+## The depth: each context is its own journey
+
+Do not march one pipeline step across several datasets in a row (that flattens each dataset into a bullet and reads like a report). Instead, give each dataset its own full journey: its own opening question, its own doubts, its own dead ends and mistakes, its own trail of small tries (a decision tree, branch by branch) until its own answer falls out. The pipeline stays as the shared map; the datasets are where we actually live and think.
+
 ## The voice, and the one rule above all: LIGHTNESS
 
 Section 0 is the standard for the whole piece: short, plain, familiar, curious, easy, never challenging the reader. The gravest failure mode of this project is the opposite, and we have already fallen into it once: long-winded, heavy, over-dramatic, hard to read. So:

@@ -24,33 +24,37 @@ So, where does everyone start? By the book. Let us start there too.
 
 ---
 
-## 1. The tool, and the plan
+## 1. What deep learning really is, and the plan
 
 So we have a job: take the next case and put a label on it. What do we build?
 
-Almost always, the same thing: a small neural network. Why that? Because it bends to fit almost anything. It is a stack of simple parts, and we get to decide how many and how big.
+Almost always, the same thing: a small neural network. It is a stack of simple parts. A few features go in, get mixed and bent through a hidden layer, and come out as a guess between the classes.
 
 ![The model: a small network](figures/mlp.svg)
 
-That is the whole model. A few features go in on the left, pass through a hidden layer in the middle, and come out on the right as a guess between the classes. The circles and wires are fixed once we choose them; what we actually set are the knobs listed underneath: how wide, how deep, which activation, how fast it learns, how long, how hard we hold it back. Turn any knob and we get a different model. That freedom is the whole appeal. Later it will also be the trouble.
+How does it learn? We do not program it. We show it examples, and a procedure called gradient descent nudges its many little knobs, again and again, until its guesses on the training data come out mostly right. Give it more knobs, make it wider or deeper, and it can fit more. That is the whole appeal: with enough knobs, a network can fit almost any pattern we hand it.
 
-But the model is only the middle of the story. To get a number we can show anyone, we follow a recipe, the same one taught in every course:
+And there is the catch, the one that shadows this whole report. If it can fit almost any pattern, then it can also fit patterns that are not really there. Show it pure noise for long enough and it will "learn" the noise, memorising which random point got which random label, and score beautifully on the training data.
+
+![Fitting the training data is not the same as learning](figures/loss_curve.svg)
+
+So here is the question everything turns on: if the model can fit anything, even nonsense, how do we ever know it learned something real and not just the noise? We cannot tell from the training score, because it can ace that either way. We can only tell by trying it on data it has never seen. That single idea is the root of the whole recipe that follows: hold some data back, judge the model on that, and never let it peek while it is learning.
+
+Which brings us to the plan. To turn a network into a number we can show anyone, we follow a recipe, the same one printed in every course:
 
 ![The normal way to build a model](figures/pipeline.svg)
 
-Five steps, start to finish. Frame the data, so we know what one row is and what we are predicting. Split it into training, validation and test. Scale the features. Build and search for a good model. Measure how good it turned out. Do all five by the book, and the number at the end is meant to be honest.
+Five steps. Frame the data. Split it into training, validation and test. Scale the features. Build and search for a good model. Measure how good it turned out. Every step is standard, careful, exactly what we are told to do, and the number at the end is meant to be honest.
 
-And it looks airtight. Every step is standard, careful, exactly what we are told to do. So here is the plan for the whole report. We will walk this recipe, one step at a time, on real data, and at each step we stop and ask one plain question: is this step really as safe as it looks?
+So here is the plan for the whole report. We are not going to attack this recipe. We are going to follow it, faithfully, and carry it to one real problem after another. And at each problem we ask the same plain, stubborn question: is this really as safe as it looks?
 
-Let us start at the first real choice. The split.
+Let us meet the first one.
 
 ---
 
-## 2. Splitting the data
+## 2. Loan: the well-behaved one that still lies
 
-Step two of the recipe: cut the data into a training set, a validation set, and a test set. And before we cut, shuffle it, so each part looks like the whole. This is the standard move, taught everywhere (Stone, 1974; Kohavi, 1995). Nobody argues with it.
-
-Let us try it on something real. Our first dataset is thirty thousand credit-card clients, and the job is to spot who will miss their next payment. One row is one person:
+Our first problem is the friendliest one we have. A bank hands us thirty thousand credit-card clients and one question: which of them will miss their next payment? One row is one person.
 
 | client | age | credit limit | latest bill | latest payment | defaulted? |
 | ------ | --- | ------------ | ----------- | -------------- | ---------- |
@@ -58,22 +62,34 @@ Let us try it on something real. Our first dataset is thirty thousand credit-car
 | 2 | 26 | 120 000 | 2 682 | 0 | yes |
 | 3 | 34 | 90 000 | 29 239 | 1 518 | no |
 
-Twenty-three numbers about a person, and a yes or no at the end. About one in five defaults.
+Twenty-three numbers about a person, and a yes or no. About one in five defaults. Nothing tricky here: separate people, no time, no repeats. So we do the first steps of the recipe by the book, shuffle and split, and it feels almost too easy.
 
-Does it matter how we split them? It should not. One client tells us nothing about the next, so any fair way of dealing the cards ought to give the same answer. But we said we would check, not assume. So we cut the data eleven different ways, hold everything else fixed, and watch the number. Ten are ordinary random shuffles. The eleventh forces that one-in-five default rate onto both sides.
+Still, we are careful, so before trusting anything we poke at the split. Does it matter how we cut the deck? It should not, one client tells us nothing about the next, but we check rather than assume. We cut it eleven different ways, ten random shuffles and one that forces the same one-in-five default rate onto both sides, and hold everything else fixed.
 
 | how we split | test accuracy |
 | ------------ | ------------- |
 | ten random shuffles | 0.813 ± 0.003 |
 | forced-ratio split | 0.814 |
 
-Every one of them lands in the same place, within a whisker. The split simply did not matter. On this data the book is exactly right: shuffle, cut, and go.
+Every cut lands in the same place, within a whisker. The split is a formality here, exactly as the book promises. So we build the model, and it scores 0.813. A fifth of clients default, so stamping "no default" on everyone would already score 0.779; our model beats that. We could write 0.813 down and move on, and almost everyone would.
 
-One step down, one dataset, and the recipe passed clean. So we try the next.
+But a number this smooth deserves one hard question. **The whole point of this model was to find the people who will default. So of the clients who actually did default, how many did our 0.813 model catch?**
 
-*The market.*
+We open it up and count.
 
-Same step, new data, and this time the data barely looks like data: one long column of numbers, the daily closing price of the S&P 500, about six and a half thousand days in a row.
+![Accuracy looks fine while most defaulters slip through](figures/confusion.svg)
+
+Out of 1 353 real defaulters, it caught 438 and missed 915. It waved two in three of them straight through, stamped safe. That shiny 0.813 is almost entirely the big green box, the paying clients it correctly cleared. On the very people we built the model for, it is close to a coin.
+
+And now the number stops looking smooth and starts looking dishonest. A model that catches nobody at all, that stamps "will pay" on all thirty thousand, scores 0.779. Ours catches a third of the defaulters and scores 0.813. Three points apart on paper, and worlds apart in the job that mattered. Accuracy cannot tell a working model from one that does nothing, because it counts the huge easy majority and lets the rare, costly cases dissolve inside it.
+
+The strange part is that nothing here was rigged. The split was honest, we checked it eleven ways. Nothing leaked. The number was measured perfectly. It is exactly right, and it answers the wrong question. The fix is to stop letting the crowd decide and weigh both kinds of client equally, balanced accuracy, which scores the defaulters and the payers on their own and averages the two. Ours is 0.633, not 0.813. Far less flattering, and far more honest. Or skip the single number and just read the boxes; nothing hides in a confusion table.
+
+So the friendliest problem taught us something we did not expect. The trap was not in the data, its rows were as clean as they come. It was in what we chose to measure. One problem in, and the recipe has already slipped a false number past us.
+
+## 3. Market: the edge that was too easy
+
+Our second problem barely looks like data at first: one long column of numbers, the daily closing price of the S&P 500, about six and a half thousand days in a row.
 
 | day | close |
 | --- | ----- |
@@ -93,7 +109,7 @@ But a market carries more than direction. It has a mood: some stretches are calm
 | X[1] | 0.002  0.001  0.027  0.011  0.013 | no  |
 | X[2] | 0.001  0.027  0.011  0.013  0.004 | yes |
 
-We split it by the book, shuffle and cut, and this time it reads 0.615. That is a real edge, well clear of the coin's 0.5. On the market, an edge like that would be worth a fortune, which is exactly why we should not believe it yet. Edges on the market are not supposed to be this easy.
+We split it by the book, shuffle and cut, and this time it reads 0.615. That is a real edge, well clear of the coin's 0.5, and on the market an edge like that would be worth a fortune. **Which is exactly the problem. A real edge on the market, won this easily? That is far too good to be true. What is leaking in?**
 
 So instead of celebrating, we ask one plain question: is 0.615 what we would actually get in practice? In real life we would train on the days we have and predict days that have not happened. So we measure it that way too, train on the first 80% in date order, test on the newest 20%, everything else untouched.
 
@@ -114,9 +130,28 @@ One doubt still nagged: how do we know the gap is a real leak, and not just the 
 
 Look back at the trail. We did not reason our way to "respect the order of time." We tried the obvious thing and hit a wall, tried another and got a number too good to trust, checked it and got a contradiction, and only then looked at the data and found the answer sitting there. The lesson is not really about time series. It is that we had spent all our care on the model and none on the data, and the data was exactly where the trap was hiding.
 
-*The phone.*
+We are not done with the market, though, because there is a step of the recipe we have not questioned yet: scaling. Features arrive on all sorts of sizes, so the book says standardise them, subtract the average, divide by the spread, and fit those numbers on the training data only, never the test. We have done exactly that all along, and it is the careful thing to do.
 
-One more dataset, and this one has nothing to do with time. Thirty people wore a phone while they walked, sat, stood, and so on, and each short moment of motion becomes a row of 561 numbers, with a label for what they were doing. Here are the first three rows:
+So let us keep being careful, and change one tiny, innocent thing. Our feature was the size of each day's move, in percent. What if we measure it in points instead, the raw change in the index, which is just what you get by subtracting two prices and forgetting to divide? Same days, same information, a different unit. Everything else stays fixed, the honest split included.
+
+| feature         | test accuracy |
+| --------------- | ------------- |
+| size in percent | 0.585 |
+| size in points  | 0.512 |
+
+Read the second row twice, because it should not be possible. **Nothing leaked, the split is honest, the scaler is frozen exactly as taught, and yet the same model that scored 0.585 now scores 0.512, a coin. How can changing a feature's unit kill a working model?**
+
+By now we know where to look: not at the model, at the data. The two units behave completely differently over the years. A one-percent day is a one-percent day whether the index sits at 1 500 or at 7 000. In points it is not, because the index climbs from about 1 455 to 7 483 across the data, so the same one-percent day is worth about 15 points early on and 75 points near the end. The percent feature holds still; the points feature drifts upward (this is drift, or covariate shift: Shimodaira, 2000; Gama et al., 2014).
+
+![Why a drifting feature breaks the frozen scaler](figures/drift.svg)
+
+Now the frozen scaler is the trap. It learned what "normal" looks like from the early, low years, then applied that to the late, high years. For percent, fine. For points, a disaster: the test days sit far outside anything the model met in training, and it has no idea what to make of them. The number is not lying; it is truthfully reporting a model the recipe broke. The fix is to stop freezing one average for all time and scale each day by its own recent past, a window that slides forward and only ever looks backward, which lifts 0.512 back to 0.549. Better, though the real fix was never to build a drifting feature at all.
+
+So the market cost us twice. The split leaked the future and pushed the number too high; the scaler froze a moving world and pushed it too low. Two opposite failures, one root: we kept trusting the recipe without ever looking hard at the data underneath it.
+
+## 4. Phone: reading the person, not the task
+
+The third problem has nothing to do with time. Thirty people wore a phone while they walked, sat, stood, and so on, and each short moment of motion becomes a row of 561 numbers, with a label for what they were doing. The first three rows:
 
 | row | person | activity | f1   | f2    | f3    |
 | --- | ------ | -------- | ---- | ----- | ----- |
@@ -124,63 +159,30 @@ One more dataset, and this one has nothing to do with time. Thirty people wore a
 | 2   | 1      | standing | 0.28 | -0.02 | -0.12 |
 | 3   | 1      | standing | 0.28 | -0.02 | -0.11 |
 
-Notice, again, before we do anything: all three rows are the same person, standing, and their numbers barely move. That is how the data comes, in long runs of one person doing one thing, hundreds of rows at a stretch. Thirty people, but thousands of rows.
+Before anything else, we tried to train the network, and it embarrassed us. We reused the settings that had worked on the market, hit go, and the accuracies came back as pure noise, bouncing between 0.0 and 0.35, worse than guessing. For a moment we thought the task was hopeless. It was not: the learning rate was simply too large for 561 features, and the training was blowing up instead of settling down. We turned it down, the model trained cleanly, and it reached 0.98 on its own training data. A small, ordinary mistake, but it left a rule worth keeping: before you trust any number a model prints, check that the model is actually learning at all. A contest between two splits means nothing if neither model has learned a thing.
 
-By the book: shuffle all the rows, take a random fifth as test. It reads 0.973, almost perfect, the best number we have seen yet.
+With that sorted, back to the recipe. Notice, again, before we cut anything: all three rows above are the same person, standing, their numbers barely moving. That is how the data comes, in long runs of one person doing one thing, hundreds of rows at a stretch. Thirty people, but thousands of rows.
 
-But we have been here before, so we ask how the model would really be used: on someone new, a person it has never met. Shuffle does not test that at all, because once everyone's rows are scattered, almost every person sits on both sides of the cut. So the honest split holds out whole people: pick six of the thirty, put every one of their rows in the test set, and let the model meet them for the first time there.
+By the book: shuffle all the rows, take a random fifth as test. It reads 0.973. Almost perfect, the best number in the whole report.
+
+And that is the moment to be suspicious, not pleased. **0.973 at reading human activity, from a phone in a pocket? Is the model really that good at telling walking from sitting, or is it just recognising these particular thirty people?** Because here is what we should have asked sooner: how would this model ever be used? On someone new, a person it has never met. And shuffle does not test that at all, because once everyone's rows are scattered, almost every one of the thirty people sits on both sides of the cut.
+
+So we ask the honest question instead. We hold out whole people: pick six of the thirty, put every row they ever produced into the test set, and let the model meet them for the very first time at test.
 
 | how we split    | test accuracy |
 | --------------- | ------------- |
 | shuffle rows    | 0.973 |
 | hold out people | 0.946 |
 
-Down it comes again, lower in almost every run. Part of that shiny 0.973 was never reading activities at all; it was the model recognising these particular thirty people. Shuffle let it study a person in training, then meet them again at test. Ask it about a stranger, the thing we actually wanted, and it honestly does worse.
+Down it comes again. Part of that shiny 0.973 was never reading activities at all; it was the model recognising these particular thirty people. Shuffle let it study a person in training, then meet the same person again at test, and it happily used the second look. Ask it about a stranger, which is the only thing we actually wanted, and it honestly does worse. A third dataset, a third structure, and the same shuffle leaks all over again, this time not through time but through people.
 
-*What the split step really asks.*
+## 5. The lab: the trap that needs no data
 
-Three datasets, one step, and they fall into two camps. On the loan clients the split did nothing. On the market and the phone it moved the number by about three points, always the same way: the shuffle read higher than the honest cut.
+Three datasets, three traps, and every one of them lived in the data: its order in time, its people, its rare cases. So here is a comforting thought: if the traps are in the data, then clean, honest data should be safe. But there is one more trap, and it is the deepest of the lot, because it needs no bad data whatsoever. It is in us.
 
-So the trouble was never shuffling itself. Shuffling was exactly right for the loan clients and quietly wrong for the other two, and the recipe cannot tell them apart, because the difference is not in the recipe. It is in the data. Loan's rows are separate people; the market's rows are days in a row; the phone's rows belong to someone. Shuffling silently assumes any row could swap with any other, and only sometimes is that true.
+Look back at what we actually did in every chapter. We never built just one model. We tried a setting, trained, kept the best, tried more. That is the busiest step of the recipe, and the most natural thing in the world: the harder we search, the better the model we walk away with. Or so it feels.
 
-And notice that the loan data earned its place. It held. If every example had broken, you could accuse us of hunting for trouble. But one of the three stood perfectly still, for a plain reason, its rows really are independent, and that is how we know the failure comes from the shape of the data, not from a rigged demonstration.
-
-Which is why there is no single split that is safe everywhere. Days in order want a cut in time. Rows that belong to people want whole people held out. Rows that are truly independent want the plain shuffle the book teaches. The work was never to find a clever trick; it was to look at the data first and see which situation we are in.
-
-That is step two of the recipe, done with our eyes open. On to step three: scaling.
-
-## 3. Scaling the features
-
-Step three: scale the features. They come on wildly different sizes, so we standardise them, subtract the average, divide by the spread, so each one sits near zero. The book is careful here, in exactly the way we learned to be: measure the average and the spread on the training data only, freeze them, and apply those frozen numbers to the test. Never peek at the test. We have done this all along.
-
-Let us stay on the market and change one small, innocent thing. Our feature was the size of each day's move, in percent. Suppose we measure it in points instead, the raw change in the index, which is what you get by subtracting two prices and forgetting to divide. Same days, same information, a different unit. Everything else stays fixed, and the split stays honest.
-
-| feature         | test accuracy |
-| --------------- | ------------- |
-| size in percent | 0.585 |
-| size in points  | 0.512 |
-
-Read the second row twice. The same honest split, nothing leaked, the scaler frozen exactly as taught, and the model that scored 0.585 now scores 0.512, a coin. By changing one feature from percent to points, we appear to have killed it. A careful person who did everything by the book would read that 0.512, decide the market has no signal, and walk away. But we know better, because we watched the percent version work a moment ago.
-
-What happened? No leak this time. Look at how the two units behave over the years. A one-percent day is a one-percent day whether the index sits at 1 500 or at 7 000. In points it is not: the index climbs from about 1 455 to 7 483 across the data, so the same one-percent day is worth about 15 points early on and 75 points near the end. The percent feature holds still. The points feature drifts upward (statisticians call this drift, or covariate shift: Shimodaira, 2000; Gama et al., 2014).
-
-![Why a drifting feature breaks the frozen scaler](figures/drift.svg)
-
-Now the frozen scaler is the trap. It learned what "normal" looks like from the early, low years, then applied that to the late, high years. For percent that is fine, the early years describe the late ones. For points it is a disaster: the test days sit far outside anything the model met in training, and it has no idea what to make of them. The number is not lying. It is truthfully reporting a model the recipe broke.
-
-Can we fix it? Mostly. Instead of freezing one average for all time, scale each day by its own recent past, a window that slides forward and only ever looks backward, so nothing leaks. That lifts 0.512 back to 0.549. Better, but still short of the 0.585 the percent feature reached. The honest lesson is quieter: the real fix was never to build a drifting feature at all. Divide by the price, keep it in percent, and the drift is gone before any scaler meets it.
-
-And see how this failure mirrors the last one. A bad split made the number too high, an edge that was never there. A bad scale made it too low, an edge that was there and got destroyed. The same disease, opposite symptoms: one recipe, meeting data it does not fit.
-
-That is step three. Next comes the heart of the machine: building the model, and searching for a good one.
-
-## 4. Building and searching
-
-Step four is where the model actually gets built, and it is the busiest step by far. Look back at the network: how wide, how deep, which activation, how fast it learns, how long, how much we hold it back. Every one of those is a knob, and nobody sets them right the first time. So we do the natural thing. We try a setting, train, look at the score, try another, and keep the best one we find.
-
-Nobody would call that cheating. It is just being thorough. The harder we search, the better the model we walk away with, so of course we search. And the more settings we try, the higher the best score climbs.
-
-But wait. When the best score climbs after we try more, two very different things could be going on. Maybe the search is turning up better models. Or maybe we are just keeping the luckiest of a lot of noisy scores, and from the outside luck looks exactly like getting better. On real data we cannot tell them apart, because we never know the true skill to hold the number against.
+**But here is the question we never stopped to ask: when the best score climbs as we try more, is the search finding a better model, or are we just keeping the luckiest of many noisy numbers?** From the outside, luck looks exactly like getting better. On real data we cannot tell the two apart, because we never know the true skill to hold the number against.
 
 So let us build a case where we do know. We make a dataset out of pure noise: random numbers for features, and a label that is a coin flip, decided without ever looking at the features. There is nothing in it to learn, and because we built it that way, we know the exact truth: no model can beat 0.5. Any score above 0.5 is luck, and nothing else.
 
@@ -210,31 +212,13 @@ So count honestly. We say we tried five settings. But inside each we kept the be
 
 There is no clever fix, only discipline. Search less, and search in the open, not with a hundred hidden seeds and epochs. And keep one sealed test that you open exactly once, on the single model you already chose, never as a dial you turn until you like the number, because a test you select on lies just like anything else you select on.
 
-That is the fourth step, and the one that does the most quiet damage. One step of the recipe left: reading off how good the model really is.
-
-## 5. Measuring how good it is
-
-The last step: read off how good the model is. The book says report accuracy, the fraction of cases you get right. Simple, and we have done it all along.
-
-Let us do it once more, on the loan clients, the one dataset that behaved. Honest split, scaler frozen on the training side, look once. The model reads 0.813. A fifth of clients default, so stamping "no default" on everyone would already score 0.779; our model beats that, a little. We would write 0.813 down and move on.
-
-But stop and ask what the model actually does, because the whole point of it was to catch defaulters. Of the clients who really did default, how many did it catch?
-
-![Accuracy looks fine while most defaulters slip through](figures/confusion.svg)
-
-There it is. Out of 1 353 real defaulters, the model caught 438 and missed 915. It let two in three of them walk straight through, stamped safe. Its 0.813 is almost entirely that big green box, the paying clients it correctly cleared. On the people we actually built the model to find, it is close to a coin.
-
-And here is the part that stings. A model that catches nobody, that stamps "will pay" on all thirty thousand, scores 0.779. Ours catches a third of the defaulters and scores 0.813. Three points apart on paper, worlds apart in the job. Accuracy cannot tell a working model from one that does nothing, because it counts the easy majority and lets the rare, important cases vanish inside it.
-
-Nothing leaked here, and nothing drifted. The split was honest, the scaler was clean, the number was measured perfectly. It is exactly right, and it answers the wrong question. The fix is to report a number that weighs both kinds of client equally, balanced accuracy, which scores the defaulters and the payers on their own and averages the two. Ours is 0.633, not 0.813. Far less flattering, and far more honest. Or skip the single number and just read the boxes above; nothing can hide in a confusion table.
-
-That is the last step of the recipe. We have now walked all five, by the book, with care, and watched four of them quietly betray us. It is time to ask what on earth is left to trust.
+And that is the last trap, and the deepest, because it was never in the data at all. It was in us, in our own eagerness to keep the best. So we have now watched the number lie in every way it can: through what we chose to measure, through the hidden structure of the data, and through our own searching. It is time to stand back and ask what, if anything, is left.
 
 ## 6. So what is left?
 
-Let us count what just happened. We took the standard recipe, the one every course teaches, and we followed it to the letter, five careful steps. Four of the five turned on us. The split made the number too high. The scaler made it too low. The search inflated it out of thin air. The metric measured the wrong thing entirely. Every safeguard we trusted failed somewhere, and not one of them said so out loud. We were not careless. We did everything by the book, and the number lied anyway.
+Let us count up the damage. Four problems, all handled by the book, and the book betrayed us on every one. On the loan clients the number measured the wrong thing entirely, missing most of the defaulters while it still looked fine. On the market it came out too high, an edge that was really the future leaking backward, and then too low, a working model killed by a drifting feature. On the phone it read the people instead of the task. And on pure noise, with nothing to learn at all, our own searching pushed the number up out of thin air. Every safeguard we trusted failed somewhere, and not one of them said so out loud. We were not careless. We did everything by the book, and the number lied anyway.
 
-So the number, the score we set out to chase and report and believe, cannot carry our trust. Not because we were sloppy, but because searching inflates it and a hidden assumption can quietly rot it, and from the outside a rotten number looks exactly like a good one. If we cannot trust the number, and we have run clean out of numbers to trust, then trust has to live somewhere else. Where?
+**So which number, exactly, are we still allowed to believe?** The score we set out to chase and report and trust cannot carry that trust, because a hidden assumption can quietly rot it and our own searching can quietly inflate it, and from the outside a rotten number looks exactly like a good one. We have run clean out of numbers to trust. If it does not live in the number, then where does trust live?
 
 ## 7. What we can trust
 
@@ -242,7 +226,7 @@ Here is the answer, and it was hiding in plain sight the whole time. Look back a
 
 ![The same five steps, and the hidden assumption in each](figures/pipeline_traps.svg)
 
-One person reached for shuffle because the book said shuffle. The other looked at the data first, saw that its rows came in time order, and chose a cut that respected time. Same step, opposite result, because one of them understood what the data was before deciding what to do to it. That is the lesson of every station we walked. The trap was never in the step. It was in doing the step without asking what it quietly assumed, the four tags above, and whether the data in front of us could bear it.
+One person reached for shuffle because the book said shuffle. The other looked at the data first, saw that its rows came in time order, and chose a cut that respected time. Same step, opposite result, because one of them understood what the data was before deciding what to do to it. That is the lesson of every problem we walked. The trap was never in the step. It was in doing the step without asking what it quietly assumed, the four tags above, and whether the data in front of us could bear it.
 
 So we do not trust the number, and we do not even trust the recipe on its own, because a recipe followed blindly is exactly what broke on us four times over. What we trust is understanding, made solid and repeatable in the shape of a procedure. State each assumption and check it against the data. Match the method to the structure in front of you. Search less, and look once. Do that, and the number at the end is one you have earned the right to believe, not because it is high, but because you can trace, step by honest step, why the way you made it could not have lied.
 
