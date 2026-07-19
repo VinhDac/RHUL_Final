@@ -6,6 +6,31 @@
 
 An ordinary person builds a deep-learning model the normal way, by the book, step by step. At each step the by-the-book move looks bulletproof, and then hides an assumption that, on the wrong data, quietly breaks. Walking that failure together teaches the reader what to actually trust: not the number, but understanding, turned into a procedure.
 
+## The compliance contract (the graded reality, added 2026-07-19)
+
+The journey above is the soul of the piece, but it is not yet what the Topic grades. The official brief ("CS: Deep Learning") marks three pillars, and two of them are currently near zero in the draft. Closing them is ADDITIVE: nothing in the existing journey is thrown away, we graft the missing graded content on as new journey beats and one light method chapter.
+
+**The three pillars we are graded on:**
+1. IMPLEMENT a feed-forward net on real data. (Present: the numpy MLP.)
+2. IMPROVE and COMPARE: at least two architectures AND at least two optimisers, plus a hyperparameter search. (Missing. Must be added.)
+3. EXPLAIN: visualise to analyse, AND derive the DL formulae (forward, cross-entropy gradient, backprop, optimiser updates), and survey the method family. (Half present: the derivation and the survey are missing.)
+
+**The reconciling bridge (non-negotiable).** Our thesis ("the number can lie; search inflates it") must SUPPORT the Topic's aim ("improve performance with architecture search and hyperparameter optimisation"), not fight it. So we never say "search is the villain, search less." We say: search is how we improve, and here is how to search so the number you keep is still one you can trust (report the search budget, keep one sealed test, never select on it). Snooping is the discipline of honest search, not an argument against searching.
+
+**Placement.** Everything graded lives INSIDE the 50 counted pages: the survey, the derivations, the convergence figure, the architecture-and-optimiser result table. Appendices are outside the limit and examiners "will not necessarily read" them (handbook 5.5), so no graded content may live only in an appendix, a notebook, or the HTML.
+
+**One source of truth for every number and figure.** The per-dataset notebooks are canonical: they write figures to figures/ and headline metrics to one machine-readable file. The doc and the HTML both consume those exact files. No number is ever retyped by hand in two places.
+
+**The transparency rule (item 6, codified).** Line-by-line worked examples live ONLY in the notebooks, and show ONE concrete row moving through each MEANINGFUL transform (raw, return, absolute size, lag window, z-score, label), via a small trace helper. The doc shows curated snippets and exported figures, never raw per-row dumps, so the page budget and the 100MB cap stay safe.
+
+**Hard submission constraints (all MUST):**
+- Format: the school Word template (TemplateMScThesis.docx), edited in place. Never convert READ_ME.md or the HTML straight to PDF; that matches no template and breaks handbook 5.2.
+- At most 50 body pages (bibliography, tables, figures counted; appendices not). Correct template, unchanged layout and font.
+- Anonymous across the WHOLE bundle: no name, student number, username, email; also scrub file paths (C:/Users/...), git author, and PDF/HTML/notebook metadata (handbook 5.6).
+- Declare a Word Count on the Declaration page; keep the name "Anonymous"; add the submission date. Whole submission at most 100MB; ship graphs, not raw logs (handbook 7.1).
+
+**The integrity gate (read this first).** The handbook (6.1) states plainly that using generative AI tools for the project "is prohibited" and "may constitute an assessment offence"; there is no label-and-use exception in the text (the only carve-out is for projects whose RESEARCH is on generative AI, and only with the supervisor's express written guidance). Everything AI touches must be treated as scaffolding the student fully re-authors, understands, and owns, and the AI use itself must be cleared with the supervisor before anything is relied upon. This constraint sits above every other item here.
+
 ## Who is telling it
 
 A fellow traveller, not a professor. Someone very ordinary, doing ordinary things, who gets confused, gets it wrong, and works it out beside the reader. Our authority is "I fell for this too, and here is how I climbed out," never "I know better." This is a journey of discovery, not a lecture. We never make the reader memorise anything; we help them see.
