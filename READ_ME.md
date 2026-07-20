@@ -64,9 +64,9 @@ Let us meet the first one.
 
 ### a. Reading the problem
 
-Our first problem is the friendliest one we have. A bank hands us thirty thousand credit-card clients and a single question: which of them will miss their next payment? One row is one person, twenty-three numbers about them, and a yes or no at the end.
+We start with the friendliest problem we have. A bank hands us thirty thousand credit-card clients and one question: which of them will miss their next payment?
 
-Before planning anything, we read one client from the notebook, top to bottom, to see what we are holding:
+Before we plan a single thing, one habit worth keeping for the whole report: look at one client first, top to bottom, and see what we are actually holding.
 
 ```
 one client (row 0):
@@ -78,17 +78,17 @@ one client (row 0):
   defaulted?     : yes
 ```
 
-A person we can almost picture: twenty-four years old, a small credit limit, a modest bill, and nothing paid back last month. They defaulted. About one client in five does, six thousand six hundred of the thirty thousand.
+We can almost picture them. Twenty-four, a small limit, a modest bill, nothing paid back last month, and a yes at the end: they defaulted. So one row is one person, twenty-three numbers and an answer. About one client in five defaults, six thousand six hundred of the thirty thousand.
 
-And notice what is not here. No date, no time of any kind. No client id tying one row to another. Just separate people, watched over the same few months, with barely a repeat among them, thirty-five exact duplicates in thirty thousand. The rows look interchangeable, and that will matter soon.
+Then we notice what is *not* here. No date. No time of any kind. No id tying one row to another. Just separate people, watched over the same few months, with barely a repeat among them: thirty-five exact duplicates in thirty thousand. Nothing puts these rows in any order. They look interchangeable. We file that thought away, and it will matter at the very next step.
 
-The job is plain: from the twenty-three numbers, say whether this client will default. And there is an obvious floor to beat. Stamp "will not default" on everyone, the safe majority, and we are already right 77.9% of the time. Anything worth building has to clear that.
+So the job is plain: from the twenty-three numbers, say whether this client defaults. But before we can claim anything, there is a floor to clear. Stamp "will not default" on everyone, the safe majority, and we are already right 77.9% of the time. Anything worth building has to beat that.
 
 ### b. By the book, and does the split matter?
 
-Now we do the whole recipe, straight down the line. Frame it as a yes-or-no question, split off a random fifth of the clients for the test, scale the twenty-three numbers on the training side only, build the network from Section 1, and train. It learns without a fuss, no scare this time.
+Now we run the whole recipe, straight down the line. Frame it as a yes-or-no question, split off a random fifth of the clients for the test, scale the twenty-three numbers on the training side only, build the network from Section 1, and train. It learns without a fuss; no scare this time.
 
-But before we trust the score, the one worry worth having here: are the rows really interchangeable? If they are, it should not matter how we cut the deck. So we cut it many ways and watch.
+We have a number. Before we trust it, we pick up the thought we filed away a moment ago: are the rows really interchangeable? There is a clean way to ask. If they are, then how we cut the deck should not matter, same clients, any split, same score. So let us not assume it, let us check: cut the deck many ways and watch whether the number moves.
 
 ```
 10 random shuffles :  0.819 0.811 0.819 0.817 0.814 0.824 0.813 0.818 0.814 0.821
@@ -96,17 +96,21 @@ But before we trust the score, the one worry worth having here: are the rows rea
 stratified split   :  0.816
 ```
 
-Every cut lands in the same place, within a whisker. Shuffle the clients, or force the one-in-five default rate onto both sides, it makes no difference. The split is a formality here, exactly as the book promises. The rows really are interchangeable.
+Every cut lands in the same place, within a whisker. Shuffle the clients at random, or force the one-in-five default rate evenly onto both sides, it makes no difference. That is a relief: the split is a formality here, exactly as the book promises, and the rows really are interchangeable.
 
-One cut does stand out. Split by raw row order, the first four fifths of the file to train and the last fifth to test, and the score creeps to 0.83, just outside the others. For a second that looks like a real difference. But loan has no time and no order that means anything; the rows are a single snapshot, and the file's order is an accident of how it was saved. A position split measures that accident, nothing more. We set it aside.
+Then, almost as an afterthought, we try one more cut. Not at random, but by raw row order: the first four fifths of the file to train, the last fifth to test. The score creeps to 0.83, a step outside all the others.
 
-So the split is honest, and the number is steady: about 0.817, comfortably above the 0.779 we would get by stamping "no default" on everyone. We could write 0.817 down and move on. Almost everyone would.
+For a second that stops us. A different number, from the same data and the same model: is there something in the order after all? So we go back and look. But loan has no date, no id, nothing that puts one client before another; the file is a single snapshot, and its row order is just an accident of how it was saved. A position split cannot find a pattern in time, because there is no time; it only measures that accident. The flicker fades, and we set the 0.83 aside.
+
+Which leaves us where the book promised. The split is honest, and the number is steady: about 0.817, comfortably above the 0.779 we would get by stamping "no default" on everyone. We could write 0.817 down and move on. Almost everyone would.
 
 ### c. But did it catch the defaulters?
 
-A number this smooth deserves one hard question. **The whole point of this model was to find the people who will default. So of the clients who actually did default, how many did our 0.819 model catch?**
+So we almost stop here, at a clean 0.817. But a number that smooth is exactly the kind worth one hard question before we trust it. What did we build this model for? Not to score well in the abstract, but to find the clients who will miss their payment. So let us ask it in the only terms that matter.
 
-We stop reading the single number and count, group by group:
+**Of the clients who actually did default, how many did the model catch?**
+
+The single number cannot answer that; it blends everyone together. So we take one honest split, where the model scores 0.819, right in line with the average, and instead of reading that one number we count what it did, group by group:
 
 ```
 real defaulters: 1353  ->  caught 459, missed 894
@@ -115,15 +119,15 @@ real payers    : 4647  ->  cleared 4454, flagged 193
 
 ![Accuracy stays high while most defaulters slip through](figures/confusion.svg)
 
-Out of 1353 real defaulters, it caught 459 and let 894 walk straight through, stamped safe. It waves two out of three of them past. That shiny 0.819 is almost all the paying clients it correctly cleared. On the very people we built the model for, it is close to a coin.
+Read the top row twice. Out of 1353 real defaulters, the model caught 459 and let 894 walk straight through, stamped safe. It waves two of every three of them past. And now we can see what the 0.819 was really made of: almost all of it is the big, easy group of payers it correctly cleared. On the very people we built the model for, it is barely better than a coin.
 
-And now the number stops looking smooth and starts looking dishonest. A model that catches nobody at all, that stamps "will pay" on every client, scores 0.779. Ours catches a third of the defaulters and scores 0.819. Four points apart on paper, worlds apart in the job that mattered. Accuracy cannot tell a working model from one that does nothing, because it counts the huge easy majority and lets the rare, costly cases dissolve inside it.
+That is the moment the shine comes off the number. It was never wrong, and it is not lying to us now; it is answering a question we did not mean to ask, which is how many clients of either kind we labelled right. Look at the do-nothing model that stamps "will pay" on everyone and catches zero defaulters: it scores 0.779. Ours catches a third of them and scores 0.819. Four points apart on paper, but worlds apart in the job that mattered. Accuracy cannot tell the two of them apart, because it counts the huge easy majority and lets the rare, costly cases dissolve inside it.
 
 ### d. The number we keep
 
-The strange part is that nothing here was rigged. The split was honest, we checked it many ways. Nothing leaked. The number was measured perfectly. It is exactly right, and it answers the wrong question.
+The strange part is that nothing here was rigged. We did not cut a corner anywhere. The split was honest, and we checked it many ways; nothing leaked; the number was measured exactly as the book teaches. And yet it misled us. The 0.819 was never a mistake in need of fixing; the measuring was flawless. The fault was in what we asked it to measure.
 
-The fix is to stop letting the crowd decide, and weigh both kinds of client equally. Balanced accuracy scores the defaulters and the payers each on their own, then averages the two, so the small class counts as much as the big one:
+So we change the question, and with it the yardstick. We stop letting the crowd of payers decide the score, and weigh both kinds of client equally. Balanced accuracy scores the defaulters on their own and the payers on their own, then averages the two, so the small class counts for exactly as much as the big one:
 
 ```
 over 5 honest splits, mean:
@@ -131,11 +135,11 @@ over 5 honest splits, mean:
   balanced accuracy : 0.644     (baseline: accuracy 0.779, balanced 0.500)
 ```
 
-**So which number do we keep?** Not the 0.816. We keep the 0.644, because it is the only one that notices whether we caught the people we came for. And look where the baseline sits: a do-nothing model scores 0.779 on accuracy, so accuracy can barely tell it apart from ours, but on balanced accuracy it scores 0.500 against our 0.644, and now the gap is real. Better still, skip the single number and just read the confusion boxes; nothing hides in a table of four counts.
+**So which number do we keep, and what do we give up?** We give up the flattering 0.816, and keep the 0.644, because it is the only one of the two that notices whether we caught the people we came for. And watch what the honest yardstick does to the do-nothing model: on accuracy it scored 0.779, close enough to ours that they are hard to tell apart; on balanced accuracy it scores 0.500 against our 0.644, and the distance between doing something and doing nothing finally shows. Better still, we can skip the single number altogether and read the four confusion counts directly; nothing hides in a table that small.
 
 ![The loan trail, one try at a time](figures/loan_tree.svg)
 
-So the friendliest problem taught us something we did not expect. The trap was not in the data, its rows were as clean as they come, and every way we cut them agreed. It was in what we chose to measure. Measured perfectly, and answering the wrong question. One problem in, and the recipe has already slipped a false number past us, not through the data, but through the yardstick we judged it by.
+So the friendliest problem taught us something we did not expect. Its rows were as clean as they come, and every way we cut them agreed, so the trap was never in the data. It was in what we chose to measure. We measured it perfectly, and answered the wrong question. One problem in, and the recipe has already handed us a false number, not through the data, but through the yardstick we judged it by.
 
 ## 3. Market: the edge that was too easy
 
@@ -190,7 +194,7 @@ volatility, shuffle       :  0.618
 volatility, chronological :  0.587
 ```
 
-They do not match. And that stopped us. Back on the loan clients, every way of cutting the data agreed to the third decimal. Here, two cuts of the same days, the same model, disagree by three whole points. One of the numbers is lying, and we did not know which one, or why.
+They do not match. And that stopped us. Back on the loan clients, every way of cutting the data agreed to the third decimal. Here, two cuts of the same days, the same model, disagree by three whole points. **One of the numbers is lying**, and we did not know which one, or why.
 
 So we finally did the thing we should have done first. We stopped fiddling with the model and looked at the rows themselves, side by side:
 
@@ -247,9 +251,9 @@ So the market cost us twice. The split leaked the future and pushed the number t
 
 ![The market trail, two traps at once](figures/market_tree.svg)
 
-**So which number do we keep?** Around 0.60, the honest walk-forward score, once the leak is stripped out and the feature is left in percent where it does not drift. Not the flattering 0.618, and not the broken 0.510; both of those were the recipe reporting on a world it had misread. And unlike the loan clients, where the trap was in the yardstick, here the number itself was the honest messenger. It came out too high when we leaked, too low when we drifted, and each time it was telling the truth about a model we had quietly broken.
+**So which number do we keep, and what do we give up?** We give up the flattering 0.618, which was the leak, and the broken 0.510; both of those were the recipe reporting on a world it had misread. We keep around 0.60, the honest walk-forward score, once the leak is stripped out and the feature is left in percent where it does not drift. And unlike the loan clients, where the trap was in the yardstick, here the number itself was the honest messenger. It came out too high when we leaked, too low when we drifted, and each time it was telling the truth about a model we had quietly broken.
 
-Two datasets in, and the pattern is starting to show. On the loan clients the number lied through the measure; on the market it lied through the structure of the data, twice over. Each time we did everything by the book, and each time the book was not enough on its own. Next we hand the model to thirty people, and watch the same kind of trap open a third way.
+Two datasets in, and the pattern is starting to show. On the loan clients the number lied through the measure; on the market it never lied at all, it was knocked off course twice by the structure of the data. Each time we did everything by the book, and each time the book was not enough on its own. Next we hand the model to thirty people, and watch the same kind of trap open a third way.
 
 ## 4. Phone: reading the person, not the task
 
@@ -257,7 +261,7 @@ Two datasets in, and the pattern is starting to show. On the loan clients the nu
 
 This third problem has nothing to do with time. Thirty people strapped a phone to their waist and did a few ordinary things: walking, sitting, standing, lying down. The phone's motion sensors watched, and every short moment of movement was boiled down to 561 numbers, with a label for what the person was doing. Ten thousand such moments in all.
 
-Before planning anything, we read one row from the notebook, top to bottom, to see what we are holding:
+Before we plan anything, we read one row first, top to bottom, to see what we are holding:
 
 ```
 one window (row 0):
@@ -296,7 +300,9 @@ step too big (learning rate 0.5):
 
 Worse than a coin, worse than guessing "laying" every time. For a moment the whole task looks hopeless.
 
-But before giving up, we stop and ask a smaller question: is the model even learning, or is something broken? Think about what training does. It walks the model downhill, one step at a time, toward the bottom of a valley where its guesses are best. The learning rate is the size of that step. Make it too big, and each step overshoots the bottom and lands further up the far side. The model never descends; it bounces across the valley and flies apart. That is what those numbers are. Not a hard problem, a step too large for it.
+But before giving up, we stop and ask a smaller question: is the model even learning, or is something broken? Think about what training does. It walks the model downhill, one step at a time, toward the bottom of a valley where its guesses are best. The learning rate is the size of that step. Make it too big, and each step overshoots the bottom and lands further up the far side. The model never descends; it bounces across the valley and flies apart.
+
+That is what those numbers are. Not a hard problem, just a step too large for it.
 
 So we change one thing, the step, and try again:
 
@@ -343,7 +349,7 @@ So we build a test that changes only the thing in question. We fix the exact sam
 ```
 same test people, seen in training :  0.968
 same test people, never seen       :  0.947
-gap                                :  0.022   (positive in all five tries, 0.008 to 0.047)
+gap                                :  0.022   (positive in all five tries, 0.007 to 0.047)
 ```
 
 There it is. Knowing a person in advance is worth about two points, every single time; not once did seeing them fail to help. So the doubt is settled. Part of that shiny 0.966 really was the model recognising these particular thirty people, not reading their activity.
@@ -386,6 +392,7 @@ Watch the two numbers over the epochs:
 
 ```
   epoch   0: validation 0.530   sealed test 0.494
+  epoch  50: validation 0.495   sealed test 0.487
   epoch 100: validation 0.505   sealed test 0.494
   epoch 150: validation 0.525   sealed test 0.498
   epoch 200: validation 0.540   sealed test 0.500
@@ -442,9 +449,11 @@ And that is the last trap, and the deepest, because it was never in the data at 
 
 ## 6. So what is left?
 
-Let us count up the damage. Four problems, all handled by the book, and the book betrayed us on every one. On the loan clients the number measured the wrong thing entirely: a proud 0.819 that caught barely a third of the defaulters we were hunting. On the market it came out too high, an edge of 0.618 that was really the future leaking backward, and then too low, a working model dropped to a coin by a drifting feature. On the phone it read the thirty people instead of the task, a near-perfect 0.966 that was really 0.947 on a stranger. And on data with nothing to learn at all, our own searching invented an edge from thin air, 0.607 out of a truth of 0.5. Every safeguard we trusted failed somewhere, and not one of them said so out loud. We were not careless. We did everything by the book, and the number lied anyway.
+Let us count up the damage. Four problems, all handled by the book, and the book fell short on every one. On the loan clients the number measured the wrong thing: 0.819 accuracy, but only a third of the defaulters caught. On the market it came out too high, an edge of 0.618 that was really the future leaking backward, then too low, a working model dropped to a coin by a drifting feature. On the phone it read the thirty people instead of the task, a near-perfect 0.966 that was really 0.947 on a stranger. And on data with nothing to learn, our own searching still found an edge, 0.607 out of a truth of 0.5.
 
-**So which number, exactly, are we still allowed to believe?** The score we set out to chase and report and trust cannot carry that trust, because a hidden assumption can quietly rot it, and our own searching can quietly inflate it, and from the outside a rotten number looks exactly like a good one. We have run clean out of numbers to trust. If trust does not live in the number, then where does it live?
+Every safeguard we trusted failed somewhere, and none of them warned us. We were not careless. We did everything by the book, and the number lied anyway.
+
+**So which number, exactly, are we still allowed to believe?** The score we set out to chase and report and trust cannot carry that trust, because a hidden assumption can quietly distort it, and our own searching can quietly inflate it, and from the outside a bad number looks exactly like a good one. We have run clean out of numbers to trust. If trust does not live in the number, then where does it live?
 
 ## 7. What we can trust
 
@@ -457,6 +466,8 @@ One person reached for shuffle because the book said shuffle. The other looked a
 Notice what this is not. It is not a counsel of despair, a warning to stop building or stop searching. We searched, and searching worked: on the loan clients, comparing a handful of architectures and optimisers honestly lifted the score we could actually keep from 0.644 to 0.650, a real gain, and one we could believe precisely because we sealed the test and never chose on it. The tool is powerful, and the goal, a good model on real data, is worth chasing. The discipline is simply how we chase it without fooling ourselves.
 
 So state each assumption and check it against the data. Match the method to the structure in front of you. Search all you like, but search in the open, count your tries, and keep one test you open once and never select on. Do that, and the number at the end is one you have earned the right to believe, not because it is high, but because you can trace, step by honest step, why the way you made it could not have lied.
+
+And we already have four of them. Look at what each honest procedure handed back: a balanced 0.644 on the loan defaulters, around 0.60 on the market with the leak stripped out, about 0.947 on a phone strapped to a stranger, and 0.650 on the loan again after searching a few models in the open. Not one is the flattering number we first saw, and not one is high for its own sake. They are simply what was left standing after every assumption was checked and the test was opened only once. That is why we can believe them.
 
 That is the whole of it. The recipe is a fine place to start and a dangerous place to stop. We cannot trust the goal for its own sake, the number chased and reported and hoped over. We can trust the understanding that earns it, and the number an honest procedure hands back is one worth keeping.
 
