@@ -1,0 +1,33 @@
+<svg width="100%" viewBox="0 0 680 370" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>Deep learning is one loop, repeated</title>
+<desc>Four boxes in a clockwise cycle: make a guess (the forward pass), measure how wrong (the loss), find which way is downhill (the gradient, backprop), nudge the knobs a little (the update), then back to make a guess. In the middle, the words repeat a few thousand times.</desc>
+<rect x="0" y="0" width="680" height="370" fill="#ffffff"/>
+<style>
+.ti{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#1a1a1a;font-size:16px;font-weight:600}
+.mn{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#1a1a1a;font-size:14px;font-weight:500}
+.sb{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#666666;font-size:12px}
+.ct{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#8a8a8a;font-size:13px;font-style:italic}
+.box{fill:#f6f6f8;stroke:#333333;stroke-width:1.5}
+.flow{stroke:#5b7db1;stroke-width:2.4;fill:none}
+</style>
+<defs><marker id="cyc" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#5b7db1"/></marker></defs>
+<text class="ti" x="340" y="24" text-anchor="middle">Deep learning is one loop, repeated</text>
+<rect class="box" x="265" y="40" width="150" height="52" rx="8"/>
+<text class="mn" x="340" y="63" text-anchor="middle">make a guess</text>
+<text class="sb" x="340" y="80" text-anchor="middle">forward pass</text>
+<rect class="box" x="400" y="172" width="150" height="52" rx="8"/>
+<text class="mn" x="475" y="195" text-anchor="middle">measure how wrong</text>
+<text class="sb" x="475" y="212" text-anchor="middle">the loss</text>
+<rect class="box" x="265" y="304" width="150" height="52" rx="8"/>
+<text class="mn" x="340" y="327" text-anchor="middle">which way is downhill</text>
+<text class="sb" x="340" y="344" text-anchor="middle">the gradient, backprop</text>
+<rect class="box" x="130" y="172" width="150" height="52" rx="8"/>
+<text class="mn" x="205" y="195" text-anchor="middle">nudge the knobs</text>
+<text class="sb" x="205" y="212" text-anchor="middle">the update</text>
+<path class="flow" d="M400,94 Q500,110 478,170" marker-end="url(#cyc)"/>
+<path class="flow" d="M472,226 Q500,300 417,322" marker-end="url(#cyc)"/>
+<path class="flow" d="M263,330 Q180,300 202,226" marker-end="url(#cyc)"/>
+<path class="flow" d="M202,170 Q180,110 263,94" marker-end="url(#cyc)"/>
+<text class="ct" x="340" y="192" text-anchor="middle">repeat, a few</text>
+<text class="ct" x="340" y="210" text-anchor="middle">thousand times</text>
+</svg>

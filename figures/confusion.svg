@@ -1,6 +1,6 @@
 <svg width="100%" viewBox="0 0 680 260" role="img" xmlns="http://www.w3.org/2000/svg">
-<title>Accuracy looks fine while most defaulters slip through</title>
-<desc>A two-by-two table of the loan model's predictions. Rows are what actually happened, defaulted or paid; columns are what the model said, flagged or cleared. Of 1353 real defaulters the model caught 438 and missed 915. Of 4647 payers it correctly cleared 4448. Accuracy is 0.813 because the large correct box of payers dominates, while most of the defaulters we care about are missed.</desc>
+<title>Accuracy stays high while most defaulters slip through</title>
+<desc>A two-by-two table of the loan model's predictions. Rows are what actually happened, defaulted or paid; columns are what the model said, flagged or cleared. Of 1353 real defaulters the model caught 459 and missed 894. Of 4647 payers it correctly cleared 4454 and flagged 193. Accuracy is 0.819 because the large correct box of payers dominates, while most of the defaulters we care about are missed.</desc>
 <rect x="0" y="0" width="680" height="260" fill="#ffffff"/>
 <style>
 .ti{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#1a1a1a;font-size:15px;font-weight:600}
@@ -9,22 +9,22 @@
 .cl{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:12px}
 .cp{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#555555;font-size:12px}
 </style>
-<text class="ti" x="20" y="24" text-anchor="start">Accuracy looks fine while most defaulters slip through</text>
+<text class="ti" x="20" y="24" text-anchor="start">Accuracy stays high while most defaulters slip through</text>
 <text class="hd" x="325" y="64" text-anchor="middle">Model flagged</text>
 <text class="hd" x="487" y="64" text-anchor="middle">Model cleared</text>
 <text class="hd" x="242" y="111" text-anchor="end">Actually defaulted</text>
 <text class="hd" x="242" y="191" text-anchor="end">Actually paid</text>
 <rect x="250" y="72" width="150" height="68" rx="6" fill="#e4efe8"/>
-<text class="n" x="325" y="110" text-anchor="middle" fill="#3f7a5a">438</text>
+<text class="n" x="325" y="110" text-anchor="middle" fill="#3f7a5a">459</text>
 <text class="cl" x="325" y="128" text-anchor="middle" fill="#3f7a5a">caught</text>
 <rect x="412" y="72" width="150" height="68" rx="6" fill="#f7e0da" stroke="#d9695a" stroke-width="2"/>
-<text class="n" x="487" y="110" text-anchor="middle" fill="#b0402f">915</text>
+<text class="n" x="487" y="110" text-anchor="middle" fill="#b0402f">894</text>
 <text class="cl" x="487" y="128" text-anchor="middle" fill="#b0402f">missed</text>
 <rect x="250" y="152" width="150" height="68" rx="6" fill="#f6ecdc"/>
-<text class="n" x="325" y="190" text-anchor="middle" fill="#a9702f">199</text>
+<text class="n" x="325" y="190" text-anchor="middle" fill="#a9702f">193</text>
 <text class="cl" x="325" y="208" text-anchor="middle" fill="#a9702f">false alarm</text>
 <rect x="412" y="152" width="150" height="68" rx="6" fill="#e4efe8"/>
-<text class="n" x="487" y="190" text-anchor="middle" fill="#3f7a5a">4 448</text>
+<text class="n" x="487" y="190" text-anchor="middle" fill="#3f7a5a">4 454</text>
 <text class="cl" x="487" y="208" text-anchor="middle" fill="#3f7a5a">correct</text>
-<text class="cp" x="340" y="246" text-anchor="middle">accuracy 0.813, yet 915 of the 1 353 real defaulters slipped through</text>
+<text class="cp" x="340" y="246" text-anchor="middle">accuracy 0.819, yet 894 of the 1 353 real defaulters slipped through</text>
 </svg>
