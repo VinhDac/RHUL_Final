@@ -184,29 +184,31 @@ If a clean, honest process is the only thing worth trusting, then at the next pr
 
 ### a. Reading the problem
 
-Our second problem barely looks like data at all. It is one long column of numbers, the daily closing price of the S&P 500, six thousand six hundred and sixty-four days in a row. Nothing else. No features, no labels, just a price that drifts across the years, from about 677 at its lowest to 7610 at its highest.
+We come to the second problem already a little wary. The last one taught us that a number can look clean, steady, and high, and still be lying, so this time we make ourselves a promise: we will not trust a score just because it looks good.
 
-So what can we even predict from a single column of prices? We cannot feed raw prices to the network; today's 1400 and next decade's 7000 are not comparable numbers. We have to turn the prices into something a model can learn from, and we do it one step at a time, printing each step so we can see it:
+And then we open the problem, and there is almost nothing there to trust. No neat rows of features like the loan clients. Just one long column of numbers: the closing price of the S&P 500 at the end of each day, 6,664 days in a row. A single price that wanders across the years, from a low near 677 to a high near 7,610.
 
-```
-trace, day by day:
-  day 1: close 1399.42  ->  return -0.0383  ->  size |r| 0.0383
-  day 2: close 1402.11  ->  return +0.0019  ->  size |r| 0.0019
-  day 3: close 1403.45  ->  return +0.0010  ->  size |r| 0.0010
-  day 4: close 1441.47  ->  return +0.0271  ->  size |r| 0.0271
-  day 5: close 1457.60  ->  return +0.0112  ->  size |r| 0.0112
-```
+![All we were handed: one drifting column of prices, and what we choose to look at instead](figures/market_data.svg)
 
-Each day becomes a return, how much the price moved as a fraction, and then the size of that move, its absolute value, forgetting whether it went up or down. Now every day is a small comparable number, a two-percent day or a tenth-of-a-percent day, no matter what the index was worth at the time.
+So what can we predict from one column of prices? With the loan clients we had twenty-three numbers about each person. Here we have one number a day, and nothing else.
 
-From that we build the task. A feature row is the sizes of the last five days; its label is whether the next day's move beats the usual size, the median of 0.0054. In plain words: given how wild the last five days were, will tomorrow be a busy day?
+The first idea is the obvious one: predict tomorrow's price. But 677 back then and 7,610 now are not the same kind of thing, and a model fed the raw prices would learn only that the numbers drift upward with the years. Useless. We need to turn the price into something that means the same thing in any year.
 
-```
-one feature row X[0] = [0.0383, 0.0019, 0.0010, 0.0271, 0.0112]
-             its label = next day's size beats the median?  yes
-```
+So we stop looking at the price, and look at how much it moved. Not "the price is 1,402" but "today it moved 0.2%." A one-percent day is a one-percent day whether the index sits at 1,500 or at 7,000, and measured that way every day becomes comparable. Then one more step: forget which way it went, up or down, and keep only the size of the move. A calm day is a small number, a wild day a large one. That is the lower panel above: the same years, seen as sizes, long quiet stretches broken by a few violent bursts.
 
-That leaves 6658 rows, split evenly between busy and calm, so there is no majority-class trick; a blind guess scores 0.5. And there is a real signal to find: the size of today's move predicts the size of tomorrow's, an echo worth 0.287 in plain correlation. Wild days cluster together. That is the thing the model can honestly learn.
+From that we build the task. Take the sizes of the last five days, and guess one thing about tomorrow: a busy day, a move bigger than usual, or a calm one? "Usual" we pin at the middle day, so that half of all days count as busy and half as calm. A blind guess is then a coin, 0.5, with no lopsided majority to lean on the way the loan data had.
+
+![The task: from the last five days' sizes, guess whether tomorrow is busy or calm](figures/market_task.svg)
+
+And here is where the last problem has changed us. With the loan clients we built first and asked questions afterwards. This time, before we train anything, we stop and ask the plainest question there is: is there really a pattern here to find, or are we about to spend three hundred epochs chasing noise? A network can always fit something. That is not the same as there being something to fit.
+
+So we look before we build. Does a big day tend to be followed by another big day? We put every day's size against the next day's size, and see whether they lean together.
+
+![Big days tend to be followed by big days: the link is 0.29, well clear of zero](figures/market_signal.svg)
+
+They do. The cloud tilts upward: when today's move is large, tomorrow's leans large too, a link of 0.29 where zero would have meant no pattern at all. Storms cluster, and quiet follows quiet. It is not a strong effect, but it is real, and it is honest, built from nothing but days that have already closed.
+
+So this time we have earned the right to try. There is a genuine signal in the sizes, we are using the same small network as before with nothing tuned or added to help it, and a blind guess scores 0.5. We build it the same careful way, and see what an honest model can do.
 
 ### b. The edge that was too easy
 
