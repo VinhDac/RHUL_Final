@@ -12,11 +12,13 @@ We have a model. Is it any good? How would we even know?
 
 We do the obvious thing. We hide some data from it, let it guess on that data, and count the hits. That gives us a number. Is it high? Good. Low? Not good. So we read the number and we decide.
 
-But we never build just one. We build many and keep the best number. So what are we really trusting in the end? One number.
+But we never build just one. We build many and keep the best number. So what are we really trusting in the end? *One number.*
 
-And here is the question we almost never stop to ask: can we trust it?
+And here is the question we almost never stop to ask.
 
-Let us find out honestly. We will not bend anything to force a problem into view. We will do the opposite, and follow every rule the books give us, exactly. Then we stand back and ask, together, what that honest number is really worth.
+> **Can we trust it?**
+
+Let us find out honestly. We will not bend anything to force a problem into view. We will do the opposite, and *follow every rule the books give us, exactly.* Then we stand back and ask, together, what that honest number is really worth.
 
 (One limit, so we are not doing everything at once. We stay with deep learning that forecasts and classifies: is tomorrow a busy day on the market, did this borrower default, which activity is this. Not vision, not language, not the rest. Just putting a label on the next case.)
 
@@ -36,17 +38,15 @@ How does it learn? Not by us programming it, but by correcting itself, the same 
 
 ![Deep learning is one loop, repeated](figures/training_loop.svg)
 
-One small marvel hides in those four moves: when we score wrongness this way, the correction each step makes is exactly how far off the guess was, no more. That is all the training is really doing, over and over. The full working, for anyone who wants it, is in Appendix E.
+One small marvel hides in those four moves: when we score wrongness this way, the correction each step makes is *exactly how far off the guess was*, no more. That is all the training is really doing, over and over. The full working, for anyone who wants it, is in Appendix E.
 
-Give it more knobs, make it wider or deeper, and it can fit more. That is the whole appeal: with enough knobs, a network can fit almost any pattern we hand it.
+Give it more knobs, make it wider or deeper, and it can fit more. That is the whole appeal: **with enough knobs, a network can fit almost any pattern we hand it.**
 
-And there is the catch, the one that shadows this whole report. If it can fit almost any pattern, then it can also fit patterns that are not really there. Show it pure noise for long enough and it will "learn" the noise, memorising which random point got which random label, and score beautifully on the training data.
+And there is the catch. If it can fit almost any pattern, then **it can also fit patterns that are not really there.** Show it pure noise for long enough and it will "learn" the noise, memorising which random point got which random label, and score beautifully on the training data.
 
 ![Fitting the training data is not the same as learning](figures/loss_curve.svg)
 
-So here is the question. **If the model can fit anything, even nonsense, how do we know it learned something real, and not just the noise?**
-
-We cannot tell from the training score, it does well either way. The only way to know is to try the model on data it has never seen. That is the idea behind the steps that follow: keep some data back, judge the model on that, and never let it look while it learns.
+So the training score can look flawless and prove nothing, which leaves a nagging question: *if the model can fit anything, even nonsense, how do we know it learned something real, and not just the noise?* We cannot tell from the training score, it does well either way. The only way to know is to try the model on data it has never seen: keep some data back, judge it there, and never let it look while it learns.
 
 Which brings us to the plan. To turn a network into a number we can show anyone, we follow a recipe, the same one printed in every course:
 
@@ -54,7 +54,15 @@ Which brings us to the plan. To turn a network into a number we can show anyone,
 
 Five steps. Frame the data. Split it into training, validation and test. Scale the features. Build and search for a good model. Measure how good it turned out. Every step is standard, careful, exactly what we are told to do, and the number at the end is meant to be honest.
 
-So here is the plan for the whole report. We are not out to attack this recipe, we want it to work. So we follow it faithfully, and carry it to one real problem after another. At each one we ask the same plain question: is this really as safe as it looks? By the end we will know the answer, and what it takes to walk away with a number we can actually trust.
+So here is the plan for the whole report. We are not out to attack this recipe, we want it to work. So we follow it faithfully, and carry it to one real problem after another. At each one we ask the same plain question.
+
+> **Is this really as safe as it looks?**
+
+By the end we will know the answer, and what it takes to walk away with a number we can actually trust.
+
+---
+
+We have three real problems to carry it to, and we take the friendliest first. We start with a bank's loan clients, the ordinary, clean kind of data the recipe was built for. Then the stock market, one long column of daily prices. Then thirty people carrying a phone through a handful of everyday activities. Each is its own journey, with its own dead ends and its own moment of doubt, and the pipeline stays the map that keeps us oriented across all three. We are not here to collect three tidy results, we are walking three roads to the same place.
 
 Let us meet the first one.
 
@@ -64,82 +72,113 @@ Let us meet the first one.
 
 ### a. Reading the problem
 
-We start with the friendliest problem we have. A bank hands us thirty thousand credit-card clients and one question: which of them will miss their next payment?
+A bank hands us thirty thousand credit-card clients and one question: which of them will miss their next payment?
 
-Before we plan a single thing, one habit worth keeping for the whole report: look at one client first, top to bottom, and see what we are actually holding.
+So who are these people? Let us look at one, top to bottom.
 
-```
-one client (row 0):
-  credit limit   : 20000
-  age            : 24
-  latest bill    : 3913
-  latest payment : 0
-  ...23 numbers in all...
-  defaulted?     : yes
-```
+![One loan client, row 0](figures/loan_client.svg)
 
-We can almost picture them. Twenty-four, a small limit, a modest bill, nothing paid back last month, and a yes at the end: they defaulted. So one row is one person, twenty-three numbers and an answer. About one client in five defaults, six thousand six hundred of the thirty thousand.
+We can almost picture them: twenty-four, a small limit, a modest bill, nothing paid back last month, and a yes at the end. They defaulted. So one row is one person: twenty-three plain numbers about them, and the answer we want to predict. There are thirty thousand of them, and about one in five default.
 
-Then we notice what is *not* here. No date. No time of any kind. No id tying one row to another. Just separate people, watched over the same few months, with barely a repeat among them: thirty-five exact duplicates in thirty thousand. Nothing puts these rows in any order. They look interchangeable. We file that thought away, and it will matter at the very next step.
+What exactly is the job? From those twenty-three numbers, for a client we have never seen, say yes or no: will they default? A plain two-way guess, and nothing about it is exotic.
 
-So the job is plain: from the twenty-three numbers, say whether this client defaults. But before we can claim anything, there is a floor to clear. Stamp "will not default" on everyone, the safe majority, and we are already right 77.9% of the time. Anything worth building has to beat that.
+What do we build? The small network from Section 1. Twenty-three numbers go in, pass through one hidden layer of sixteen units with a ReLU, and come out as two scores that softmax turns into a probability for "yes" and "no"; we keep whichever is larger.
 
-### b. By the book, and does the split matter?
+And how do we turn that into a number we can put in front of the bank? We run the recipe from Section 1, step for step:
 
-Now we run the whole recipe, straight down the line. Frame it as a yes-or-no question, split off a random fifth of the clients for the test, scale the twenty-three numbers on the training side only, build the network from Section 1, and train. It learns without a fuss; no scare this time.
+![The plan for the loan clients](figures/loan_pipeline.svg)
 
-We have a number. Before we trust it, we pick up the thought we filed away a moment ago: are the rows really interchangeable? There is a clean way to ask. If they are, then how we cut the deck should not matter, same clients, any split, same score. So let us not assume it, let us check: cut the deck many ways and watch whether the number moves.
+1. **Frame** it as the yes-or-no question it already is.
+2. **Split** the thirty thousand clients once, into training (60%), validation (20%), and test (20%); the test part stays sealed until the end, and the validation part waits unused until Section 5.
+3. **Scale** the twenty-three features, subtracting the mean and dividing by the spread, with those statistics measured on the training part only.
+4. **Build and train**: from small random weights, run three hundred passes over the training clients, scoring the guess with cross-entropy, finding the downhill direction by the backprop of Section 1, and stepping every weight a little that way with plain gradient descent (a learning rate of 0.3).
+5. **Measure** how good it is by accuracy: the fraction of the sealed test clients it labels correctly.
 
-```
-10 random shuffles :  0.819 0.811 0.819 0.817 0.814 0.824 0.813 0.818 0.814 0.821
-              mean :  0.817   (sd 0.004)
-stratified split   :  0.816
-```
+Two numbers, then, and worth keeping straight. While it trains, the network drives down one loss, cross-entropy, the score of how wrong its probabilities are. When it is done, we judge it by another, accuracy, the plain fraction it gets right. It learns by the first and is graded by the second.
 
-Every cut lands in the same place, within a whisker. Shuffle the clients at random, or force the one-in-five default rate evenly onto both sides, it makes no difference. That is a relief: the split is a formality here, exactly as the book promises, and the rows really are interchangeable.
+So what do we expect? Honestly, not much drama. The data is clean, the question is plain, the model is standard, and every step is straight from the book. We expect the network to learn the pattern and hand us a high, honest number. So we run it, and see.
 
-Then, almost as an afterthought, we try one more cut. Not at random, but by raw row order: the first four fifths of the file to train, the last fifth to test. The score creeps to 0.83, a step outside all the others.
+### b. By the book
 
-For a second that stops us. A different number, from the same data and the same model: is there something in the order after all? So we go back and look. But loan has no date, no id, nothing that puts one client before another; the file is a single snapshot, and its row order is just an accident of how it was saved. A position split cannot find a pattern in time, because there is no time; it only measures that accident. The flicker fades, and we set the 0.83 aside.
+So we run it, exactly as planned. Nothing fights us: epoch after epoch the network settles into the training clients, its accuracy climbing and then levelling off, the clean shape of something that is learning.
 
-Which leaves us where the book promised. The split is honest, and the number is steady: about 0.817, comfortably above the 0.779 we would get by stamping "no default" on everyone. We could write 0.817 down and move on. Almost everyone would.
+![The network learns: training accuracy climbs, then settles](figures/loan_learning.svg)
 
-### c. But did it catch the defaulters?
+And the number it hands back is good. On the sealed test clients, the ones it never trained on, it is right **81.9%** of the time. Into the eighties, on our very first honest try.
 
-So we almost stop here, at a clean 0.817. But a number that smooth is exactly the kind worth one hard question before we trust it. What did we build this model for? Not to score well in the abstract, but to find the clients who will miss their payment. So let us ask it in the only terms that matter.
+One careful thought before we celebrate. Is that 82% real, or a fluke of the particular fifth we happened to hold out? Easy enough to check: we cut the deck again and again, a fresh random split each time, then a stratified one that forces the same default rate onto both sides, then even a cut by raw file order. If the score is solid, none of that should move it.
 
-**Of the clients who actually did default, how many did the model catch?**
+![Every way of splitting lands in the same place](figures/loan_stability.svg)
 
-The single number cannot answer that; it blends everyone together. So we take one honest split, where the model scores 0.819, right in line with the average, and instead of reading that one number we count what it did, group by group:
+It does not move. Every cut lands between 0.81 and 0.82, the whole spread no wider than a few thousandths. The score is no accident of one lucky split; it is rock-steady, which is just what a trustworthy result looks like. So there it is: a clean, standard model, trained by the book, scoring 82% on clients it has never seen, and holding that score no matter how we slice the data. Everything points the same way. Trust this number.
 
-```
-real defaulters: 1353  ->  caught 459, missed 894
-real payers    : 4647  ->  cleared 4454, flagged 193
-```
+**But** wait. That 82%, how much of it is really ours?
 
-![Accuracy stays high while most defaulters slip through](figures/confusion.svg)
+Try answering with no model at all. Train nothing, look at nothing; for every client, just answer "no default," the same answer every time. How often is that right? It is right about every client who never defaults, and most of them never do.
 
-Read the top row twice. Out of 1353 real defaulters, the model caught 459 and let 894 walk straight through, stamped safe. It waves two of every three of them past. And now we can see what the 0.819 was really made of: almost all of it is the big, easy group of payers it correctly cleared. On the very people we built the model for, it is barely better than a coin.
+![Out of every 100 clients, about 78 never default](figures/loan_baseline.svg)
 
-That is the moment the shine comes off the number. It was never wrong, and it is not lying to us now; it is answering a question we did not mean to ask, which is how many clients of either kind we labelled right. Look at the do-nothing model that stamps "will pay" on everyone and catches zero defaulters: it scores 0.779. Ours catches a third of them and scores 0.819. Four points apart on paper, but worlds apart in the job that mattered. Accuracy cannot tell the two of them apart, because it counts the huge easy majority and lets the rare, costly cases dissolve inside it.
+Of the 30,000, 23,364 never default; only 6,636 do. Answer "no default" for all of them and you are right about the 23,364 and wrong about the 6,636: that is 23,364 out of 30,000, or **0.779**. That score is free. It takes no model, no training, no thought at all; the data gives it away because most people simply pay.
 
-### d. The number we keep
+Now stand our trained network next to that free answer.
 
-The strange part is that nothing here was rigged. We did not cut a corner anywhere. The split was honest, and we checked it many ways; nothing leaked; the number was measured exactly as the book teaches. And yet it misled us. The 0.819 was never a mistake in need of fixing; the measuring was flawless. The fault was in what we asked it to measure.
+![Our model against answering "no" to everyone](figures/loan_deflate.svg)
 
-So we change the question, and with it the yardstick. We stop letting the crowd of payers decide the score, and weigh both kinds of client equally. Balanced accuracy scores the defaulters on their own and the payers on their own, then averages the two, so the small class counts for exactly as much as the big one:
+Our network, twenty-three features and three hundred epochs of training: **0.819**. The free answer, which never looks at the data at all: **0.779**. **Everything we built sits four points above what the data was handing out for nothing.**
 
-```
-over 5 honest splits, mean:
-  plain accuracy    : 0.816
-  balanced accuracy : 0.644     (baseline: accuracy 0.779, balanced 0.500)
-```
+Four points. Where did even those come from, and what did all that training actually add? And a colder doubt behind it: is our model any good at all, or is it mostly just riding that free 78%?
 
-**So which number do we keep, and what do we give up?** We give up the flattering 0.816, and keep the 0.644, because it is the only one of the two that notices whether we caught the people we came for. And watch what the honest yardstick does to the do-nothing model: on accuracy it scored 0.779, close enough to ours that they are hard to tell apart; on balanced accuracy it scores 0.500 against our 0.644, and the distance between doing something and doing nothing finally shows. Better still, we can skip the single number altogether and read the four confusion counts directly; nothing hides in a table that small.
+And then the question that should stop us cold. We have judged this entire thing on one number, its accuracy. But if that number can barely tell our careful, trained model apart from an answer that never even looked at the data, then what is it really measuring? What have we been trusting this whole time?
 
-![The loan trail, one try at a time](figures/loan_tree.svg)
+> **If one number cannot tell a trained model from an answer that never looked at the data, what is it measuring, and can we trust it at all?**
 
-So the friendliest problem taught us something we did not expect. Its rows were as clean as they come, and every way we cut them agreed, so the trap was never in the data. It was in what we chose to measure. We measured it perfectly, and answered the wrong question. One problem in, and the recipe has already handed us a false number, not through the data, but through the yardstick we judged it by.
+### c. What the number was hiding
+
+So we stop trusting the single number, and go looking for what it hides.
+
+First, rule out the obvious. Is the score high because we split the data badly, or because something leaked from the training set into the test? No. We watched it hold rock-steady across every cut we tried, and there is nothing in this data to leak: no dates, no ids, nothing that puts one client ahead of another or ties a training row to a test row. The data is clean and the split is honest. The fault is not there. It is in the number itself.
+
+So take the number apart. Accuracy asks one plain thing: of all the clients, how many did we label correctly? Notice what it does not ask. It does not care who. **Getting a payer right and getting a defaulter right count for exactly the same.** And there is the crack, because the two are not the same job at all. We did not build this to wave through the people who pay; we built it to catch the people who will not. So we ask the only question that was ever the point.
+
+**Of the 1,353 clients in the test set who really did default, how many did our model catch?**
+
+We stop reading the blended score and count, group by group.
+
+![What the model did with each group: most defaulters slip through](figures/loan_recall.svg)
+
+It caught 472 of them. It missed 881. Two of every three people who default, our carefully trained, 82%-scoring model waved straight through, stamped safe. Then look at the payers, and the picture turns over: it cleared 4,445 of the 4,647. That is where the 82% lives. Almost the whole score is the big, easy group it got right; almost none of it is the small, hard group we actually cared about.
+
+Put it in the plainest terms. Picture an illness that 78% of people do not have. A lazy doctor tells everyone the same thing, "you are healthy," and is right 78% of the time, because most people really are healthy. **And yet that doctor catches zero sick people.** A 78% that looks perfectly respectable, and is useless at the one job that mattered: finding the sick.
+
+Our model is a little better than that lazy doctor: it does catch about one in three of the sick. But its accuracy barely moves, **82% against the doctor's 78%**, because accuracy is mostly measuring how well it labels the healthy majority, which was always the easy part.
+
+That is what makes the four points so slippery. The number was never measuring the thing we cared about. It answers "did we get most clients right?", where the answer is easily yes, and it stays silent on "did we catch the defaulters?", where the answer is mostly no. So the entire gap between our model and doing nothing, those four points, is almost nothing by the number and almost everything in the job, and the number gives us no way to tell which.
+
+> **Four points over doing nothing: nearly nothing, or nearly everything? And if our one number cannot tell the two apart, how are we ever meant to judge this model?**
+
+### d. The number we can trust
+
+So how do we judge this model without being fooled? We stop handing the whole verdict to one blended number, and we measure in a way that gives the rare, costly cases their due.
+
+The fix is small. Instead of asking "how many clients did we get right," a question the majority always wins, we score the two groups apart and then average them. How well did we do on the people who default? How well on the people who pay? Average those two, and each group counts the same, however many are in it. That is balanced accuracy.
+
+Now judge our model and the "always no" answer both ways at once:
+
+![Same model, same data. Change the ruler, and the gap appears.](figures/loan_balanced.svg)
+
+On plain accuracy they are near twins, 0.817 and 0.779, four points apart. On balanced accuracy they split wide open: our model scores **0.646**, and the "always no" answer scores exactly **0.500**, a flat coin, because it never catches a single defaulter. Same model, same data. We changed only the ruler, and a difference that was four grudging points became fifteen. The skill that accuracy was drowning is suddenly there to see.
+
+**So which number do we keep?** Here is the honest answer: **neither**, if we keep it on faith. We are not saying trust 0.646 instead of 0.819. That would be the same mistake in new clothes, swapping one number we do not really understand for another.
+
+What we actually trust is not a number at all. It is the four counts underneath both of them: **472 caught, 881 missed, 4,445 cleared, 202 flagged.** Those are not a summary of anything, they are simply what the model did to 6,000 real people, and nothing can hide inside four counts. Accuracy blended them so the majority buried the failure; balanced accuracy weighs the two groups evenly so the failure shows. We keep the 0.646 only because we can see it is an honest reading of the counts, and we drop the 0.819 only because we can see it is not. The counts are the evidence. A number is just shorthand, trustworthy exactly as far as we have checked what it is made of.
+
+And there, at last, is the assumption we never knew we had made. **Reaching for accuracy without a second thought, we assumed that every client counts the same, and that getting most of them right means the job is done.** That holds only when the two outcomes are roughly balanced and the two mistakes cost the same. Here neither did, and accuracy was blind to both. This is the shape of the whole report in miniature: a plain step of the recipe, followed without question, carrying a hidden assumption that the data quietly breaks.
+
+So notice, in the end, what is worth trusting and what is not. The number itself wobbles: 0.646 today, a hair different tomorrow under another split, and none of it shakes us, because the number was never what we were trusting. We trusted the way we made it. We looked at the real counts, we chose a measure that credits the job we actually cared about, and we can trace, step by step, why it cannot be quietly lying. 
+
+> **The score, the goal we chase, we cannot trust on its own. The process that earns it, we can.**
+
+If a clean, honest process is the only thing worth trusting, then at the next problem, where inside that process is the next **hidden assumption** hiding?
 
 ## 3. Market: the edge that was too easy
 

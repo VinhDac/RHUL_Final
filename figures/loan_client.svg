@@ -1,0 +1,31 @@
+<svg width="100%" viewBox="0 0 440 250" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>One loan client, row 0</title>
+<desc>A profile card for one client: credit limit 20000, age 24, latest bill 3913, latest payment 0, 23 numbers in all. The client defaulted.</desc>
+<style>
+.card{fill:#ffffff;stroke:#e3e7ec;stroke-width:1}
+.hd{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#1f2d3d;font-size:15px;font-weight:700}
+.sm{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#8a93a0;font-size:12px}
+.lab{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#6b7480;font-size:13px}
+.val{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#1a2b3c;font-size:14px;font-weight:600}
+.mut{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#9aa2ae;font-size:12px;font-style:italic}
+.badge{fill:#c85a52}
+.bt{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#ffffff;font-size:12px;font-weight:700;letter-spacing:0.5px}
+.oc{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#1f2d3d;font-size:14px;font-weight:600}
+</style>
+<rect class="card" x="0.5" y="0.5" width="439" height="249" rx="14"/>
+<circle cx="36" cy="38" r="17" fill="#e7eef6"/>
+<circle cx="36" cy="33" r="5" fill="#3a6ea5"/>
+<path d="M26 49 a10 8.5 0 0 1 20 0 z" fill="#3a6ea5"/>
+<text class="hd" x="64" y="34">one client</text>
+<text class="sm" x="64" y="51">row 0 of 30,000</text>
+<line x1="24" y1="66" x2="416" y2="66" stroke="#eef1f4" stroke-width="1"/>
+<text class="lab" x="28" y="90">credit limit</text><text class="val" x="412" y="90" text-anchor="end">20,000</text>
+<text class="lab" x="28" y="116">age</text><text class="val" x="412" y="116" text-anchor="end">24</text>
+<text class="lab" x="28" y="142">latest bill</text><text class="val" x="412" y="142" text-anchor="end">3,913</text>
+<text class="lab" x="28" y="168">latest payment</text><text class="val" x="412" y="168" text-anchor="end">0</text>
+<text class="mut" x="28" y="191">plus 19 more, 23 numbers in all</text>
+<line x1="24" y1="207" x2="416" y2="207" stroke="#eef1f4" stroke-width="1"/>
+<text class="oc" x="28" y="231">defaulted?</text>
+<rect class="badge" x="360" y="217" width="56" height="22" rx="6"/>
+<text class="bt" x="388" y="232" text-anchor="middle">YES</text>
+</svg>
