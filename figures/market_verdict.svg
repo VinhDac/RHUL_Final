@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 320" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="760" height="320" fill="#ffffff"/>
+  <text x="40" y="40" font-size="19" fill="#1a1a1a" font-weight="700">Can we trust 0.612?</text>
+  <text x="40" y="62" font-size="12" fill="#6b7480">The same three suspects, after we checked the third one properly.</text>
+
+  <line x1="40" y1="78" x2="720" y2="78" stroke="#ececf0" stroke-width="1"/>
+  <circle cx="58" cy="105" r="14" fill="#b8c0cc"/><text x="58" y="110" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="700">1</text>
+  <text x="86" y="102" font-size="14" fill="#6b7480" font-weight="600">The model</text>
+  <text x="86" y="120" font-size="11" fill="#9aa3ae">did it actually learn?</text>
+  <text x="330" y="112" font-size="12" fill="#9aa3ae">0.494  to  0.630</text>
+  <rect x="608" y="92" width="98" height="26" rx="13" fill="#f4f6f4" stroke="#b6c7ba" stroke-width="1.2"/>
+  <text x="657" y="110" font-size="12" fill="#7d9385" text-anchor="middle" font-weight="700">CLEAR</text>
+
+  <line x1="40" y1="143" x2="720" y2="143" stroke="#ececf0" stroke-width="1"/>
+  <circle cx="58" cy="170" r="14" fill="#b8c0cc"/><text x="58" y="175" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="700">2</text>
+  <text x="86" y="167" font-size="14" fill="#6b7480" font-weight="600">The answer</text>
+  <text x="86" y="185" font-size="11" fill="#9aa3ae">deciding, or just parroting?</text>
+  <text x="330" y="177" font-size="12" fill="#9aa3ae">45% busy, 55% calm</text>
+  <rect x="608" y="157" width="98" height="26" rx="13" fill="#f4f6f4" stroke="#b6c7ba" stroke-width="1.2"/>
+  <text x="657" y="175" font-size="12" fill="#7d9385" text-anchor="middle" font-weight="700">CLEAR</text>
+
+  <line x1="40" y1="208" x2="720" y2="208" stroke="#ececf0" stroke-width="1"/>
+  <rect x="34" y="212" width="692" height="52" rx="8" fill="#fdf1f0"/>
+  <circle cx="58" cy="235" r="14" fill="#c85a52"/><text x="58" y="240" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="700">3</text>
+  <text x="86" y="232" font-size="14" fill="#1f2d3d" font-weight="700">The test</text>
+  <text x="86" y="250" font-size="11" fill="#6b7480">five shuffles is still only one check</text>
+  <text x="330" y="242" font-size="12" fill="#2b333f" font-weight="600">split by time instead: 0.587</text>
+  <rect x="608" y="222" width="98" height="26" rx="13" fill="#fbe3e1" stroke="#c85a52" stroke-width="1.4"/>
+  <text x="657" y="240" font-size="12" fill="#b04a42" text-anchor="middle" font-weight="700">GUILTY</text>
+
+  <line x1="40" y1="278" x2="720" y2="278" stroke="#ececf0" stroke-width="1"/>
+  <text x="40" y="302" font-size="13" fill="#2b333f" font-weight="600">The exam was spoiled: every row is a near-copy of the next. The honest score is about 0.60.</text>
+</svg>

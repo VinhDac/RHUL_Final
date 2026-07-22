@@ -180,7 +180,7 @@ So notice, in the end, what is worth trusting and what is not. The number itself
 
 If a clean, honest process is the only thing worth trusting, then at the next problem, where inside that process is the next **hidden assumption** hiding?
 
-## 3. Market: the edge that was too easy
+## 3. Market: busy days and calm days
 
 ### a. Reading the problem
 
@@ -194,107 +194,187 @@ So what can we predict from one column of prices? With the loan clients we had t
 
 The first idea is the obvious one: predict tomorrow's price. But 677 back then and 7,610 now are not the same kind of thing, and a model fed the raw prices would learn only that the numbers drift upward with the years. Useless. We need to turn the price into something that means the same thing in any year.
 
-So we stop looking at the price, and look at how much it moved. Not "the price is 1,402" but "today it moved 0.2%." A one-percent day is a one-percent day whether the index sits at 1,500 or at 7,000, and measured that way every day becomes comparable. Then one more step: forget which way it went, up or down, and keep only the size of the move. A calm day is a small number, a wild day a large one. That is the lower panel above: the same years, seen as sizes, long quiet stretches broken by a few violent bursts.
+**So we stop looking at the price, and look at how much it moved.** Not "the price is 1,402" but "today it moved 0.2%." A one-percent day is a one-percent day whether the index sits at 1,500 or at 7,000, so now every day is comparable. Then one more step, and it matters more than it looks. **We forget which way the market went, up or down, and keep only the size of the move.** Trying to call the direction is a fool's errand, and not only for us: the market's ups and downs are the textbook "random walk", famously impossible to predict (Malkiel, 1973). So we leave the direction alone, and chase the one thing the random walk says nothing about, not which way the market moves, but how big the move is. Wild days seem to sit near other wild days. A calm day is a small number, a wild day a large one. That is the lower panel above: the same years seen as sizes, long quiet stretches broken by a few violent bursts.
 
-From that we build the task. Take the sizes of the last five days, and guess one thing about tomorrow: a busy day, a move bigger than usual, or a calm one? "Usual" we pin at the middle day, so that half of all days count as busy and half as calm. A blind guess is then a coin, 0.5, with no lopsided majority to lean on the way the loan data had.
+From that we build the task. Take the sizes of the last five days, and guess one thing about tomorrow: is it a busy day, a move bigger than usual, or a calm one? "Usual" we pin at the middle day, so that half of all days count as busy and half as calm. There is no lopsided majority to lean on the way the loan data had; here a blind guess is a straight coin, 0.5.
 
 ![The task: from the last five days' sizes, guess whether tomorrow is busy or calm](figures/market_task.svg)
 
-And here is where the last problem has changed us. With the loan clients we built first and asked questions afterwards. This time, before we train anything, we stop and ask the plainest question there is: is there really a pattern here to find, or are we about to spend three hundred epochs chasing noise? A network can always fit something. That is not the same as there being something to fit.
+Now, what do we build, and how do we run it? Nothing new, and that is deliberate. We keep the same small network from Section 1, untouched: five numbers in, the sizes of the last five days, through one hidden layer of sixteen ReLU units, out to two scores that a softmax turns into a chance of "busy" and a chance of "calm"; we keep the larger. We tune nothing and add nothing, precisely so that whatever we find later has to come from the data, not from us fiddling with the model.
 
-So we look before we build. Does a big day tend to be followed by another big day? We put every day's size against the next day's size, and see whether they lean together.
+And we run it through the very same recipe as the loan clients, step for careful step:
 
-![Big days tend to be followed by big days: the link is 0.29, well clear of zero](figures/market_signal.svg)
+![The plan for the market days](figures/market_pipeline.svg)
 
-They do. The cloud tilts upward: when today's move is large, tomorrow's leans large too, a link of 0.29 where zero would have meant no pattern at all. Storms cluster, and quiet follows quiet. It is not a strong effect, but it is real, and it is honest, built from nothing but days that have already closed.
+1. **Frame** it as the plain busy-or-calm question we just built.
+2. **Split** the days once into the same three parts as before: training (60%), validation (20%), and test (20%), dealt out by a random shuffle, exactly as we did for the loans. The test stays sealed until the end, so we only grade ourselves on days the model has never seen. We keep the validation slice too, following the recipe exactly, though this chapter only measures one model rather than searching for the best, so it waits untouched.
+3. **Scale** the five inputs, measuring the average and spread on the training part alone, never peeking at the test days.
+4. **Build and train** exactly as before: small random weights, three hundred passes over the training days, each scored by cross-entropy, every weight nudged downhill by plain gradient descent at a learning rate of 0.3.
+5. **Measure** by accuracy, the plain fraction of the sealed test days it calls right, against the coin's 0.5.
 
-So this time we have earned the right to try. There is a genuine signal in the sizes, we are using the same small network as before with nothing tuned or added to help it, and a blind guess scores 0.5. We build it the same careful way, and see what an honest model can do.
+Step two is worth pausing on, because it is the one place where we had a real choice to make. How should the days be dealt into those three piles? We do what the book says, and what worked on the loans: **shuffle them all together, then deal them out at random.** And here that feels like more than convention, it feels correct. Remember what this market is: a random walk, unpredictable, impossible to time. **If nobody alive can say what the market will do tomorrow, then the particular order we happen to file the days in cannot matter either.** Shuffling is simply us refusing to hand ourselves any advantage from the calendar, and it is the fairest test we could set ourselves.
 
-### b. The edge that was too easy
+And that last step is where the new us stops short. **Accuracy: that is the exact number that fooled us on the loan clients.** So before we lean on it again, we do what Loan should have taught us, and cross-examine it now, before a single day is trained. Why did it lie last time? Because the classes were lopsided, 78 payers to every 22 defaulters, and accuracy let the easy majority drown the group we cared about. So we ask the only question that matters: is anything lopsided here? No. We cut busy from calm at the middle day, on purpose, so the two are 50/50, dead even. There is no majority to hide behind, which means accuracy and the fairer balanced-accuracy would land in the same place. **On balanced classes like these, accuracy is an honest judge.** The trap that caught us last time is simply not set here, and we know it because we checked, not because we took the number on faith.
 
-The obvious first try is direction: will tomorrow close up or down? We build it, split it by the book, and look.
+So this time we have earned our confidence, and more of it than before. There is a real pattern to learn, we are running the same trusted network with nothing tuned to flatter it, and the one measure that fooled us last time we have just cross-examined and cleared. Every trap we know to look for, we have looked in the eye. We run it, and see.
 
-```
-direction:  shuffle 0.533,  chronological 0.540
-```
+### b. By the book
 
-A coin flip, both ways. No edge at all. Dead end.
+So we run it, exactly as planned, and the score comes back.
 
-But a market has more than a direction. It has a mood: some stretches are calm, some stormy, and the storms bunch together, a wild day sitting near other wild days. That is the 0.287 echo we found. So we change the question. Never mind which way tomorrow moves, can we say how much? From the sizes of the last five days, predict whether tomorrow is a busy day.
+**0.612.** The model is right about 61% of the time on days it has never seen, against the 50% a blind guess would get. Eleven points of something.
 
-```
-volatility, shuffle (by the book):  0.618
-```
+Now, before we believe a word of it, there is only one question in this chapter.
 
-A real edge, well clear of the coin's 0.5, and on the market an edge like that would be worth a fortune. **Which is exactly the problem. A real edge on the market, won this easily? That is far too good to be true. What is leaking in?**
+> **Can we trust 0.612?**
 
-So instead of celebrating, we ask one plain question: is 0.618 what we would actually get in practice? In real life we train on the days we have and predict days that have not happened yet. So we measure it that way too, past to future.
+Everything from here is an attempt to answer it. So we start where a lie would have to hide. **If this number were lying to us, there are only three places it could be hiding:**
 
-```
-volatility, shuffle       :  0.618
-volatility, chronological :  0.587
-```
+1. **The model.** Maybe it never learned anything, and 0.612 is a lucky roll.
+2. **The answer.** Maybe it is not deciding at all, just saying the same thing over and over.
+3. **The test.** Maybe the exam we set it was not a fair one.
 
-They do not match. And that stopped us. Back on the loan clients, every way of cutting the data agreed to the third decimal. Here, two cuts of the same days, the same model, disagree by three whole points. **One of the numbers is lying**, and we did not know which one, or why.
+So we take them one at a time.
 
-So we finally did the thing we should have done first. We stopped fiddling with the model and looked at the rows themselves, side by side:
+**Suspect one, the model. Did it actually learn?** We watch the training itself. From random starting weights the network is worth nothing, a coin at 0.494. Then, pass by pass, it climbs, fast at first and then slower, and settles around 0.630.
 
-```
-X[0]: [0.0383, 0.0019, 0.0010, 0.0271, 0.0112]
-X[1]: [0.0019, 0.0010, 0.0271, 0.0112, 0.0131]
-```
+![It is learning: from a coin, the score climbs and then settles](figures/market_learning.svg)
 
-There it was, in plain sight the whole time. Each row is the last five days; the very next row is those same days slid along by one. Two neighbouring rows share four of their five numbers. They are near-twins. We had been so busy with the model that we never once looked at what a single row actually was.
+That is the shape of something genuinely learning: a climb while there is a pattern to pick up, then a flattening when there is no more to take. **Suspect one is clear.**
 
-That one look explains both numbers. When we shuffle, a day and its near-twin can land on opposite sides of the cut, so at test time the model is handed a day whose near-double it already studied in training. The 0.618 was never skill at seeing the future; it was skill at recognising a neighbour. The honest split, past then future, leaves no twin to lean on, which is why it settles lower, near 0.587, or 0.603 when we roll the cut forward through the years.
+**Suspect two, the answer. Is it deciding, or parroting?** That was the trap on the loan clients, where a model could look good by telling everybody "no default". Not here. On the sealed test it answers busy 45% of the time and calm 55%, close to the even split the data really has, and it gets 56% of the busy days right and 66% of the calm days right. It is making real calls, on both sides. **Suspect two is clear.**
 
-One doubt still nagged: how do we know the gap is a real leak, and not the shuffle getting lucky once? The direction task answers it. A leak can only inflate an edge that is really there, so on direction, which we already know is a coin flip, the gap should vanish. It does: shuffle and honest split both land near 0.53. The gap shows up only where there is a real pattern to steal. That is how we know it is a true leak.
+**Suspect three, the test. Was the exam fair, or did we just draw a lucky test set?** Easy enough to check: deal the days out again, a fresh shuffle each time, and run it again.
 
-### c. A working model, killed by a unit
+![By the book: the same score, every shuffle we try](figures/market_shuffle.svg)
 
-We are not done with the market. There is a step of the recipe we have not questioned yet: scaling. Features arrive on all sorts of sizes, so the book says standardise them, subtract the average, divide by the spread, and fit those numbers on the training data only, never the test. We have done exactly that all along, and it is the careful thing to do.
+It barely moves. Every shuffle lands near 0.61. That is the same reassurance the loan clients gave us, where every way of slicing agreed. **Suspect three is clear.**
 
-So let us keep being careful, and change one tiny, innocent thing. Our feature was the size of each day's move, in percent. What if we measure it in points instead, the raw change in the index, which is just what you get by subtracting two prices and forgetting to divide? Same days, same information, a different unit. Everything else stays fixed, the honest split included.
+![Three suspects, three clear](figures/market_suspects.svg)
 
-```
-same split, only the feature's unit changes:
-  size in percent :  0.586
-  size in points  :  0.510
-```
+All three checked, all three clean. The model learned, it decides both ways, and the score holds however we deal the cards. Trust this number.
 
-Read the second row twice, because it should not be possible. **Nothing leaked, the split is honest, the scaler is frozen exactly as taught, and yet the same model that scored 0.586 now scores 0.510, a coin. How can changing a feature's unit kill a working model?**
+And then, quietly, something does not sit right.
 
-By now we know where to look. Not at the model, at the data. The two units behave completely differently over the years. A one-percent day is a one-percent day whether the index sits at 1500 or at 7000. In points it is not, because the index climbs from about 677 to 7610 across the data, so the same one-percent day is worth a handful of points early on and dozens near the end. The percent feature holds still; the points feature drifts upward with the market.
+Look again at how we cleared suspect three. We shuffled, and re-ran. Then we shuffled again, and re-ran. Five times, always the same move. One shuffle agreeing with another shuffle is not a second opinion. **Running the same check five times is still only one check.** Suspect three was never examined at all.
 
-![Why a drifting feature breaks the frozen scaler](figures/drift.svg)
+> **We never checked the test. We only ran the same check five times. So what happens if we check it a completely different way?**
 
-We can even measure how badly. The frozen scaler learned what "normal" looks like from the early, low years. Ask it to score the late, high years, and see how far outside its training range the test days land:
+### c. Tracing it back
 
-```
-frozen scaler, test values as z-scores:
-  percent :  mean 0.57,  max  9.19
-  points  :  mean 1.67,  max 27.69
-```
+So we go back to suspect three, and this time we check the test a genuinely different way.
 
-For percent, the test days sit about where the model expects, under one standard deviation on average. For points, they are miles out, nearly twenty-eight standard deviations at the extreme, values the model never met in training and has no idea what to make of. The number is not lying; it is truthfully reporting a model the recipe broke.
+Every check so far shuffled the days. But nobody in real life gets to shuffle time. You stand on today and face tomorrow, and tomorrow has not happened yet. So we split it the way the world actually deals it: learn from the early years, test on the latest years, kept sealed.
 
-The fix is to stop freezing one average for all time, and scale each day by its own recent past, a window that slides forward and only ever looks backward, so it cannot peek at the future:
+**0.587.**
 
-```
-  points, rolling scaler :  0.555
-```
+The number drops. Same model, same days. The only thing we changed was which day went into which pile, and the score fell by more than two points. On the loan clients every way of slicing agreed to the third decimal. Here two honest-looking splits give two different answers.
 
-That lifts the coin back to 0.555. Better, though the real fix was never to build a drifting feature in the first place.
+**So suspect three was guilty after all.** The exam was not fair. But why not? Why should it matter which pile a day lands in?
 
-### d. What the market cost us
+There is one way to find out. We stop poking at the model and look at the rows themselves, two of them, side by side.
 
-So the market cost us twice. The split leaked the future and pushed the number too high, an edge of 0.618 that was really 0.60. The frozen scaler froze a moving world and pushed the number too low, a working 0.586 collapsed to a coin. Two opposite failures, and the same root under both: we kept trusting the recipe without ever looking hard at the data underneath it.
+![Why a shuffle leaks: two neighbouring rows are near-twins](figures/market_twins.svg)
 
-![The market trail, two traps at once](figures/market_tree.svg)
+Something is plainly wrong. Row one and row two are almost the same. Four of their five numbers match exactly.
 
-**So which number do we keep, and what do we give up?** We give up the flattering 0.618, which was the leak, and the broken 0.510; both of those were the recipe reporting on a world it had misread. We keep around 0.60, the honest walk-forward score, once the leak is stripped out and the feature is left in percent where it does not drift. And unlike the loan clients, where the trap was in the yardstick, here the number itself was the honest messenger. It came out too high when we leaked, too low when we drifted, and each time it was telling the truth about a model we had quietly broken.
+Then we see why. Row one is days one to five. Row two is days two to six. The window slides along one day at a time, so **every row overlaps the next by four days**. We had built thousands of near-copies without ever noticing.
 
-Two datasets in, and the pattern is starting to show. On the loan clients the number lied through the measure; on the market it never lied at all, it was knocked off course twice by the structure of the data. Each time we did everything by the book, and each time the book was not enough on its own. Next we hand the model to thirty people, and watch the same kind of trap open a third way.
+Now think about what a shuffle does to near-copies. Say you are revising with flashcards, and each card is made from five days in a row, so each card and the next are nearly identical. Shuffle the pack, and card one can land in your revision pile while card two lands in the exam. You sit the exam, see card two, and get it right, not because you learned to predict anything, but because you had already revised its twin.
+
+That is exactly what happened to us. The shuffle scattered near-twins across the divide, so at test time the model met rows it had all but trained on already. **So the test was never a test. The model had already revised the exam.** The 0.612 was not skill at predicting tomorrow. **It was memory.**
+
+Splitting by time does not allow that. A row and its near-twin sit next to each other in the same stretch of years, so they land in the same pile, and no twin sneaks across. That is why the honest score comes out lower.
+
+And there is the irony. At the start we told ourselves the order of the days could not matter, because the market is a random walk. **But the random walk is about which way the market moves, not how big.** The sizes do remember each other, and that memory is exactly what the shuffle smuggled across the divide.
+
+Still, a neat story is not proof. How do we know the drop came from this leak, and not from the shuffle simply getting lucky? There is a clean test. A leak like this can only help if there is a real pattern for the twin to carry. So take a task with no pattern in it at all, and the gap should vanish. We have one already: guessing whether the market goes up or down is a pure coin flip.
+
+![The gap shows up only where there is a real pattern to steal](figures/market_leak.svg)
+
+And it does vanish. On up-or-down, the shuffle and the honest split land together, 0.540 and 0.539. The gap opens only on busy-or-calm, the task with a real pattern in it. **The leak turns up exactly where there is something worth stealing, and nowhere else.** So it was not luck.
+
+![The same three suspects, after we checked the third one properly](figures/market_verdict.svg)
+
+So where does that leave us? The honest number, with no twin to lean on, is about 0.60. Lower than the 0.612 we were admiring, but real.
+
+And here is the part that stings. We were careful. The model was sound, the answer was real, the measure was fair, and we had checked every one of them. The fault sat in the one suspect we thought we had cleared, **and we had cleared it by running the same check five times over**.
+
+And there it is, the **hidden assumption** we never knew we had made. **Dealing the days out at random, we assumed they were interchangeable: that one row has nothing to do with the next, so it could not matter which pile each one fell into.** On the loan clients that was true, and the shuffle was fine. Here it was not. Every row shares four of its five days with its neighbour, so the rows are near-copies, and a shuffle scatters copies across the divide. We never chose that assumption. We inherited it, from a step we had run without asking what it took for granted.
+
+Then notice what could never have saved us: the number itself. **A number can be steady, repeatable, and wrong, and it will never tell you so itself.** 0.612 was all three, and no amount of staring at it would have said a word. It took checking from a different angle.
+
+> **What else have we only ever checked one way?**
+
+### d. The step we had not questioned
+
+Take a breath and see where we stand. One number has betrayed us so far, and it did it in a particular way: a step we ran without ever asking what it assumed. That is the pattern. So this time we do not wait to be ambushed. We walk back through the recipe on purpose, looking for the next step we have been taking on faith.
+
+It does not take long. **Scaling.** We measured the average and the spread on the training years, froze those two numbers, and used them on every day afterwards, because the book says to. We never once asked what that takes for granted.
+
+So we test it the way part c taught us. Keep the honest split, the same network, the same task, everything. Change only the **unit** the move is measured in: instead of "today moved 0.8 percent", say "today moved 38 points". Same day, same market, same information. A different ruler.
+
+**0.509.**
+
+A coin. The model that scored 0.587 a moment ago now knows nothing at all. Nothing leaked, the split is honest, the scaler was frozen exactly as taught, and **a change of ruler has killed it.**
+
+![What the frozen scaler called normal, and where the feature actually went](figures/market_drift.svg)
+
+The picture says why. The grey band is what the scaler learned as normal, back in the training years. In percent, a one-percent day is a one-percent day in any decade, so the feature stays inside that band. In points it does not, because the index climbs across the years, so the same one-percent day is worth a handful of points early on and dozens near the end. The feature walks straight out of the band, ending up about three times larger than where it began, and the network is being asked about a world it has no vocabulary for.
+
+Can we patch it? Scale each day by its own recent past instead, a window that slides forward and only ever looks backward. That lifts the coin to 0.528: better, and still nowhere near 0.587. **The fix was never a better scaler. It was not building a drifting feature in the first place.**
+
+And there it is again, the **hidden assumption** we never knew we had made. **Freezing the scaler assumed the world stands still: that what counted as a normal day back then still counts as normal now.** In percent that roughly holds. In points it does not, and nothing in the recipe was ever going to say so.
+
+So we put the points feature away and keep percent, which leaves us holding the one number we had decided to trust: 0.587.
+
+### e. Asking the number to hold still
+
+And then the colder thought arrives.
+
+> **If the world moves under our feet, why would that number hold still?**
+
+There is a way to find out. Instead of one test at the very end, walk the split forward: train on everything up to a point, test on the stretch that comes next, then move the line along and do it again. Era by era, same model, same recipe.
+
+![The same model, era by era, against the bar each era actually sets](figures/market_eras.svg)
+
+It does not hold still. Across five eras the score runs from **0.519 to 0.654**. That is not luck: the swing is about nine times larger than chance can explain on stretches this long, and it barely moves when we change the seed. There was never one number. There were five, and they disagree.
+
+But the worse news is in the pale bars beside them.
+
+Look at how many days counted as busy in each era: **0.374 in one, 0.541 in another.** We drew the busy line once, at the middle day of all history, and then compared every score to a flat coin at 0.5. **That comparison was never right in a single era.**
+
+Take the two best-looking eras. One scored **0.651**, the other **0.654**, near enough identical. But the first sat in a calm stretch where fewer than four days in ten were busy, so simply saying "calm" every single time would already have scored **0.626**, and the model beat that by about two and a half points. In the other era, always saying the majority would have scored **0.528**, so the same-looking score was worth about thirteen points. **Two scores you could not tell apart, worth five times different amounts.**
+
+Measured against the bar each era actually sets, the model is ahead by about **five points on average**, and in one era it is **behind**, worse than doing nothing at all. The headline we began with, 0.612 against a flat coin, read as **eleven points**. Less than half of it survives.
+
+> **We assumed the yardstick stood still.**
+
+That is the biggest one of all, and it sits underneath both of the others. We cut the busy line once, out of all of history. We fixed the bar at 0.5. Then we treated both as facts about the market, when they were only ever facts about a stretch of it.
+
+Which leaves one question, and it is no longer about the market: after all this, what are we actually still allowed to say?
+
+### f. What we can actually stand behind
+
+So what are we still allowed to say?
+
+Start with what survived, because something did, and pretending otherwise would be its own kind of dishonesty. Measured era by era, against the bar each era actually sets, the model is ahead by about **five points on average, and ahead in four eras out of five**. That is real, if modest. The sizes of recent days do carry something about the size of the next one, and the little network found it.
+
+What died is not the skill. It is the sentence we wanted to write.
+
+We wanted to write "the model is 61% accurate." A short, clean sentence, and it does not survive this data for a moment. It claims **one** number, true everywhere and for good, on days where the score moves with the era, the bar moves with the era, and the whole thing can be flattened by the choice of a unit. No procedure, however careful, was ever going to hand us that sentence.
+
+So we write a longer one instead, and we can defend every word of it:
+
+> **On these 6,658 S&P 500 days, using the size of the last five moves in percent, split past to future and scaled without peeking, a sixteen-unit network beats the bar its own era sets by about five points, ranging from two and a half points behind to thirteen ahead.**
+
+Less impressive. Much harder to put in a headline. The only one of the two we can stand behind.
+
+And that is what the market adds to what the loans taught us. The loans said: trust the process, not the score. The market says the harder half out loud. **A process is worth only as much as the conditions you state beside it.** The era, the split, the unit, the bar: leave any of them out, and what is left is not a rougher version of the truth.
+
+> **A number without its conditions is not a smaller claim. It is a different one.**
+
+Next we hand the same network to thirty people carrying phones, and ask what "someone it has never seen" is actually supposed to mean.
 
 ## 4. Phone: reading the person, not the task
 
