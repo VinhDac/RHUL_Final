@@ -1,6 +1,6 @@
 <svg width="100%" viewBox="0 0 760 300" role="img" xmlns="http://www.w3.org/2000/svg">
-<title>Can we trust 0.612? Three of the five pipeline stations checked and cleared</title>
-<desc>The same five-step pipeline as before. Three stations have been checked and marked clear: the split, the build, and the measure. Frame and Scale carry no verdict.</desc>
+<title>The plan, corrected: every fault we found has been repaired</title>
+<desc>The same five-step pipeline. The split is fixed to run past to future, the scale is fixed to a non-drifting feature in percent, and the build and the measure carry their earlier clean verdicts. Station one, Frame, carries no verdict at all.</desc>
 <style>
 .card{fill:#ffffff;stroke:#ececf0;stroke-width:1}
 .ti{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#1a1a1a;font-size:19px;font-weight:700}
@@ -18,8 +18,8 @@
 </style>
 <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#3a6ea5"/></marker></defs>
 <rect class="card" x="0.5" y="0.5" width="759" height="299" rx="12"/>
-<text class="ti" x="40" y="36">Can we trust 0.612?</text>
-<text class="st" x="40" y="58">If the number is lying, it is hiding at one of these five stations.</text>
+<text class="ti" x="40" y="36">The plan, corrected</text>
+<text class="st" x="40" y="58">Every fault we found, repaired. This time we have checked our work.</text>
 
 <text class="inb" x="47" y="128" text-anchor="middle">6,658</text>
 <text class="sub" x="47" y="144" text-anchor="middle">days</text>
@@ -47,14 +47,18 @@
 <text class="nm" x="534" y="140" text-anchor="middle">Build</text>
 <text class="nm" x="662" y="140" text-anchor="middle">Measure</text>
 <text class="sub" x="150" y="158" text-anchor="middle">busy or calm?</text>
-<text class="sub" x="278" y="158" text-anchor="middle">shuffle at random</text>
-<text class="sub" x="406" y="158" text-anchor="middle">level the sizes</text>
+<text class="sub" x="278" y="158" text-anchor="middle">past to future</text>
+<text class="sub" x="406" y="158" text-anchor="middle">percent, no drift</text>
 <text class="sub" x="534" y="158" text-anchor="middle">train the net</text>
 <text class="sub" x="662" y="158" text-anchor="middle">vs a coin</text>
 
-<text class="ev" x="278" y="198" text-anchor="middle">every shuffle near 0.61</text>
+<text class="ev" x="278" y="198" text-anchor="middle">no twin can cross</text>
 <rect class="chip" x="234" y="208" width="88" height="24" rx="12"/>
-<text class="ok" x="278" y="224" text-anchor="middle">CLEAR</text>
+<text class="ok" x="278" y="224" text-anchor="middle">FIXED</text>
+
+<text class="ev" x="406" y="198" text-anchor="middle">stays in its band</text>
+<rect class="chip" x="362" y="208" width="88" height="24" rx="12"/>
+<text class="ok" x="406" y="224" text-anchor="middle">FIXED</text>
 
 <text class="ev" x="534" y="198" text-anchor="middle">0.494 to 0.630</text>
 <rect class="chip" x="490" y="208" width="88" height="24" rx="12"/>
@@ -65,5 +69,5 @@
 <text class="ok" x="662" y="224" text-anchor="middle">CLEAR</text>
 
 <line x1="40" y1="252" x2="720" y2="252" stroke="#ececf0" stroke-width="1"/>
-<text class="ft" x="40" y="276">Three stations checked, three clear. So we trust the number.</text>
+<text class="ft" x="40" y="276">Every fault we found is repaired. So we run it again, and this time we trust the number.</text>
 </svg>

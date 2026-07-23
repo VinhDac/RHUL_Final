@@ -1,0 +1,90 @@
+<svg width="100%" viewBox="0 0 760 420" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>Station three examined: the unit and the scaler branch, and neither scaler rescues a drifting feature</title>
+<desc>The same five-step pipeline with station three, Scale, flagged in red. A branch grows out of it: measured in percent with a frozen scaler scores 0.587, measured in points with a frozen scaler scores 0.509, and with a rolling scaler 0.528.</desc>
+<style>
+.card{fill:#ffffff;stroke:#ececf0;stroke-width:1}
+.ti{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#1a1a1a;font-size:19px;font-weight:700}
+.st{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#6b7480;font-size:12px}
+.nm{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#1f2d3d;font-size:14px;font-weight:600}
+.dim{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#9aa3ae;font-size:14px;font-weight:600}
+.sub{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#6b7480;font-size:11px}
+.dsub{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#b3bac3;font-size:11px}
+.inb{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#9aa3ae;font-size:13px;font-weight:600}
+.bn{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#ffffff;font-size:11px;font-weight:700}
+.cn{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#1f2d3d;font-size:13px;font-weight:700}
+.cs{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#6b7480;font-size:10.5px}
+.ft{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#2b333f;font-size:13px;font-weight:600}
+.box{fill:#ffffff;stroke:#e3e7ec;stroke-width:1.2}
+.hot{fill:#fdf1f0;stroke:#c85a52;stroke-width:1.8}
+.node{fill:#f7f9fb;stroke:#d3d9e0;stroke-width:1.3}
+.leaf{fill:#ffffff;stroke:#d3d9e0;stroke-width:1.3}
+</style>
+<rect class="card" x="0.5" y="0.5" width="759" height="419" rx="12"/>
+<text class="ti" x="40" y="36">The step we had not questioned</text>
+<text class="st" x="40" y="58">Station three, and the two forks hiding inside it.</text>
+
+<text class="inb" x="47" y="128" text-anchor="middle">6,658</text>
+<text class="dsub" x="47" y="144" text-anchor="middle">days</text>
+<line x1="80" y1="131" x2="94" y2="131" stroke="#c8ced6" stroke-width="1.6"/>
+
+<rect class="box" x="96" y="86" width="108" height="90" rx="10"/>
+<rect class="box" x="224" y="86" width="108" height="90" rx="10"/>
+<rect class="hot" x="352" y="86" width="108" height="90" rx="10"/>
+<rect class="box" x="480" y="86" width="108" height="90" rx="10"/>
+<rect class="box" x="608" y="86" width="108" height="90" rx="10"/>
+<line x1="204" y1="131" x2="224" y2="131" stroke="#c8ced6" stroke-width="1.6"/>
+<line x1="332" y1="131" x2="352" y2="131" stroke="#c8ced6" stroke-width="1.6"/>
+<line x1="460" y1="131" x2="480" y2="131" stroke="#c8ced6" stroke-width="1.6"/>
+<line x1="588" y1="131" x2="608" y2="131" stroke="#c8ced6" stroke-width="1.6"/>
+
+<circle cx="150" cy="108" r="13" fill="#b8c0cc"/><text class="bn" x="150" y="112" text-anchor="middle">1</text>
+<circle cx="278" cy="108" r="13" fill="#b8c0cc"/><text class="bn" x="278" y="112" text-anchor="middle">2</text>
+<circle cx="406" cy="108" r="13" fill="#c85a52"/><text class="bn" x="406" y="112" text-anchor="middle">3</text>
+<circle cx="534" cy="108" r="13" fill="#b8c0cc"/><text class="bn" x="534" y="112" text-anchor="middle">4</text>
+<circle cx="662" cy="108" r="13" fill="#b8c0cc"/><text class="bn" x="662" y="112" text-anchor="middle">5</text>
+
+<text class="dim" x="150" y="140" text-anchor="middle">Frame</text>
+<text class="dim" x="278" y="140" text-anchor="middle">Split</text>
+<text class="nm"  x="406" y="140" text-anchor="middle">Scale</text>
+<text class="dim" x="534" y="140" text-anchor="middle">Build</text>
+<text class="dim" x="662" y="140" text-anchor="middle">Measure</text>
+<text class="dsub" x="150" y="158" text-anchor="middle">busy or calm?</text>
+<text class="dsub" x="278" y="158" text-anchor="middle">past to future</text>
+<text class="sub"  x="406" y="158" text-anchor="middle">what counts as normal?</text>
+<text class="dsub" x="534" y="158" text-anchor="middle">train the net</text>
+<text class="dsub" x="662" y="158" text-anchor="middle">vs a coin</text>
+
+<path d="M406 176 L406 206" stroke="#c85a52" stroke-width="1.8" fill="none"/>
+<path d="M406 206 L215 230" stroke="#c85a52" stroke-width="1.8" fill="none"/>
+<path d="M406 206 L555 230" stroke="#c85a52" stroke-width="1.8" fill="none"/>
+
+<rect class="node" x="130" y="230" width="170" height="46" rx="9"/>
+<text class="cn" x="215" y="251" text-anchor="middle">measured in percent</text>
+<text class="cs" x="215" y="267" text-anchor="middle">stays in the same ballpark</text>
+
+<rect class="node" x="470" y="230" width="170" height="46" rx="9"/>
+<text class="cn" x="555" y="251" text-anchor="middle">measured in points</text>
+<text class="cs" x="555" y="267" text-anchor="middle">drifts up with the index</text>
+
+<path d="M215 276 L215 312" stroke="#c8ced6" stroke-width="1.6" fill="none"/>
+<path d="M555 276 L555 292" stroke="#c8ced6" stroke-width="1.6" fill="none"/>
+<path d="M555 292 L470 312" stroke="#c8ced6" stroke-width="1.6" fill="none"/>
+<path d="M555 292 L646 312" stroke="#c8ced6" stroke-width="1.6" fill="none"/>
+
+<rect class="leaf" x="130" y="312" width="170" height="58" rx="9"/>
+<text class="cs" x="215" y="331" text-anchor="middle">frozen scaler</text>
+<text x="215" y="354" text-anchor="middle" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-size="16" font-weight="700" fill="#3a6ea5">0.587</text>
+
+<rect class="leaf" x="390" y="312" width="160" height="58" rx="9"/>
+<text class="cs" x="470" y="331" text-anchor="middle">frozen scaler</text>
+<text x="470" y="354" text-anchor="middle" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-size="16" font-weight="700" fill="#c85a52">0.509</text>
+
+<rect class="leaf" x="566" y="312" width="160" height="58" rx="9"/>
+<text class="cs" x="646" y="331" text-anchor="middle">rolling scaler</text>
+<text x="646" y="354" text-anchor="middle" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-size="16" font-weight="700" fill="#6b7480">0.528</text>
+
+<line x1="40" y1="386" x2="720" y2="386" stroke="#ececf0" stroke-width="1"/>
+<text class="ft" x="40" y="408">Station three: no scaler rescues a feature that will not hold still.</text>
+<rect x="612" y="392" width="94" height="24" rx="12" fill="#fbe3e1" stroke="#c85a52" stroke-width="1.4"/>
+<text x="659" y="408" text-anchor="middle" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-size="11" font-weight="700" fill="#b04a42">GUILTY</text>
+</svg>
