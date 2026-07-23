@@ -360,7 +360,7 @@ So we put the points feature away and keep percent, which leaves us holding the 
 
 **What else did we freeze once, and then forget we had frozen?**
 
-### e. Asking the number to hold still
+### e. The process we can finally trust
 
 So we go back to the drawing board, and this time with our eyes open.
 
