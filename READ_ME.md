@@ -433,27 +433,33 @@ And the worst part is how close we came. We had run the one check that might hav
 
 So we are left with one question, and it is not about the market anymore. After all that care, what are we still allowed to say?
 
-### f. What we can actually stand behind
+### f. So what did all that teach us?
 
-So what are we still allowed to say?
+That was a lot. Three times in this chapter we found a number, trusted it, and watched it move under us. Before we go on, it is worth stopping to gather what we actually learned, because it is simpler than it felt.
 
-Start with what survived, because something did, and pretending otherwise would be its own kind of dishonesty. Measured era by era, against the bar each era actually sets, the model is ahead by about **five points on average, and ahead in four eras out of five**. That is real, if modest. The sizes of recent days do carry something about the size of the next one, and the little network found it.
+![The road we just walked, and the three bets it uncovered](figures/market_recap.svg)
 
-What died is not the skill. It is the sentence we wanted to write.
+Every time, the trouble had the same shape. We ran a step because the book said to. That step was quietly betting on something. And the bet stayed invisible, folded inside a number that looked perfectly healthy, until we happened to check it from an angle we had not tried.
 
-We wanted to write "the model is 61% accurate." A short, clean sentence, and it does not survive this data for a moment. It claims **one** number, true everywhere and for good, on days where the score moves with the era, the bar moves with the era, and the whole thing can be flattened by the choice of a unit. No procedure, however careful, was ever going to hand us that sentence.
+There were three such bets.
 
-So we write a longer one instead, and we can defend every word of it:
+The **split** bet that one day has nothing to do with the next. The near-twins broke it, and 0.612 turned out to be memory, not skill.
 
-> **On these 6,658 S&P 500 days, using the size of the last five moves in percent, split past to future and scaled without peeking, a sixteen-unit network beats the bar its own era sets by about five points, ranging from two and a half points behind to thirteen ahead.**
+The **scale** bet that a normal day stays normal. The drift broke it, and a working model dropped to a coin.
 
-Less impressive. Much harder to put in a headline. The only one of the two we can stand behind.
+The **frame** bet that the question and the pass-mark were simply given, settled before the real work began. The eras broke it, and the single score we came for turned out never to have existed.
 
-And that is what the market adds to what the loans taught us. The loans said: trust the process, not the score. The market says the harder half out loud. **A process is worth only as much as the conditions you state beside it.** The era, the split, the unit, the bar: leave any of them out, and what is left is not a rougher version of the truth.
+So the recipe was never the thing we took it for. It is not a list of steps to carry out. It is a list of bets to read. Follow it without looking, and you take every one of those bets sight unseen.
 
-> **A number without its conditions is not a smaller claim. It is a different one.**
+And look at how we found all three. Never once in advance. Always after the fall, one ambush at a time, patching the last hole just in time to walk into the next.
 
-Next we hand the same network to thirty people carrying phones, and ask what "someone it has never seen" is actually supposed to mean.
+What died in all of it is one short sentence, the one we wanted to write: "the model is 61% accurate." It does not survive this data for a moment, because there is no single number here to be right about. What survived is smaller, and real: the size of recent days does carry a little about the size of the next one. But we can only say so honestly with its conditions held right beside it.
+
+> **Here is the one thing we never did in this whole chapter. We never sat down at the start, looked at each step, and asked what it was betting before it could cost us anything.**
+
+We only ever reacted. And we did the whole thing one-handed, with the same tiny untouched network, never once reaching for the tools we actually have.
+
+So there is one thing left to try. We take the same problem back to the top, and this time we read each bet before it bites, and we hold nothing back.
 
 ## 6. So what is left?
 
@@ -483,7 +489,7 @@ That is the whole of it. The recipe is a fine place to start and a dangerous pla
 
 ## References
 
-*The sources behind Sections 0 to 2, the only sections built so far; this list will grow with the report. Formatting to be brought to the handbook style at the end.*
+*The sources behind Sections 0 to 3, the sections built so far; this list will grow with the report. Formatting to be brought to the handbook style at the end.*
 
 **Deep learning, the standard method (Section 1).**
 
@@ -495,6 +501,18 @@ That is the whole of it. The recipe is a fine place to start and a dangerous pla
 - Yeh, I.-C. and Lien, C.-H. (2009). The comparisons of data mining techniques for the predictive accuracy of probability of default of credit card clients. *Expert Systems with Applications*, 36(2). (The UCI credit-card default dataset used here.)
 - Provost, F., Fawcett, T. and Kohavi, R. (1998). The case against accuracy estimation for comparing induction algorithms. *ICML*. (Why plain accuracy is the wrong yardstick when the classes are imbalanced.)
 - Brodersen, K. H., Ong, C. S., Stephan, K. E. and Buhmann, J. M. (2010). The balanced accuracy and its posterior distribution. *ICPR*. (Balanced accuracy, the honest metric used in Section 2.)
+
+**The market: unpredictable in direction, learnable in size, and the traps in between (Section 3).**
+
+- Malkiel, B. G. (1973). *A Random Walk Down Wall Street*. Norton. (Why the direction of the next move is effectively unpredictable, so the task predicts the size of the move instead.)
+- Engle, R. F. (1982). Autoregressive conditional heteroscedasticity with estimates of the variance of United Kingdom inflation. *Econometrica*, 50(4). (Volatility clustering: wild days sit near wild days, the real signal the task learns and the very thing a shuffle leaks.)
+- Hastie, T., Tibshirani, R. and Friedman, J. (2009). *The Elements of Statistical Learning*, 2nd ed., ch. 7. Springer. (The random hold-out and cross-validation the recipe leans on.)
+- Kohavi, R. (1995). A study of cross-validation and bootstrap for accuracy estimation and model selection. *IJCAI*. (Cross-validation and model selection, the standard practice we put on trial.)
+- Kaufman, S., Rosset, S. and Perlich, C. (2012). Leakage in data mining: formulation, detection, and avoidance. *ACM Transactions on Knowledge Discovery from Data*, 6(4). (The shuffle leak: information from the future crossing into the training set.)
+- Tashman, L. J. (2000). Out-of-sample tests of forecasting accuracy: an analysis and review. *International Journal of Forecasting*, 16(4). (Rolling-origin evaluation, the academic name for the walk-forward test used in Section 3.)
+- Bergmeir, C. and Benitez, J. M. (2012). On the use of cross-validation for time series predictor evaluation. *Information Sciences*, 191. (Why a time series needs a time-respecting split rather than a random one.)
+- Shimodaira, H. (2000). Improving predictive inference under covariate shift by weighting the log-likelihood function. *Journal of Statistical Planning and Inference*, 90(2). (Covariate shift: the feature drifting out from under a frozen scaler.)
+- Gama, J., Zliobaite, I., Bifet, A., Pechenizkiy, M. and Bouchachia, A. (2014). A survey on concept drift adaptation. *ACM Computing Surveys*, 46(4). (How a learned relationship drifts as time passes.)
 
 ---
 
@@ -575,8 +593,45 @@ Honest limits: one bank, one country, one six-month window (Taiwan, 2005). That 
 
 ---
 
-## Appendix C: The code
+## Appendix C: The market data, up close
 
-*Outside the page limit, and the answer to "how do I run this?" Every number and figure in Section 2 is produced by one self-contained notebook, `notebooks/loan.ipynb`. It loads the raw data, trains the model, prints every count, and plots every chart, and it reads as a standalone walk-through: open it and Run All (it needs only numpy and matplotlib), or read it top to bottom without running a thing. From the command line: `jupyter nbconvert --to notebook --execute notebooks/loan.ipynb`.*
+*Outside the page limit, and here so the whole of Section 3 can be understood from this document alone. This is the market data exactly as it arrives, and how one column of prices becomes the busy-or-calm task. Every number below is printed by `notebooks/market.ipynb`, which reads the raw file and shows one day moving through each transform.*
 
-*The market, phone, and search chapters (Sections 3 to 5) each get their own notebook under `notebooks/` as they are built.*
+Downloaded once and frozen to `data/gspc_2026-07-03.csv`: one column of numbers and nothing else, 6,664 daily closing prices of the S&P 500 in date order. The price wanders from a low near 677 to a high near 7,610. The task is built from that one column in a few steps, and the first days show every one:
+
+| day | close    | the move into it, r | its size, abs(r) |
+| --- | -------- | ------------------- | ---------------- |
+| 1   | 1,455.22 |                     |                  |
+| 2   | 1,399.42 | -0.0383             | 0.0383           |
+| 3   | 1,402.11 | +0.0019             | 0.0019           |
+| 4   | 1,403.45 | +0.0010             | 0.0010           |
+| 5   | 1,441.47 | +0.0271             | 0.0271           |
+
+A day's features are then the five previous sizes, and its label is whether the next size beats the median size, 0.00544:
+
+| row  | lag 5  | lag 4  | lag 3  | lag 2  | lag 1  | label |
+| ---- | ------ | ------ | ------ | ------ | ------ | ----- |
+| X[0] | 0.0383 | 0.0019 | 0.0010 | 0.0271 | 0.0112 | 1     |
+| X[1] | 0.0019 | 0.0010 | 0.0271 | 0.0112 | 0.0131 | 0     |
+| X[2] | 0.0010 | 0.0271 | 0.0112 | 0.0131 | 0.0044 | 1     |
+
+Look at what that table shows on its own. `X[1]` is `X[0]` shifted one step to the left with one new number added on the end: consecutive rows share four of their five columns. They are near-twins by construction, before we say a single word about markets, and that overlap is exactly what a shuffle leaks.
+
+Two more numbers are the structure. The **drift**: the index climbs from 1,455 to 7,483 over the years, about five times larger, so the same one-percent day is worth roughly five times the points at the end that it was at the start, which is why a scaler frozen on the early years cannot describe the later ones. The **lag-1 autocorrelation of abs(r) is +0.287**: the size of today's move really does predict the size of tomorrow's. That is volatility clustering (Engle, 1982), the real signal the task learns, and also precisely what a shuffle leaks, because it is what makes neighbouring days alike.
+
+After five lags are used up, 6,658 days remain, and because the threshold is the median the two classes are balanced at 0.500, so a blind guess scores 0.5 and no majority-class trick is available.
+
+Honest limits: one index along one path through history. We read its numbers as directional, not to the third decimal.
+
+---
+
+## Appendix D: The code
+
+*Outside the page limit, and the answer to "how do I run this?" Every number and figure in Sections 2 and 3 is produced by one self-contained notebook per chapter, under `notebooks/`. Each one loads the raw data, trains the model, prints every count the chapter quotes, and plots every chart, and each reads as a standalone walk-through: open it and Run All (it needs only numpy and matplotlib), or read it top to bottom without running a thing.*
+
+| Notebook | Chapter | What it produces |
+| --- | --- | --- |
+| `notebooks/loan.ipynb` | Section 2, Loan | one client read top to bottom, the split checks, the confusion counts, and balanced accuracy |
+| `notebooks/market.ipynb` | Section 3, Market | the price-to-size transform traced day by day, the shuffle-versus-honest leak with its near-twins, the drift under a frozen scaler, and the era-by-era spread |
+
+*From the command line, run either with `jupyter nbconvert --to notebook --execute notebooks/<file>.ipynb`. Later chapters get their own notebook as they are built.*
