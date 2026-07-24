@@ -1,58 +1,62 @@
 # HANDOFF — tiếp tục dựng dissertation "Data Snooping in Deep Learning"
 
-*Dán prompt này vào đầu session mới. Nó chắt lọc kinh nghiệm từ session dựng xong §0–§2. ĐỌC KỸ trước khi làm gì.*
+*Dán vào đầu session mới. Chắt lọc từ session dựng lại trọn §3 Market. ĐỌC KỸ trước khi làm gì. Luật tối cao: NHẸ + TRỰC DIỆN + CÙNG-KHÁM-PHÁ.*
 
-Bạn (Claude) tiếp quản một MSc dissertation "CS: Deep Learning" viết theo kiểu HÀNH TRÌNH (một người bình thường đi qua pipeline DL, mỗi dataset là một journey có "hidden assumption"). Session trước đã dựng xong trọn §0–§2 làm BẢN MẪU. Nhiệm vụ tiếp: **§3 Market**, rồi §4 Phone, §5 Lab, §6 Valley/§7 Summit.
+Bạn (Claude) tiếp quản MSc dissertation "CS: Deep Learning" viết kiểu HÀNH TRÌNH: một người bình thường đi qua pipeline DL, mỗi dataset là một journey lộ ra một **hidden assumption**. §0–§2 là bản mẫu. Session này đã **dựng lại trọn §3 Market (a→e)** theo giọng mới. Nhiệm vụ tiếp: **§3f**, rồi §4 Phone, §5 Lab, §6, §7.
 
 ## 0. Đọc trước, theo thứ tự
-1. `NORTH_STAR.md` — la bàn giọng/hồn. Luật tối cao: **NHẸ**.
-2. `LOAN_PLAN.md` — spec Loan + các nguyên tắc giọng đã khoá (áp cho MỌI chương).
-3. `READ_ME.md` §0–§2 (tới hết Appendix C) — **bản mẫu đã chốt**, bắt chước giọng + cấu trúc.
-4. `notebooks/loan.ipynb` — notebook standalone mẫu (mở xem cấu trúc + chart inline).
-5. `Docs/CONSTRUCT_TOPIC_DL.md` — tầng chấm điểm (3 trụ: implement · improve ≥2 arch×≥2 opt · explain+derive+visualize).
-6. memory/ tự load.
+1. memory/ tự load — đặc biệt `leveling-up-arc-3-5` (mọi thiết bị của §3) và `writing-style-key-core` (luật giọng).
+2. `NORTH_STAR.md` (la bàn) + `LOAN_PLAN.md` (giọng đã khoá).
+3. `READ_ME.md` §0–§3 (§3 là bản mẫu MỚI nhất — bắt chước giọng này, KHÔNG bắt chước §4–§7 cũ).
+4. Handoff này (mục 2 = phần quý nhất).
 
 ## 1. Trạng thái
-- ✅ **§0/§1/§2 DỰNG LẠI XONG** (giọng cùng-khám-phá, config B, chart inline, self-contained). = KHUÔN.
-- ✅ `loan.ipynb` standalone (12 cells, 6 chart inline, đọc riêng hiểu trọn).
-- ✅ READ_ME §0–§2 + References (5 curated) + Appendix A (derivation) / B (loan data chi tiết) / C (code) — **TỰ ĐỦ** (đọc README riêng hiểu hết, không cần notebook).
-- ✅ Refs/appendix cũ parked ở `_parked_refs_appendix.md`.
-- ⏳ **§3 Market, §4 Phone, §5 Lab, §6, §7 VẪN BẢN CŨ** (config cũ + giọng cũ) → phải dựng lại.
-- ⚠️ Nợ (để CUỐI): §3–§7 còn trỏ appendix đã parked (dangling); §5/§6/§7 trích số loan cũ. Reconcile + whole-report number-sweep + ẩn danh/metadata + đổ Word template ở cuối.
+- ✅ **§3 Market a→e DỰNG XONG** (giọng plain/exam, dẫn cảm xúc). §3f (hạ cánh) **VẪN BẢN CŨ** → việc kế tiếp: viết lại §3f cho khớp giọng + gắn câu chốt user đã thêm.
+- ✅ Notebook `market.ipynb` rebuilt (config B), 13 hình §3 trong `figures/`.
+- ⏳ **§4 Phone, §5 Lab, §6, §7 VẪN BẢN CŨ** (config + giọng cũ) → dựng lại sau.
+- ⚠️ Nợ: **§6 Valley trích SỐ MARKET CŨ** (0.618…) → reconcile sang 0.612/0.587/~0.60/+0.050. `market_tree.svg` + `market_signal.svg` giờ KHÔNG dùng. Nhãn part-d trong notebook ôm cả §3d+§3e. Reconcile/anonymity/Word-template để CUỐI.
 
-## 2. GIỌNG + PHƯƠNG PHÁP (phần quý nhất — chắt lọc từ rất nhiều vòng sửa)
+## 2. GIỌNG + CRAFT DẪN CẢM XÚC (chắt lọc từ RẤT nhiều vòng sửa session này)
 
-**A. Cùng-khám-phá, KHÔNG biết trước (quan trọng nhất).** CẤM mọi "tell" báo trước: *"file this away, it'll matter" · "almost everyone would" · "the shine comes off" · "a number this smooth is suspect".* Mỗi nước đi thúc bởi cái THẤY TRƯỚC MẮT, không dùng kiến thức tương lai; để DATA (kết quả chạy thật) bung bất ngờ. Đóng vai người thực hành NGÂY THƠ.
+**A. TRỰC DIỆN, KHÔNG VĂN VẺ (lỗi tái phạm #1).** Tiếng Việt mình chốt với user luôn rõ; tiếng Anh thì cứ trôi sang "văn". Chữa MỖI LẦN: câu ngắn; **mỗi đoạn MỘT nhịp**; **câu-neo đứng RIÊNG một dòng** (đừng chôn giữa câu). Bỏ mệnh đề phụ, bỏ hình ảnh điệu ("the ground the whole thing was standing on", "all that care buys you"). Giọng bạn-đồng-hành plain: *"But hang on… we did the right thing, we just did it once, and called it done."* **Test:** đọc riêng các dòng-neo từ trên xuống, phải tái hiện đúng chuỗi key tiếng Việt. Anh "văn" hơn Việt = SAI. TUYỆT ĐỐI KHÔNG em-dash (—).
 
-**B. Live-run (cách làm user cực thích).** Mỗi nhịp: quyết nước đi → viết cell notebook → **CHẠY THẬT** → nhìn output thật → phản ứng thật → viết prose từ khoảnh khắc đó → mới quyết bước sau. **KHÔNG bịa/nhớ số.** Notebook = nguồn chân lý duy nhất.
+**B. CÙNG-KHÁM-PHÁ, KHÔNG BIẾT TRƯỚC.** Mỗi nước đi thúc bởi cái thấy trước mắt; để DATA bung bất ngờ. Kinh nghiệm-mang-theo (sẹo chương trước) ≠ biết-trước-bẫy-chương-này.
 
-**C. Cấu trúc a/b/c/d mỗi journey (đã khoá ở Loan):**
-- **a — Reading the problem:** dựng TỰ TIN NGÂY THƠ; trải config ĐẦY ĐỦ rõ nhất (frame/split/scale/layers/epochs/optimizer/loss/metric); **GIẤU con số chốt-hạ** (vd. baseline). Kết "we run it, and see."
-- **b — By the book:** PHỒNG (chart làm mọi thứ đẹp, "trust this number") → **"But"** → SỤP (lộ con số giấu + chart deflate) → **pulled-quote câu hỏi gây sụp đổ.**
-- **c — What the number was hiding:** loại nghi phạm khác (clean control) → cú vỡ THẬT + **ví dụ đời thường dùng SỐ THẬT của bài** (kiểu bác sĩ 78%/82%, KHÔNG "one in five" trừu tượng) → **pulled-quote câu hỏi.**
-- **d — The number we can trust:** cách sửa đúng → **HIDDEN ASSUMPTION** (giả định ngầm khi chạy mù recipe) → **"tin PROCESS không tin GOAL"** (số lệch không sao, tin cái CÁCH làm ra nó + các con ĐẾM thô) → **pulled-quote câu hỏi mở sang chương sau.**
+**C. MỖI PHẦN: chốt KEY + PHẢN ỨNG KỲ VỌNG trước khi viết.** User lái bằng cảm xúc, nên trước mỗi phần phải nói rõ: *ý cốt lõi một câu* + *người đọc sẽ cảm/nghĩ gì*. Rồi mới viết phục vụ đúng câu neo đó. Số nhẹ tay — HÌNH gánh con số, prose gánh cảm xúc.
 
-**D. Quy ước trình bày:** câu hỏi trọng tâm = **pulled-quote** (blockquote đậm); câu key phụ = bold/italic THƯA tay; **MỖI MỤC KẾT BẰNG CÂU HỎI NGHI VẤN** (không phải câu chốt); diễn giải KEY trực quan + số THẬT + highlight bold; chart "phồng" zoom-in vs "sụp" zoom-từ-0 = bài học ngầm. **TUYỆT ĐỐI KHÔNG em-dash (—)**.
+**D. ẨN DỤ ĐỜI THƯỜNG, CHẠY SUỐT, KHÔNG ĐỔI GIỮA CHỪNG.** Mỗi khái niệm khó = một ví dụ đời thường (Loan: bác sĩ lười; §3c: flashcard ôn-thi; §3d: ly cà phê/"ngưỡng bình thường cũ"; §3e: **học sinh/bài thi/bạn lười**). LỖI hay mắc: kể bằng ẩn dụ rồi nhảy về jargon (Frame/Station) → reader rớt mạch. Chữa: **bắc cầu** ("Frame = station một = ra đề"), giữ ẩn dụ chạy suốt.
+- *Đặc biệt: "lazy guesser" KHÔNG phải máy 50:50.* Nó **luôn nói lớp đông** → điểm nó TRÔI theo độ lệch → đó mới là engine của "cái vạch trôi". Phải nói thẳng "not a coin".
 
-**E. Hidden assumption = đích mỗi journey.** Mỗi bước recipe làm mù giấu một giả định data phá vỡ. Loan = MEASURE giả định "lớp cân bằng, lỗi giá ngang." Nối vào thesis cả bài.
+**E. DẪN BẰNG CHUỖI CÂU HỎI ở chỗ vỡ sâu nhất.** Đáy cảm xúc (§3e Part 3) đi THẬT CHẬM, mỗi bước một câu hỏi nghi vấn ("So how? Where did it come from? Did we not check that one? Why not?") → phát hiện thành CỦA người đọc, không phải tác giả bảo.
 
-**F. Self-contained kép.** README đọc riêng hiểu hết (appendix chứa data/derivation THẬT, không chỉ "xem notebook"); notebook đọc riêng hiểu hết (markdown giàu + chart inline).
+**F. BẢN ĐỒ 3 NGHI CAN (device rất hiệu quả).** Sau khi ra số đẹp: *"nếu số này nói dối, nó chỉ trốn được ở mấy chỗ"* → liệt kê nghi can (khớp trạm pipeline) → soi từng cái → clear. Cú lật: cái tưởng đã clear (hoặc cái CHƯA BAO GIỜ lên danh sách) mới là thủ phạm. Hình: pipeline-với-chip (market_suspects), pipeline-mọc-nhánh-GUILTY (market_verdict/market_scale).
 
-**G. Mode C.** Mỗi lựa chọn logic → đề 2–3 phương án → **USER QUYẾT** → viết mẩu nhỏ → soi la bàn → chốt → bước sau. CHẬM, mẩu nhỏ. **KHÔNG commit git.** Không tự quyết arc.
+**G. LƯỢT-HAI SOI GƯƠNG LƯỢT-MỘT (cho bẫy lớn nhất).** "Giờ hiểu rồi, làm lại cho đúng" = **lặp Y HỆT** động tác lập-plan (§Xa) + soi-nghi-can (§Xb), có thể lặp câu chữ — sự đối xứng CHÍNH LÀ cách thể hiện "có kinh nghiệm thì xử lý sao". Cú đau: danh sách nghi can DÀI RA theo kinh nghiệm (3→4) mà bẫy sâu nhất VẪN không lên danh sách, vì nó không giống một bước — nó là "cái đề". → *"a choice we never even saw as a choice."*
+
+**H. TÊN GIẢ ĐỊNH NẰM TRONG CÔNG THỨC, không phải cái núm bề mặt.** §3d không phải "percent vs points" (đọc thành "dùng %"); mà là **frozen mean/std = cược rằng thế giới đứng yên**; points chỉ là PHÉP THỬ phơi cược; percent CŨNG trôi (chỉ ít hơn), ta chưa bao giờ đo.
+
+**I. LUẬT LEO THANG.** Khi bẫy mới TRÔNG GIỐNG bài học cũ: narrator phải ĐÃ ÁP đúng bài cũ mà VẪN ngã (vì bài cũ tự nó có giả định ngầm). Nói THẲNG ra: *"that check was right, and it was still not enough."* (§3e: đã kiểm cân bằng §2 đúng, nhưng đếm-một-lần-cho-cả-lịch-sử nên vẫn thiếu.)
+
+**J. KHÔNG LỘ Ở TIÊU ĐỀ.** Tiêu đề đừng báo trước bẫy. Ở mục bẫy-lớn-nhất, tiêu đề phải RU NGỦ (hứa phần thưởng), vd. §3e "The process we can finally trust" (mỉa mai khi đọc lại). Đặt kỹ thuật mới phải có CONTEXT ("same honest test at 5 moments — no new trick"), không lôi chiêu lạ ra bất ngờ.
+
+**K. Cấu trúc §3 làm mẫu:** a Reading (config + neo niềm tin + level-up ở bước MEASURE canh vết-thương-§2) → b By the book (số đẹp + 3 nghi can, tin) → c So was it the shuffle? (traceback → near-twin) → d And what about the scaling? (frozen mean/std) → e The process we can finally trust (3 movement: rebuild+tin → result+lộ "no single number"+lazy guesser → biggest assumption Frame) → f hạ cánh. Câu chốt chương (deepen §2): *"Trust the process, not the score. But what if the frame and the goal are unclear? What is the cleanest process worth then?"*
 
 ## 3. KỸ THUẬT
-- **Python:** dùng `python` HỆ THỐNG (3.14, có numpy 2.4.3 + matplotlib 3.10.8). **`.venv` HỎNG** (trỏ Python 3.11 đã xoá) — ĐỪNG dùng.
-- **Dựng notebook:** viết 1 script builder ở scratchpad (nbformat + `ExecutePreprocessor(kernel_name="python3")`, `metadata={"path": ".../notebooks"}`), construct tất cả cell (markdown giàu + code) rồi execute để lưu output THẬT; re-run mỗi lần đổi. *(Builder script ở scratchpad là tạm/không persist sang session mới — nhưng notebook + repo file thì persist; cứ dựng builder mới theo pattern này.)* Warning zmq Proactor = vô hại.
-- **Chart inline:** đầu code cell dùng matplotlib đặt `%matplotlib inline` + `%config InlineBackend.figure_format='svg'`; mỗi hình: `fig.savefig(f"{FIG}/x.svg"); plt.show()` (savefig để README có file, show để notebook hiển thị inline). `FIG = "figures" if os.path.isdir("figures") else "../figures"`.
-- **Config (mẫu Loan; dùng SHAPE tương tự cho chương khác trừ khi chương cần khác — Market cần chronological split + rolling scaler):** train/val/test 60/20/20 (val để dành §5), standardize trên train, MLP feats→16 ReLU→2 softmax, cross-entropy, plain GD lr 0.3, 300 epoch, seeds 0–4. **GUARDRAIL:** giữ baseline NGÂY THƠ (không cân-bằng-lớp; không momentum ở §2–4 — momentum để §5 cải thiện F2).
-- **Palette:** accent `#3a6ea5`, muted `#b8c0cc`/`#9db8d6`, đỏ `#c85a52`, spine sạch, grid `#eef1f4`.
-- **Số Loan (config B — để reconcile §5/§6/§7 sau):** acc 0.8195(seed0)/0.817(mean) · do-nothing 0.7788 · defaulters 1353→caught 472/missed 881 (recall 0.349) · payers 4647→cleared 4445/flagged 202 · balanced 0.646 vs 0.500 (gap balanced 0.146 vs accuracy 0.038).
-- **Figures Loan đã có:** loan_client, loan_pipeline, loan_learning, loan_stability, loan_baseline(waffle), loan_deflate, loan_recall, loan_balanced.
+- **Python:** `py -3.14` (3.14, có numpy/matplotlib/nbformat/nbconvert). `.venv` HỎNG — đừng dùng.
+- **Dựng notebook:** viết builder ở scratchpad (nbformat + `ExecutePreprocessor(kernel_name="python3")`, `resources={"metadata":{"path": NB_DIR}}`), construct hết cell rồi execute để lưu output THẬT. Chart inline: đầu cell `%matplotlib inline` + `%config InlineBackend.figure_format='svg'`; mỗi hình `fig.savefig(f"{FIG}/x.svg"); plt.show()`; `FIG = "figures" if os.path.isdir("figures") else "../figures"`. Warning zmq Proactor = vô hại.
+- **Soi hình:** browser pane render file:// KHÔNG tin cậy (snapshot cũ). Cách chắc: render matplotlib ra PNG bằng script Agg rồi Read PNG. SVG vẽ tay thì không auto-render được ở đây — nhờ user liếc.
+- **Palette:** accent `#3a6ea5`, muted `#b8c0cc`, đỏ `#c85a52`, grid `#eef1f4`; spine sạch. SVG vẽ tay: nền trắng `<rect fill="#ffffff">`, font Segoe UI.
+- **Config B (mẫu, dùng SHAPE tương tự chương khác trừ khi cần khác):** train/val/test 60/20/20 (val để dành, §3 không dùng), standardize fit-train-only, MLP feats→16 ReLU→2 softmax, cross-entropy, plain GD lr **0.3**, 300 epoch, seeds 0–4. Market cần chronological split + rolling scaler + walk-forward. **Market DÙNG CHUNG 60/20/20 như §2** (đừng đổi 80/20; "không val" đọc thành gài-hụt).
+- **USER SỬA TAY file:** user thường tự chỉnh READ_ME giữa chừng → **LUÔN Read lại vùng liên quan trước khi Edit** (đừng ghi đè sửa của user).
 
-## 4. NHIỆM VỤ NGAY: §3 Market
-- Áp KHUÔN Loan (a/b/c/d · live-run · chart inline · câu kết = câu hỏi · self-contained · notebook `market.ipynb` standalone).
-- Market có **HAI bẫy** (theo CHAPTER_MAP + §3 cũ): (1) **rò split** — shuffle thổi điểm vì các dòng near-twin (X[0], X[1] chung 4/5 giá trị); (2) **thang trôi** — frozen scaler vỡ khi đổi feature sang "points" trôi theo index (677→7610). Key question kiểu *"an edge this easy? what's leaking in?"*. Data `data/gspc_2026-07-03.csv` (một cột giá S&P).
-- **BẮT ĐẦU:** đọc §3 cũ trong READ_ME + `market.ipynb` cũ để nắm số/cấu trúc/2-bẫy → rồi hỏi user cách vào (Mode C) → **CHẠY THẬT trước khi viết một chữ.** *Chú ý: Market khác Loan — 2 bẫy nằm ở bước SPLIT + SCALE (không phải MEASURE); mỗi bẫy có hidden assumption riêng.*
+## 4. Số canonical §3 (từ notebook — dùng để reconcile §6/§7)
+- Leak: shuffle **0.612**, chronological **0.587**, walk-forward **0.601**; direction control **0.540 / 0.539** (gap ~0); near-twin chung **4/5**.
+- Drift: percent+frozen **0.587**, points+frozen **0.509**, points+rolling **0.528**; frozen-normal percent 0.85%→0.75% (×0.9), points 10.6→37 (×3.5); test |z| percent 0.59/9.25, points **2.73/43.7**.
+- Eras (walk-forward): **0.519 / 0.602 / 0.651 / 0.654 / 0.582**; busy share trôi **0.374–0.541**; margin vs bar-của-era **+0.050** (biên −0.025 → +0.127) so với headline **+0.112**; swing ≈ 9× nhiễu mẫu.
+- Learning: chưa-train ~0.494 → settled ~0.630; test busy 45%/calm 55%, đúng 56% busy / 66% calm.
 
-## 5. Nhắc cuối
-Luôn hỏi user trước mỗi lựa chọn logic. Soi `NORTH_STAR.md` + `LOAN_PLAN.md` mỗi mẩu. User cực chú trọng: **giọng nhẹ · cùng-khám-phá THẬT (không biết trước) · số THẬT từ notebook chạy live · self-contained · mỗi mục kết bằng câu hỏi · không em-dash.**
+## 5. NHIỆM VỤ NGAY: §3f
+Viết lại §3f ("What we can actually stand behind") cho khớp giọng plain/exam của §3e, và **hạ cánh vào câu chốt** *"...what if the frame and the goal are unclear? What is the cleanest process worth then?"*. Ý §3f: (1) cái GÌ sống sót (kỹ năng thật nhưng nhỏ, +5 điểm, thắng 4/5 era) — đừng bi quan giả; (2) cái CHẾT = câu ta muốn viết ("the model is 61% accurate") — không tồn tại một con số; (3) thay bằng một câu nhỏ đứng-sau-được (data + feature + split + scaling + biên độ); (4) nâng §2: process sạch vô nghĩa nếu frame/goal chưa vững. Theo Mode C: đề 2–3 phương án, USER QUYẾT, mẩu nhỏ, KHÔNG commit git.
+
+## 6. Nhắc cuối
+Luôn hỏi user trước mỗi lựa chọn logic (đề 2–3 phương án). Soi NORTH_STAR + memory mỗi mẩu. User cực chú trọng: **giọng NHẸ + TRỰC DIỆN (không văn vẻ) · cùng-khám-phá thật · số THẬT từ notebook · ẩn dụ đời thường chạy suốt · dẫn cảm xúc bằng câu hỏi · câu-neo đứng riêng · mỗi mục kết bằng câu hỏi · không em-dash.**

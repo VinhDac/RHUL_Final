@@ -37,6 +37,14 @@ A fellow traveller, not a professor. Someone very ordinary, doing ordinary thing
 
 ## The structure: the pipeline is the map
 
+**⚠️ CURRENT STRUCTURE (2026-07-24, user-locked). The four-station march described below is SUPERSEDED; it is kept only for the reasoning behind each trap.** The dissertation is now TWO ACTS over the SAME market problem, not four datasets marched in a row:
+
+- **Act 1, the climb through pain (§2 Loan, §3 Market).** We deliberately HOLD BACK our deep-learning skill (one tiny untuned network the whole way) so every lesson comes from the data, and we get ambushed station by station. §3 Market is the CLIMAX: the leak, the drift, the frame, maximum interrogation, ending humbled with no single number to trust. Snooping is lived here, never named.
+- **Act 2, mastery, the redo (§4).** We take the SAME market problem and solve it again, now grown up: light, seasoned, relieved. We know what to do, what not to do, where the limits are, and we finally UNLEASH the full DL toolkit we had hidden. This is where all the graded Topic content lives (compare architectures and optimisers, the hyperparameter-to-convergence study, the derivations, the survey), and where we build a genuinely useful, honest machine. Same problem as §3, but the person has matured. This is the satisfy point of the whole piece.
+- **Ending.** Only here do we NAME snooping, as a concept built from our own scars, and distil it into a reusable workflow: for each pipeline step, ask what it silently assumes and demand case-specific evidence before trusting it.
+
+Cut entirely: Phone, the §5 search lab, and the old §6. Full record in memory `two-act-restructure`. The pipeline diagram and "each step hides an assumption" argument still hold; only the chapter map changed.
+
 Section 1 lays out the normal way to build a DL model as a pipeline, with a diagram, so the reader always knows where they are. Then we walk it, in pipeline order, station by station. Four stations hold a trap:
 
 1. **SPLIT** the data. Loan: it works, the book is vindicated. Market: it breaks (time). Phone: it breaks (people). Hidden assumption: the rows are interchangeable.
