@@ -208,7 +208,7 @@ And we run it through the very same recipe as the loan clients, step for careful
 
 1. **Frame** it as the plain busy-or-calm question we just built.
 2. **Split** the days once into the same three parts as before: training (60%), validation (20%), and test (20%), dealt out by a random shuffle, exactly as we did for the loans. The test stays sealed until the end, so we only grade ourselves on days the model has never seen. We keep the validation slice too, following the recipe exactly, though this chapter only measures one model rather than searching for the best, so it waits untouched.
-3. **Scale** the five inputs, measuring the average and spread on the training part alone, never peeking at the test days.
+3. **Scale** the five inputs the standard way, `(x - mean) / std`: measure the average and the spread once, on the training years, and then use those same two numbers to level every day that follows.
 4. **Build and train** exactly as before: small random weights, three hundred passes over the training days, each scored by cross-entropy, every weight nudged downhill by plain gradient descent at a learning rate of 0.3.
 5. **Measure** by accuracy, the plain fraction of the sealed test days it calls right, against the coin's 0.5.
 
@@ -323,82 +323,115 @@ Which steps have we actually put to the test? The split, twice over now. The bui
 
 **Scaling**, for instance. We measured the average and the spread on the training years, froze those two numbers, and used them on every day afterwards. **Why? Because that is what you do. We never asked what has to be true for it to be sensible, and if someone had stopped us and asked, we are not sure we could have answered.**
 
-So we test it the way part c taught us: change one thing, and see whether the number cares. Keep the honest split, the same network, the same task, everything. Change only the **unit** the move is measured in. Instead of "today moved 0.8 percent", say "today moved 38 points". Same day, same market, same information. A different ruler.
+So we ask the question now. What does that formula, `(x - mean) / std`, actually need in order to be sensible? It needs those two frozen numbers, the mean and the spread, to keep describing the world. **That is the bet sitting quietly inside the arithmetic: that a normal day, and the spread of days, will stay what they were back on the training years.** We never said it out loud, and we never checked it.
+
+How would we even see a bet like that? Only by watching it lose. So we hand the frozen scaler a feature whose normal really does drift, the simplest one there is to build: the size of each move in raw points, the plain change in the index, instead of in percent. Same day, same market, same information. We run it.
 
 **0.509.**
 
-A coin. The model that scored 0.587 a moment ago now knows nothing at all. Nothing leaked. The split is honest. The scaler was frozen exactly as taught. 
->**A change of ruler has killed a working model.**
+A coin. The model that scored 0.587 a moment ago now knows nothing at all. Nothing leaked, the split is honest, the scaler was frozen exactly as taught, and the bet has quietly lost.
 
 ![What the frozen scaler called normal, and where the feature actually went](figures/market_drift.svg)
 
-The picture says why. The grey band is what the scaler learned to call normal, back in the training years. In percent the feature stays inside that band, because a one-percent day is a one-percent day in any decade. In points it does not. The index climbs across the years, so the same one-percent day is worth a handful of points early on and dozens near the end, and the feature walks straight out of the band, ending about three times larger than it began.
+The picture shows it losing. The grey band is the one normal we froze, the mean and spread from the training years, and we had pinned a normal day at about 10.6 points. But the index climbs across the years, so the same move in points grows with it, and by the test years a normal day had drifted to 37, three and a half times larger. Every test day now arrives looking like a wild outlier: measured against the frozen normal it sits **2.73** standard deviations out on average, and 43.7 at the very worst. Imagine grading today's coffee prices by what felt normal to you thirty years ago and never updating. Four pounds is not expensive, it is off the scale, a number you have no category for. That is exactly where the frozen scaler leaves the network. It is not being asked a hard question. **It is being asked a question in a language it has never heard.**
 
-Put yourself where the network is standing. 
-Imagine judging today's prices with a sense of what is normal that you formed thirty years ago and never once updated. A four-pound coffee is not simply expensive to you; it is off the scale, absurd, a number you have no category for. That is exactly where the frozen scaler leaves the network. It learned what an ordinary day looks like from the cheap early years, and then we hand it the late ones.
+And here is the part that should keep us up at night. Percent did not survive because percent is safe. Percent drifted too: we froze its normal at 0.85% and by the test years it had slipped to 0.75%. It simply drifted a little where points drifted a lot, so the frozen scaler could still cope. And we never measured that. We reached for percent because the book reaches for percent, and this time the book happened to be right. Hand the very same recipe a feature that drifts hard, and it dies, and nothing anywhere tells us in advance which kind we are holding.
 
-And we can put a number on how far off the scale they land. Under the frozen scaler, the test days measured in percent sit **0.59** of a standard deviation from what the model knows, on average, comfortably inside its experience. Measured in points they sit **2.73 out on average, and 43.7 at the worst.** It is not being asked a hard question. **It is being asked a question in a language it has never heard.**
+Could a cleverer scaler rescue it? Re-fit the mean and the spread every day, on a window that only ever looks backward, and points climbs back to just 0.528: better, and still nowhere near 0.587.
 
-Can we patch it? Scale each day by its own recent past instead, a window that slides forward and only ever looks backward. That lifts the coin to 0.528: better, and still nowhere near 0.587.
+![Station three examined: the frozen mean and std are a bet on stability](figures/market_scale.svg)
 
-![Station three examined: two forks, and no scaler that rescues a drifting feature](figures/market_scale.svg)
+So it was never about a smarter scaler, and it was never really about the unit either. It was those two frozen numbers, and the bet hiding inside them.
 
-Two ways of scaling, and neither one saves it. That is a little humbling, because we had gone in assuming a cleverer scaler was the answer. It was not. **The trouble was never how we scaled the feature. It was that we built a feature that will not sit still.**
+And there it is again, the **hidden assumption**.
 
-And there it is again, the **hidden assumption**. 
-> **Freezing the scaler assumed the world stands still: that what counted as a normal day back then still counts as normal now.**
+> **Standardizing froze one mean and one spread and used them forever, betting a normal day would stay normal. We never once checked whether it would.**
 
-In percent that roughly holds. In points it does not, and nothing in the recipe was ever going to say so.
+The scaler, it turns out, is not really a piece of arithmetic. It is a **memory**: two numbers we took from one stretch of the past, and then used to mark everything that came after. While the world stayed roughly as it had been, the memory held. The moment it moved, we were grading today against a yesterday that had stopped existing.
 
-And that makes us look at the scaler differently. It is not really a piece of arithmetic. It is a **memory**: two numbers we took from one stretch of the past, and then used to mark everything that came after.
+We keep the feature in percent, where the bet happens to hold, and we are left holding 0.587 again. But we are less easy about it now. If one step of the recipe is a frozen memory like that, we would very much like to know how many others are.
 
-> **While the world stayed roughly as it had been, the memory was good enough. Once the world moved, we were judging today against a yesterday that had stopped existing.**
-
-Which is an uncomfortable thing to sit with. If one part of the recipe turns out to be a memory like that, we would rather like to know how many others are.
-
-So we put the points feature away and keep percent, which leaves us holding the one number we had decided to **trust**: 0.587.
-
-**What else did we freeze once, and then forget we had frozen?**
+What else did we freeze once, and then forget we had frozen?
 
 ### e. The process we can finally trust
 
-So we go back to the drawing board, and this time with our eyes open.
+Twice now the same thing has happened, and it is worth stopping to name, because it is the real lesson of this chapter. Both times we ran a step simply because the book said to. Both times that step was quietly betting on something: the shuffle, that one day has nothing to do with the next; the scaler, that a normal day stays normal. And both times the bet was invisible, folded inside a number that looked perfectly healthy, until we happened to check it from an angle we had not tried.
 
-We know what went wrong, both times. The split leaked, so now we cut past to future, and no near-twin can cross. The feature drifted, so we keep the size in percent, which stays in the same band from one decade to the next. Two faults found, two faults repaired. We draw the plan again with the repairs in it.
+So the recipe is not the thing we took it for. It is not a list of instructions to carry out. **It is a list of bets to read.** Every step quietly assumes something is true, and to follow it without looking is just to take the bet sight unseen.
+
+That is what changes now. We do not patch the two holes and rerun. We build the plan again from the top, and this time, at every step, we stop and ask the question we kept skipping: **what does this quietly assume, and is it true here?**
+
+First the plan, the way we laid it out in part a. The same five stations, in the same order, only now we walk them with our eyes open. **Frame** the question, busy or calm. **Split** the days, no longer by a shuffle but past to future, so no near-twin can cross into the exam. **Scale** the sizes in percent, whose normal barely moves, so the frozen mean and spread still fit the world. **Build** the same little network. **Measure** against the coin. The recipe, corrected.
+
+Then the trial, the way we ran it in part b. Back then we asked the question that saved us: if this number is lying, where could it be hiding? We named three suspects. This time we are wiser by one, because the market taught us to distrust the scaling too, so we make the list again, longer now, and go down it.
+
+- **The split?** Repaired. Past to future, no twin can cross. Clear.
+- **The scale?** Repaired, and a chapter ago we would not have thought to check it. Percent, barely drifting. Clear.
+- **The build?** We watched it climb from a coin and settle. Clear.
+- **The measure?** We watched it call busy days and calm ones both, with no majority to hide behind. Clear.
 
 ![The plan, corrected: every fault we found, repaired](figures/market_plan2.svg)
 
-Look at it. The split is honest. The scale holds still. The network learned, and it decides both ways. Every fault we found is fixed, and this time we found them by hunting for them rather than by being ambushed.
+Four suspects where once there were three, and every one of them clean. We run the corrected plan, and the number settles a little under 0.60.
 
-So we run it again, and the number comes back where the honest cut left it, a little under 0.60. Smaller than the one we started with, and this time we have earned it.
+And this is the moment the whole chapter has been climbing toward. It is not a score we are hoping is **honest**. It is a score left standing after we asked, at every step, what it took for granted, and found each answer sound. This is exactly what the loan clients taught us to reach for: not a number to trust, but a process to trust. And here, for the first time, having questioned a longer list than we ever have, is **a process we believe in**.
 
-And then the colder thought arrives.
+So we could stop here. By every rule we have learned, we are finished, and we have earned the right to be. We very nearly close the book.
 
-> **If the world moves under our feet, why would that number hold still?**
+> **There is one last check, and we very nearly skip it, because we cannot imagine how it could go wrong. We have cleared every station, twice over. What is left to catch us?**
 
-There is a way to find out. Instead of one test at the very end, walk the split forward: train on everything up to a point, test on the stretch that comes next, then move the line along and do it again. Era by era, same model, same corrected recipe.
+But look at how we got our number. We trained the model on the years up to a point, then tested it on the stretch that came right after, the most recent days, and read off the score. One test, on one slice of time.
 
-![The same model, era by era, against the bar each era actually sets](figures/market_eras.svg)
+So, one fair question. Was that slice special? A number we can trust ought to be a fact about the model itself, and come out much the same whichever slice of time we test it on. If we had stopped a few years earlier, or later, would the number have held? Or did this one stretch just happen to be kind to us?
 
-It does not hold still. Across five eras the score runs from **0.519 to 0.654**. That is not luck: the swing is about nine times larger than chance can explain on stretches this long, and it barely moves when we change the seed. There was never one number. There were five, and they disagree.
+There is one honest way to find out, and it is no new trick. We run the very same test again, train on the past, test on what comes next, only at five points spaced along the history instead of only at the end. Same honest recipe, five different moments in time.
 
-But the worse news is in the pale bars beside them.
+And the five do not agree.
 
-Look at how many days counted as busy in each era: **0.374 in one, 0.541 in another.** We drew the busy line once, at the middle day of all history, and then compared every score to a flat coin at 0.5. **That comparison was never right in a single era.**
+Think of the model as a student, and each test as an exam it sits. We had marked it on one exam, the most recent years, and written down its grade as if that settled the matter. Now we set the same exam at five different moments in its history, and the grades come back all over the place. On one, the model barely beats a coin. On another, it does genuinely well.
 
-Take the two best-looking eras. One scored **0.651**, the other **0.654**, near enough identical. But the first sat in a calm stretch where fewer than four days in ten were busy, so simply saying "calm" every single time would already have scored **0.626**, and the model beat that by about two and a half points. In the other era, always saying the majority would have scored **0.528**, so the same-looking score was worth about thirteen points. **Two scores you could not tell apart, worth five times different amounts.**
+![One number we trusted, and the five the eras actually gave](figures/market_spread.svg)
 
-Measured against the bar each era actually sets, the model is ahead by about **five points on average**, and in one era it is **behind**, worse than doing nothing at all. The headline we began with, 0.612 against a flat coin, read as **eleven points**. Less than half of it survives.
+This is the ground giving way. 
+> **We opened the chapter asking one question, how good is this model, and it turns out to have NO answer.**
 
-> **We assumed the bar never moved.**
+It is barely a coin, or it is genuinely good, depending on nothing but which year we happen to examine it in.
 
-We drew the busy line once, out of all of history, and then held every score up against a flat 0.5, as though "better than a coin" meant the same thing in every year. It never did.
+**There was never one number.**
 
-And the sting is that we did check this, or thought we had. Back at the start we asked exactly what the loan clients had taught us to ask: is one class rare enough to flatter us? We counted. Fifty-fifty, dead even, so accuracy was fair and the coin sat at 0.5. **That check was right, and it was still not enough.** We ran it once, across all of history, and took the answer for a fact about the market when it was only a fact about the whole stretch of it. On the loan clients one count was the whole truth, because those clients had no order and no eras. Here every number carries a date on it, **including the balance itself.**
+And then it gets worse, because the exams were not equally hard, and we never checked.
 
-And underneath that check sat a decision we never examined at all. Where did the busy line come from in the first place? **Station one**, the very first thing we did. Look again at the corrected plan we were so pleased with a page ago: the split repaired, the scale repaired, the build and the measure checked and clear. **Station one carries no verdict**, and it never has, from the first page of this chapter to this one.
+To be worth anything, the model has to beat a classmate who never studies. Not one who flips a coin, though. This one is craftier: he notices which answer has been coming up most often lately, and then writes that same answer down for every single question. He understands nothing, and still, on a lopsided exam where most days are one kind, that alone scores high. On an even exam it manages only about half. This is the lazy guesser, the same idle trick as the lazy doctor on the loan clients.
 
-Which leaves one question, and it is no longer about the market: after all this, what are we actually still allowed to say?
+And here is the catch. **How well you can do by not trying changes from one exam to the next.**
+
+![The same model, era by era, against what the lazy guesser scores](figures/market_eras.svg)
+
+Yet we had marked every one of the model's grades against the same flat line, a coin at 0.5, as though every exam were equally hard. They never were. On the easy exams we set the bar far too low, and praised the model for clearing it, when a classmate who was not even trying had cleared it just as well.
+
+Put the two together, and the result falls apart. Take the two exams the model scored highest on, near-identical grades. One was easy: the lazy classmate nearly matched it, so the model proved almost nothing. The other was hard: the lazy classmate flopped, so the same grade was a real achievement. **The same score, worth five times as much on one exam as on the other.** Marked fairly, each grade against the lazy classmate on that same exam, the model's proud lead more than halves. And on one exam, it is beaten outright by a classmate who never opened a book.
+
+Sit with that for a moment, because it is worse than a bad result. **We did everything right.** We found the leak, and sealed it. We found the drift, and fixed it. We put every step of the recipe on trial, not once but twice, and cleared every one. And the number still came apart in our hands.
+
+So how? If every step was sound, where did the trouble get in?
+
+Follow the one thing that kept moving. How hard each exam was, how well the lazy classmate could do on it without trying, rose and fell from one stretch to the next. But the pass-mark we judged against, the flat 0.5, never moved with it. Where did that fixed pass-mark come from? Not from any step we checked. From before all of them, from the very first thing we ever did: setting the exam. Choosing what it would ask, and what score would count as a pass. That is station one of the recipe. **Frame.**
+
+> **Trust the process, not the score. But what if the frame and the goal are unclear? What is the cleanest process worth then?**
+
+But hang on. We checked every station, didn't we? So how did we miss that one?
+
+Look back at the plan we were so pleased with. The split, we cleared it. The scale, we cleared it. The build and the measure, cleared. Station one, the exam itself? We never even looked. **We cleared every station but the first.**
+
+So why did we never test the exam? It was not laziness. We went hunting for traps twice, and wrote out a list of suspects each time, and the exam was never on it. Not once did we think to add it.
+
+Why not? Because setting the exam never felt like a step. Splitting, scaling, training, marking, those are all things you do, and things you do, you can get wrong. But deciding what the exam asks, and how high to put the pass mark? That did not feel like something we did. It felt like the setup, fixed before the real work even started. And you do not stop to question the setup.
+
+**It was not a step we ran badly. It was a choice we never even saw as a choice.**
+
+And the worst part is how close we came. We had run the one check that might have caught it, the one the loan clients drummed into us: is the exam lopsided enough to flatter the student? We looked. Fifty-fifty, dead even. It was true. And it still was not enough, because we looked once, at all the exams lumped together, and never looked again, while the balance kept shifting under us. We did the right thing. We just did it once, and called it done.
+
+So we are left with one question, and it is not about the market anymore. After all that care, what are we still allowed to say?
 
 ### f. What we can actually stand behind
 
