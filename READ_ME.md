@@ -461,6 +461,210 @@ We only ever reacted. And we did the whole thing one-handed, with the same tiny 
 
 So there is one thing left to try. We take the same problem back to the top, and this time we read each bet before it bites, and we hold nothing back.
 
+## 4. The market, put to use: a forecast we can trust
+
+### a. What are we actually trying to build?
+
+So we come back to the same market, and this time we come back different. We carry everything Section 3 taught us: the leak, the drift, the frame we never checked. And the old instinct is already talking. Build. A bigger network, more layers, throw the whole toolkit at it and watch the number climb.
+
+But we do not build. Not yet.
+
+Because that instinct is the very one that walked us into every trap. We ran each step because the recipe said to, and never once stopped to ask what we were really doing. So this time we stop first. Before a single line of code, we ask the question Section 3 taught us we had skipped every time.
+
+**The most important choice comes before the first step.**
+
+What are we actually trying to build? The tempting answer comes fast, the one everybody reaches for: predict the market, and make money. But we have been here. Section 3 spent a whole chapter proving that the direction of the next move is a coin, a random walk, unpredictable by anyone. Chasing it is not ambition. It is the fantasy that fools everyone who skips the thinking.
+
+**We are not here to beat the market. Section 3 taught us we cannot.**
+
+So we ask the humbler question: not what we wish were true, but what the data will honestly give. And Section 3 already found the one real thing in all that noise. The size of the moves clusters. A wild day sits next to wild days, and a calm stretch stays calm. We cannot say where the market is going, but we can say something about how hard it will move.
+
+**We cannot say which way tomorrow moves. We can only say how rough.**
+
+And that, it turns out, is worth having. Think of a sailor. He cannot command the wind, and he cannot know which way it will blow. But hand him a forecast, rough seas tomorrow, and he can do something real: reef the sail, or stay in port. On a calm forecast he puts full sail up and makes good time. What we are building is that forecast, for the market's weather, and the "sail" is simply how much you put at risk on any given day.
+
+**A forecast does not make the wind. It lets you match your sail to the weather.**
+
+One last thing about its shape. A weather forecast never says it will storm tomorrow. It says seventy percent chance. That honest hedge is the whole point, because it is what you act on: a little caution at fifty-five percent, a lot at eighty-five. So our tool cannot hand back the flat busy-or-calm label that Section 3's did. It has to hand back a probability.
+
+**A real forecast speaks in "likely," not "yes."**
+
+So now we know what we are building. Not a fortune-teller, but a weather station: a daily probability that tomorrow runs rough, so a careful person can trim their sail. It is a small, honest thing. And before we build a single piece of it, there is one more question a careful builder always asks first.
+
+**So how good could this even get?**
+
+### b. How good could it get, and what won't it do?
+
+So how good could this even get? The instinct is to find out by building: train the best model we can and read off the number. But there is a sharper move, the one that separates a builder who knows what they are doing from one who is only hoping. You can know the ceiling before you build a thing, because the ceiling is not set by how clever you are. It is set by how much the past actually says about the future.
+
+**How good a forecast can be is decided by the weather, not the forecaster.**
+
+So we estimate it with the crudest tool we have. Not a network, nothing tuned: just the simplest guess, that a rough day tends to follow rough days, and a plain linear rule on the last five sizes. We run those honestly, past to future.
+
+![The ceiling is set by the data, not our cleverness: a trivial model already reaches it](figures/m4_ceiling.svg)
+
+They already land at about six days in ten, and we found that out before writing a single line of the real model.
+
+**The simplest possible model already reaches the ceiling.**
+
+Now, six in ten sounds like a poor grade, and it would be, on a task that could be learned. This is not that task. The size of the moves clusters, so the recent past leans on tomorrow a little, and that little is real. The rest of tomorrow's weather is genuinely new: news that has not happened yet, that nothing can read off yesterday. The ceiling is low because the world is, not because we tried too little.
+
+**About six in ten is not a weak result. It is the whole result there is.**
+
+And knowing that number changes everything, because now it does a second job. It is not only a target. It is a lie detector. A model that lands near six in ten is telling the truth. A model that suddenly scores three-quarters, or nine in ten, is not a triumph, because there is not enough signal in this data to hold a number that high. So if we ever see one, we do not celebrate it. We go looking for the leak. It is the exact smell from Section 3, except now we can catch it before it fools us, because we wrote the honest number down first.
+
+**A score far above the ceiling is not a win. It is a warning.**
+
+This quietly turns the usual instinct on its head. The instinct says higher is better, so keep pushing, and that is precisely the instinct that snoops: push hard enough on any test and the number will climb, whether or not the model actually improved. Knowing the ceiling, we push differently. We bring out every tool we own, but only to reach that ceiling reliably, and we stop the moment we touch it.
+
+**We will search hard to reach the ceiling, and stop the moment we touch it.**
+
+One thing is left before we build, and it is the part people skip: saying plainly what this will not do. It speaks about tomorrow, and nothing further out. It speaks about the size of the move, never its direction, so it can never be used to make money, only to manage risk. It is a tilt, not an oracle, wrong about a third of the time. It is one index along one path through history, and because it learned from the past, it carries an expiry, and must be re-checked as the world moves on. None of this is an apology. A forecaster who tells you the forecast is for tomorrow, for this coast, and often wrong, is exactly the one you trust. The one who claims to be right every time is selling something.
+
+**An honest forecaster names the limits. That is why you trust one.**
+
+So the plan is finished. We know the target, about six in ten, and we know the box it lives in. Every choice we would once have made without looking, we have now made on purpose, and out loud. There is nothing left to decide, and nothing left to fear.
+
+**So after all that planning, will the building finally just work?**
+
+### c. Building it, and this time the steps just work
+
+So we build. And the strange thing is how little there is to it, now that every choice has already been made. We split the days past to future, so no near-twin can slip from training into the test. We scale in percent, whose normal barely moves, so nothing drifts out from under us. We use the same small network from before, untouched. Each of those was a station that ambushed us in Section 3, drawn out over pages of doubt. Here each is a single, quiet line.
+
+**Every trap of Section 3 is now a single line of the checklist.**
+
+There is exactly one thing that is new. We do not read the network's output as a verdict any more, busy or calm, yes or no. We read it as a chance: the probability it assigns to tomorrow running rough. Same network, same weights. We just take the number it always produced and use it honestly, the way a forecast hedges.
+
+**The only new thing is that it hedges: a probability, not a verdict.**
+
+Then we run it. On the sealed past-to-future test it lands at about six days in ten, and across the five era-by-era windows it lands there too. No leak inflated it, because the twins cannot cross the cut. No drift sank it, because the feature we chose barely moves. It sits exactly where the ceiling told us it would sit, before we had trained a thing.
+
+**It lands right where we said it would. About six in ten.**
+
+And that is the quiet, unfamiliar feeling of doing it right. Nothing jumped out. There is no dazzling number to be suspicious of, and no trap waiting to spring, because everything we bled over in Section 3 was handled before it could reach us. After a whole chapter of the ground giving way, the ground simply holds.
+
+**Nothing went wrong, and this time that is not luck. It is the point.**
+
+So we have it: an honest model, sitting right on the ceiling, every condition stated. We could stop here and be telling the truth. But there is one promise we made back in the plan, and one itch we said we would keep on a leash. We have not yet reached for a single one of the tools we spent all this time learning.
+
+**So could the whole toolkit do any better?**
+
+### d. Bringing out the whole toolkit
+
+Now we open the toolbox we kept shut for three chapters. There is a lot in it, and it is worth naming plainly, because these are the tools a practitioner reaches for first. Bigger networks, with more units in a layer or more layers stacked, giving the model more room to fit. Better optimisers than the plain gradient descent we have leaned on all along: momentum, which builds up speed downhill, and Adam, which tunes its own step for every weight (Kingma and Ba, 2015). And the habit of searching over all these choices at once, keeping whatever scores best. The standard references lay the whole kit out (Goodfellow, Bengio and Courville, 2016; Chollet, 2018).
+
+**Here is everything we deliberately left in the bag.**
+
+Start with size, the first thing anyone tries. We take the little sixteen-unit network and set two bigger ones beside it: one much wider, one with a second hidden layer stacked on. Same data, same honest split. We just give the model more room to work.
+
+![More capacity, the same score: the ceiling does not move](figures/m4_arch.svg)
+
+They all land in the same place. The wide one, the deep one, and the small one from Section 3 are separated by less than the noise between two runs. More capacity did not buy a better score. It was never the size of the net that held us at the ceiling.
+
+**A bigger net, a deeper net, the very same six in ten.**
+
+So we try the other lever, the optimiser, the rule that decides how each weight moves. Plain gradient descent just steps a little way downhill, `W ← W − η g`, with `g` the gradient and `η` the step size. Momentum keeps a running velocity, so it rolls through flat spots instead of crawling: `v ← μ v − η g`, then `W ← W + v`. Adam keeps a running average of each gradient and of its square, and divides one by the other, so every weight gets its own step size: `W ← W − η m / (√v + ε)`, with both averages bias-corrected. Better machinery for the very same descent.
+
+![A better optimiser reaches the ceiling faster, but no higher](figures/m4_convergence.svg)
+
+And they do help, but look closely at what they help. The loss falls sooner with momentum, and sooner still with Adam. They reach the bottom in fewer passes over the data. And then all three settle at the same accuracy we already had.
+
+**A better optimiser gets there faster, not higher.**
+
+Put it together and the lesson is hard to miss, because every tool we brought out told the same story. The wider net, the deeper net, momentum, Adam: each one landed at the same six in ten. Not because we used them wrong, but because none of them was ever the thing in our way. The limit was never the optimiser or the depth. It was how much the past actually says about tomorrow, and no amount of machinery can add to that.
+
+**Complexity changed how fast and how smooth. It never changed how high.**
+
+So no single tool broke the ceiling, exactly as the plan warned. But we did not try them one at a time in real life. We now have a whole rack of combinations, sizes and optimisers and settings together, and a tempting habit is already whispering: run them all, and keep whichever one scores highest. The moment we do that, an old worry should wake up.
+
+**So if we try everything and keep the best, is the best a real number?**
+
+### e. Searching without fooling ourselves
+
+So we line up a dozen combinations, sizes and optimisers and settings, and we search. But honestly, the way we promised. We write down how many we are about to try, so nobody can pretend later that the winner appeared out of nowhere. We choose among them only on the validation years. And we keep the test sealed, unopened, until the very end. We also know the classic trap of any search, the one everyone warns about: try enough things and the best of them will look good on luck alone, whether or not it is actually better.
+
+**The more you try, the better the best looks, whether or not it is better.**
+
+So the first thing we do is check for exactly that. How much did picking the best of twelve inflate the validation score? Almost nothing. The twelve configurations cluster together, all within a whisker of each other, and the best beats their average by a hair. On this data, at least, the famous winner's curse is barely a scratch.
+
+**We picked the best of twelve, and it barely beat the middle.**
+
+And yet something is wrong, because the winning configuration scored close to seven days in ten on the validation years. That is well above the ceiling we measured, high enough that our own rule from the plan should be flashing red. So we open the sealed test, once, and read it off. Six in ten.
+
+![Even an honest search flatters you when the validation years are one easy stretch](figures/m4_search.svg)
+
+A drop that large, from a search we ran completely by the book, and we already know it is not the search inflating it, because we just checked. So what pushed the validation number so high?
+
+**The number we tuned toward said seven in ten. The sealed test said six.**
+
+We have met this before. The validation years happened to be a calm, easy stretch of the market, where the model looks clever; the test years were rougher, where it looks ordinary. The score did not fall because we searched too hard. It fell because we walked from one era into another. It is Section 3's drift, come back to bite the one place we still thought was safe, the quiet act of choosing a model on a slice of the past.
+
+**It was never the search. It was the era, again.**
+
+But this time it does not fool us, and that is the whole difference between this chapter and the last. We learned, the hard way, that a single slice of time can flatter a model, so we never trusted one alone. The number we actually keep is the one judged across every era, walk-forward, and that number is the same six in ten it has always been. We saw the trap coming, because we had already been caught in it once.
+
+**One slice can flatter you. Only every era tells the truth.**
+
+So the whole search changed nothing we did not already know. No configuration beats the ceiling, the fancy tools bought speed and nothing else, and the honest number holds at six in ten. Which leaves the one question we have circled since the start of the chapter, the only one that still matters.
+
+**So it is honest. But is it any use?**
+
+### f. Is it a forecast we can trust?
+
+There is a tempting way to answer that, and it is the wrong one. We could write a trading rule, buy less on the rough days, and count up the money it saved. But that drags us straight back to the fantasy we spent this whole chapter refusing: the market as a machine for getting rich. A weather forecast is not proved by a betting scheme built on top of it. It is proved by whether it is a good forecast. So we ask the three questions you would ask of any forecast, and nothing more.
+
+**We test it the way you test a weather forecast, not a bet.**
+
+The first is the one that matters most: does it discriminate? On the days it forecasts rough, what actually happened next? We take every out-of-sample day, split them by what the tool said, and look at the real moves.
+
+![On the days it forecast rough, the market really did move about twice as hard](figures/m4_discrimination.svg)
+
+On the days it called rough, the market moved about twice as far as on the days it called calm. That is the whole job of the thing, and it does it. It is not guessing; it genuinely separates the stormy days from the still ones, before they arrive.
+
+**On the days it called rough, the market moved about twice as hard.**
+
+The second question is whether the number itself can be trusted. A forecast that says seventy percent should be right about seventy percent of the time, or the percentage is just decoration. So we check it against what really happened.
+
+![It says sixty percent, and about sixty percent of the time it is right](figures/m4_calibration.svg)
+
+Its probabilities already sit close to the line. When it says sixty, it is right about sixty percent of the time. There is nothing to correct. A small network on a weak signal turns out to be naturally humble: it never claims to be more sure than it has any right to be. The usual fix for an over-confident model is there if we need it, and here we simply do not.
+
+**It says sixty percent, and sixty percent of the time it is right. Already honest.**
+
+The third question is the humbling one. Does its probability beat the trivial baseline's? Barely. Measured on the sealed test, it essentially ties the simplest linear model we started with. Complexity, one last time, bought almost nothing. So whatever makes this tool worth having, it was never that it beat logistic regression.
+
+**It only ties the simplest model. The value is not there.**
+
+The value is the separation. A forecast that is wrong a third of the time, and that no fancy model could improve, still doubles your read on tomorrow's turbulence. That is not a fortune, and it was never going to be. But it is exactly enough for the one job we built it for: a sailor, glancing at the sky, deciding how much sail to carry. A real, honest edge on the weather, and no more than that.
+
+**A forecast that doubles your read on the storm is worth having, even at six in ten.**
+
+So we have our answer, the one the whole chapter was walking toward. It is honest, and it is useful, in the small and truthful way we set out to build. Which leaves only the last thing: to say plainly what we actually made, and, more than the tool itself, the way we made it.
+
+**So: honest, and useful. Now, what did we really build?**
+
+### g. What we built, and how to build anything
+
+So, plainly, what did we make? A small thing, and an honest one. A daily probability that tomorrow runs rough, on this one index, right at about six in ten, calibrated so the number means what it says, and worth about a doubling of your read on the coming storm. Not a way to beat the market, which cannot be done, but a way to see its weather a little, and trim your sail. Every condition is stated, and we can defend each word.
+
+**A small, honest forecast, and we can defend every word of it.**
+
+Now look back at how we got there, because it is not the story you would expect. We brought out the whole of deep learning: deeper nets, wider nets, momentum, Adam, a search over a dozen configurations. And none of it moved the number. The tool we kept was, for all practical purposes, the little network from Section 3. The machinery everyone reaches for first turned out to be the part that mattered least.
+
+**The deep learning was not the thing that mattered.**
+
+What mattered came earlier, and quieter. Before we trained anything, we decided what we actually wanted, and refused the fantasy of predicting the market. We measured the ceiling, so we knew what good looked like and could smell a lie above it. We wrote down the limits, so a modest result stayed honest instead of overselling itself. Every choice that made the final number trustworthy was made before the model existed.
+
+**Everything that made it trustworthy, we decided before we built a thing.**
+
+And that is the real lesson of the chapter, larger than any forecast of the weather. The product was never the tool. It was the order of operations: decide what you want, find the ceiling before you build, apply the plain steps with care, search in the open and seal one honest test, and state every condition beside the answer. Follow that, and the number you end with is one you have earned the right to believe. Ignore it, reach for the complicated thing first, and you are back at the start of Section 2, about to be fooled.
+
+**The real product was never the forecast. It was the way we built it.**
+
+We have been doing this the whole way, chapter after chapter, without ever giving it a name. On the loan clients, on the market twice over, the same quiet discipline kept saving us, or would have, if we had listened sooner. It is time to turn around, look at the trail behind us, and finally call it what it is.
+
+**We have been building one idea this whole time. It is time to give it a name.**
+
 ## 6. So what is left?
 
 Let us count up the damage. Four problems, all handled by the book, and the book fell short on every one. On the loan clients the number measured the wrong thing: 0.819 accuracy, but only a third of the defaulters caught. On the market it came out too high, an edge of 0.618 that was really the future leaking backward, then too low, a working model dropped to a coin by a drifting feature. On the phone it read the thirty people instead of the task, a near-perfect 0.966 that was really 0.947 on a stranger. And on data with nothing to learn, our own searching still found an edge, 0.607 out of a truth of 0.5.
@@ -489,7 +693,7 @@ That is the whole of it. The recipe is a fine place to start and a dangerous pla
 
 ## References
 
-*The sources behind Sections 0 to 3, the sections built so far; this list will grow with the report. Formatting to be brought to the handbook style at the end.*
+*The sources behind Sections 0 to 4, the sections built so far; this list will grow with the report. Formatting to be brought to the handbook style at the end.*
 
 **Deep learning, the standard method (Section 1).**
 
@@ -513,6 +717,12 @@ That is the whole of it. The recipe is a fine place to start and a dangerous pla
 - Bergmeir, C. and Benitez, J. M. (2012). On the use of cross-validation for time series predictor evaluation. *Information Sciences*, 191. (Why a time series needs a time-respecting split rather than a random one.)
 - Shimodaira, H. (2000). Improving predictive inference under covariate shift by weighting the log-likelihood function. *Journal of Statistical Planning and Inference*, 90(2). (Covariate shift: the feature drifting out from under a frozen scaler.)
 - Gama, J., Zliobaite, I., Bifet, A., Pechenizkiy, M. and Bouchachia, A. (2014). A survey on concept drift adaptation. *ACM Computing Surveys*, 46(4). (How a learned relationship drifts as time passes.)
+
+**The deep-learning toolkit: architectures, optimisers, calibration (Section 4).**
+
+- Kingma, D. P. and Ba, J. (2015). Adam: a method for stochastic optimization. *ICLR*. (The adaptive optimiser compared in Section 4.)
+- Sutskever, I., Martens, J., Dahl, G. and Hinton, G. (2013). On the importance of initialization and momentum in deep learning. *ICML*. (Momentum, the second optimiser compared.)
+- Guo, C., Pleiss, G., Sun, Y. and Weinberger, K. Q. (2017). On calibration of modern neural networks. *ICML*. (Reliability, expected calibration error, and temperature scaling, the calibration check in Section 4.)
 
 ---
 
