@@ -473,4 +473,45 @@ Quét repo lập **BẢN KÊ DỌN DẸP** (đối chiếu READ_ME sống): §4-
 
 ---
 
-*TRẠNG THÁI hiện tại: 🧹 PHASE TỔNG VỆ SINH — weather CHỐT LÀ §4, §4-VaR BỎ. Đã lập bản kê 3 tầng (park §4-VaR notebook + m4_* figures + har + orphans), CHỜ tác giả duyệt scope rồi mới di dời (PARK, reversible). Sau vệ sinh → chau chuốt: viết prose §4 weather + export figure SVG. [(c) fold usage — XONG B53; (d) val-flatters — XONG B54; weather-vs-VaR — CHỐT weather B55.]*
+## Beat 56 — TỔNG VỆ SINH đã THỰC THI (dọn thẳng tay, backend Checkpoint_1)
+**Tác giả:** "cứ dọn thẳng tay đi, tôi save branch rồi, chỉ giữ lại md, note, những gì đang cần dùng thôi cho gọn."
+**Claude:** xác nhận backup branch `Checkpoint_1` (local+origin) tồn tại; 7 hình mồ côi + drift + confusion = 0 ref mọi notebook sống; Appendix D không liệt kê market_forecast. **XOÁ HẲN 19 file** (backup rồi nên hard-delete, git status hiện `D` = tracked → khôi phục dễ): `market_forecast.ipynb`; 9 `m4_*.svg`; `phone_tree/confusion/drift/loan_tree/market_signal/market_tree/split_leak/winners_curse.svg`; `data/har.npz`. Thay prose §4-VaR (174 dòng, README 464-637) bằng **stub 6 dòng** (tiêu đề weather + trỏ 2 notebook weather + giữ cầu nối "real product = the discipline... time to name it" sang ending). VERIFY: README 0 ref chết, mọi hình còn được ref đều tồn tại, mục §0-4/6/7 mạch lạc; sweep cuối = 0 hình mồ côi (còn 29 SVG, 4 notebook sống, data gọn, 7 root .md giữ nguyên). Tầng 3 (reconcile BUILD_PLAN/CHAPTER_MAP/HANDOFF/NORTH_STAR mô tả §4-VaR cũ) HOÃN tới sau chau chuốt.
+
+---
+
+## Beat 57 — CỐT LÕI §4 (chốt lại trước khi viết prose)
+**Tác giả:** nhắc lại cốt lõi §4 muốn truyền tải đến người đọc.
+**Claude — cốt lõi §4:**
+
+**THÔNG ĐIỆP LỚN NHẤT (1 câu):** Sau khi §3 để ta tay trắng (không tin nổi một số cao, không đoán được thị trường), §4 trả lời "vậy ta LÀM ĐƯỢC gì trung thực & hữu ích?" — và cú lật: **một con số KHIÊM TỐN nhưng ĐÁNG TIN, dùng đúng mục đích, THẮNG một con số CAO nhưng KHÔNG đáng tin** (đúng thứ §3 dạy phải sợ). Sức mạnh thật nằm ở CƠ BẢN làm cho kỹ, không ở phức tạp.
+
+**HỮU ÍCH đến từ 3 cái CƠ BẢN người ta hay bỏ qua (KHÔNG phải accuracy):**
+1. **MỤC ĐÍCH** — con số ĐỂ LÀM GÌ: bản tin thời tiết độ "gồ ghề" của thị trường (calm/normal/stormy), dùng phòng thủ / chỉnh phơi nhiễm. KHÔNG đoán hướng, KHÔNG "thắng thị trường" (trong lằn ranh §3).
+2. **CALIBRATION trung thực** — biến nhãn thành XÁC SUẤT tin được: nói 60% thì đúng ~60%. "Tin được cái %."
+3. **GIÁ TRỊ chứng minh** — bằng chứng walk-forward rằng HÀNH ĐỘNG theo nó thật sự giúp: calibration bám chéo trên thị trường CHƯA thấy + phép thử ô-dù (cảnh báo → 60% gồ ghề vs nền 27%).
+
+**5 TRỤ ĐỠ (cách §4 dựng thông điệp):**
+- **PLANNING là TRÁI TIM** — bậc thầy không lao vào build; hỏi trước: quyết định nào cần số? số gì? đủ tốt là bao nhiêu (ceiling)? giới hạn đâu? Mọi thứ suy từ mục đích. → §4 CHỮA vết thương sâu nhất của §3 (FRAME — cái kế hoạch/câu hỏi chưa từng vào danh sách nghi phạm) bằng cách làm đúng điều đó, đầu tiên & kỹ nhất.
+- **CEILING = cái PHANH chống snooping** — biết trước trần; gần trần → nhận; vượt xa trần → BÁO ĐỘNG (rò/snoop) chứ không phải chiến thắng. Đảo ngược "cao hơn = tốt hơn".
+- **Complexity buys little, discipline buys trust** — tung hết bộ đồ nghề DL (≥2 arch, optimizers, activations, GD variants, regularization, search, derive công thức + gradient-check, survey) trung thực → đồ xịn chỉ đổi TỐC ĐỘ không đổi TRẦN; winner big-search (val-overfit) THUA MLP đơn giản trên sealed test → phức tạp+search mua ÂM. Nội dung DL chấm điểm = BẰNG CHỨNG cho luận đề, không phải trình diễn.
+- **RELIEF (thở phào) = hệ quả của SỰ RÕ RÀNG**, không phải giọng văn; biết chính xác đang làm gì, mọi thứ trong lòng bàn tay → execution trôi. Trưởng thành = Act 1 vùng vẫy vs Act 2 làm được (phải KIẾM được bằng mastery, không tô bằng chữ).
+- **Sản phẩm thật = QUY TRÌNH, không phải con số** — §4 dựng workflow đúng (cơ bản làm nghiêm), ending mới ĐẶT TÊN (snooping) + cô thành thủ tục tái dùng. §4 trao gậy cho ending.
+
+**PHƯƠNG TIỆN CỤ THỂ (honest NGAY TRONG §4):** bản tin thời tiết độ gồ ghề; hành trình §4 tự nó honest — bỏ Direction (nhiễu/microstructure), xoay sang Volatility (thật, có cụm); bắt overlap leak → nhịp tháng không chồng; tín hiệu thật nhưng khiêm tốn. KẾT: một cú NGHIÊNG đáng tin, khiêm tốn — KHÔNG phải quả cầu tiên tri.
+
+---
+
+## Beat 58 — CỐT LÕI §4, BỔ SUNG (tác giả — 3 tinh chỉnh khóa vào nhau)
+**Tác giả bổ sung 2 ý; Claude phản chiếu + rút ra ý thứ 3 (relief redefine):**
+
+**(1) DL BẨN nhưng TIỆN → làm SẠCH BÀI TOÁN để thả DL vẫy vùng.** DL dễ bị lừa (overfit/snoop) nhưng mạnh + tiện, đừng bỏ, đừng ghì cương. Đổ toàn bộ kỷ luật vào **BÀI TOÁN** (frame thật, data sạch, null đúng, không leak, biết trần, seal test) = cái *chuồng* để DL thả full sức mà VẪN không lừa được ta. Sạch-bài-toán TRƯỚC → unleash DL SAU → honest tự đứng vững. (Chính là nhánh weather: ~toàn bộ công sức = LÀM SẠCH, rồi mới tung mẩu 1-8; vì sạch nên simple thắng complex.) → nghĩa thật của "discipline buys trust": **kỷ luật nằm ở bài toán, và nó cho ta quyền hưởng cái tiện của DL.**
+
+**(2) Viết §4 như DECISION TREE — "sạch" là thứ TỰ TÌM RA.** Cả hành trình (tác giả ↔ Claude ↔ notebook) = cây quyết định lặp mỗi bước: **nêu phương án + giả thuyết → chạy lab → đánh giá đúng/sai → nếu SAI: ra quyết định + tự truy HIDDEN ASSUMPTION đã lừa mình → sạch hơn 1 nấc → lặp.** Mỗi vòng gỡ 1 cách bài toán có thể lừa DL; qua đó mới TỰ ĐỊNH NGHĨA "sạch" (không biết trước). **Viết bài ĐÚNG hướng này** — show thật quá trình (phương án/thử/sai/sửa/truy giả định ẩn), KHÔNG phải báo cáo sạch hồi tưởng.
+
+**(3) THỞ PHÀO — ĐỊNH NGHĨA LẠI (quan trọng nhất, tinh chỉnh framing cũ "relief=clarity/control, các bước trơn tru").** Thở phào KHÔNG từ đúng-ngay, KHÔNG từ "mọi thứ trong lòng bàn tay" kiểu master toàn tri. Nó từ: **CHẤP NHẬN mình sẽ đoán sai + có vòng lặp đáng tin để sửa cho sạch** — bình an vì tin QUY TRÌNH, không phải tin mình luôn đúng. Còn lại chỉ là **tối ưu hết mức những gì ta THẬT SỰ CÓ** (tín hiệu khiêm tốn nhưng thật) một cách sạch. Buông nhu cầu "phải đúng ngay" = calm trưởng thành. (Phần cơ học §3 đổ máu — split/scale — vẫn là checklist bình thản; nhưng thở-phào SÂU của §4 = "tôi sai cũng không sao, vì tôi có cách làm sạch" → giữ bài HONEST, không thành báo cáo master tự mãn.)
+
+**TÓM 1 CÂU (through-line §4):** *làm bài toán sạch tới mức DL tiện-lợi-nhưng-bẩn được thả tự do mà vẫn không lừa được ta — và "sạch" đó ta tìm ra bằng một vòng lặp đoán-thử-sai-sửa-truy-giả-định, thở phào vì tin vòng lặp chứ không vì tin mình đúng.*
+
+---
+
+*TRẠNG THÁI hiện tại: ✅ VỆ SINH XONG + CỐT LÕI §4 chốt (B57) + BỔ SUNG craft (B58: clean-problem→unleash-DL; viết theo decision-tree; relief=chấp-nhận-sai+vòng-lặp-làm-sạch). Repo gọn. TIẾP THEO = dựng KHUNG §4 (map cốt lõi+craft sang nhịp weather, cấu trúc theo decision-tree loop) → viết prose từng phần (giọng journey, no em-dash) + export figure weather SVG; rồi ending. Tầng-3 doc kế hoạch để cuối.*
