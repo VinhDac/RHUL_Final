@@ -1,62 +1,47 @@
-# HANDOFF — tiếp tục dựng dissertation "Data Snooping in Deep Learning"
+# HANDOFF — tiếp tục dựng §4 (deep-plan) của dissertation "Data Snooping in Deep Learning"
 
-*Dán vào đầu session mới. Chắt lọc từ session dựng lại trọn §3 Market. ĐỌC KỸ trước khi làm gì. Luật tối cao: NHẸ + TRỰC DIỆN + CÙNG-KHÁM-PHÁ.*
+*Dán vào đầu session mới. ĐỌC KỸ. Luật tối cao: NHẸ + TRỰC DIỆN + CÙNG-KHÁM-PHÁ + PLAN-TRƯỚC-EXECUTE-SAU.*
 
-Bạn (Claude) tiếp quản MSc dissertation "CS: Deep Learning" viết kiểu HÀNH TRÌNH: một người bình thường đi qua pipeline DL, mỗi dataset là một journey lộ ra một **hidden assumption**. §0–§2 là bản mẫu. Session này đã **dựng lại trọn §3 Market (a→e)** theo giọng mới. Nhiệm vụ tiếp: **§3f**, rồi §4 Phone, §5 Lab, §6, §7.
+## 0. Đọc trước, đúng thứ tự
+1. `memory/` tự load. Đặc biệt **`two-act-restructure.md`** = tài liệu MẸ của §4 (chi tiết mọi quyết định). Cũng: `writing-style-key-core`, `leveling-up-arc-3-5`, `working-mode-data-snooping`.
+2. `NORTH_STAR.md` (la bàn) + `READ_ME.md` §0–§4 (§4 là bản đang dựng).
+3. Handoff này (mục 2 = bài học đắt nhất — đọc kỹ để KHÔNG lặp sai lầm).
 
-## 0. Đọc trước, theo thứ tự
-1. memory/ tự load — đặc biệt `leveling-up-arc-3-5` (mọi thiết bị của §3) và `writing-style-key-core` (luật giọng).
-2. `NORTH_STAR.md` (la bàn) + `LOAN_PLAN.md` (giọng đã khoá).
-3. `READ_ME.md` §0–§3 (§3 là bản mẫu MỚI nhất — bắt chước giọng này, KHÔNG bắt chước §4–§7 cũ).
-4. Handoff này (mục 2 = phần quý nhất).
+## 1. Cấu trúc chốt (2026-07-24)
+- Dissertation = **HAI HỒI** trên **cùng bài toán thị trường**, không phải 4 dataset. Đã CẮT: Phone, §5 Lab, §6.
+- **Hồi 1 (đau):** §2 Loan · §3 Market = cao trào (giấu kĩ năng DL, ngã từng trạm, xây khái niệm snooping từ thất bại).
+- **Hồi 2 (làm chủ):** **§4** = giải lại bài thị trường như bậc thầy. Bài toán cụ thể: **định cỡ đệm rủi ro cho ngày mai (Value-at-Risk)** — model dự báo mai-động-hay-không (busy/calm) là ĐẦU VÀO cho cái đệm.
+- **Hồi kết** (chưa làm): đặt tên **Snooping** + **workflow phổ quát** (chính là cái Plan §4).
+- §4 = **ĐÚNG 3 PHẦN**: (a) Plan · (b) Execute · (c) Evaluate. Prose 3-phần hiện có trong READ_ME (khung "pricing") — SẼ ĐƯỢC VIẾT LẠI theo deep-plan (mục 3).
 
-## 1. Trạng thái
-- ✅ **§3 Market a→e DỰNG XONG** (giọng plain/exam, dẫn cảm xúc). §3f (hạ cánh) **VẪN BẢN CŨ** → việc kế tiếp: viết lại §3f cho khớp giọng + gắn câu chốt user đã thêm.
-- ✅ Notebook `market.ipynb` rebuilt (config B), 13 hình §3 trong `figures/`.
-- ⏳ **§4 Phone, §5 Lab, §6, §7 VẪN BẢN CŨ** (config + giọng cũ) → dựng lại sau.
-- ⚠️ Nợ: **§6 Valley trích SỐ MARKET CŨ** (0.618…) → reconcile sang 0.612/0.587/~0.60/+0.050. `market_tree.svg` + `market_signal.svg` giờ KHÔNG dùng. Nhãn part-d trong notebook ôm cả §3d+§3e. Reconcile/anonymity/Word-template để CUỐI.
+## 2. BÀI HỌC ĐẮT CỦA SESSION NÀY (đọc kỹ nhất)
 
-## 2. GIỌNG + CRAFT DẪN CẢM XÚC (chắt lọc từ RẤT nhiều vòng sửa session này)
+### Sai lầm — ĐỪNG lặp:
+1. **Dựng notebook/kết quả TRƯỚC khi có plan = KHÔNG TRUNG THỰC** ("xây rồi bịa kế hoạch để khoe"). User bắt đúng: cả §4 dạy plan-trước, nên CÁCH ta làm §4 phải plan-trước-execute-sau. → **PLAN xong mới EXECUTE mới EVALUATE.** Kết quả (số breaches...) chỉ thuộc Evaluate, sau khi tiêu chí đã cắm mù.
+2. **Viết plan giọng TOÀN TRI ("ta đã lường hết") = BỊP người xem.** → Kể **KHÁCH QUAN, TỪ KINH NGHIỆM**: "sẹo §2/§3 dạy ta soi X, nên ta soi X", KHÔNG phải "ta biết X". Thêm **Tự-kiểm cuối** thừa nhận có thể vẫn sót giả định.
+3. **Sa đà vào "lab" (cơ chế VaR/breach) → mất CORE.** Core của §4 = một **QUY TRÌNH nghĩ PHỔ QUÁT, chưng từ kinh nghiệm**; bài cushion chỉ là MỘT lần điền. Đừng biến §4 thành "một lời giải kỹ thuật khôn cho bài VaR".
+4. **Khung "cái có ích" bị đảo nhiều lần** (sailor → pricing → VaR) vì tôi ĐOÁN. Chốt: "có ích" = **mục đích + hiệu chuẩn honest + chứng minh giá trị (breach coverage)**, KHÔNG phải accuracy. **KHÔNG jargon lạ** (VIX/quyền chọn/Black-Scholes làm loạn → đã bỏ; chỉ dùng "đệm/cushion", "thời tiết", lẽ thường).
+5. **Nhồi 1 prompt quá nhiều → chất lượng TỆ** (user nói thẳng). → Làm **TỪNG MẨU, bàn từng mẩu, chất lượng > tốc độ.**
+6. **Trang-plan 1-A4-visual = trống rỗng, thiếu lí do.** → Plan phải **SÂU** (nhiều technique, tại sao, cách cụ thể, contingency), không phải một thẻ gọn. (m4_plan.svg đã BỎ, không dùng.)
+7. Vặt kỹ thuật: notebook `train_net` trả `(P,hist)` nhớ `[0]`; từng để sót đuôi mục cũ khi thay khối (luôn grep header sau khi replace-by-script).
 
-**A. TRỰC DIỆN, KHÔNG VĂN VẺ (lỗi tái phạm #1).** Tiếng Việt mình chốt với user luôn rõ; tiếng Anh thì cứ trôi sang "văn". Chữa MỖI LẦN: câu ngắn; **mỗi đoạn MỘT nhịp**; **câu-neo đứng RIÊNG một dòng** (đừng chôn giữa câu). Bỏ mệnh đề phụ, bỏ hình ảnh điệu ("the ground the whole thing was standing on", "all that care buys you"). Giọng bạn-đồng-hành plain: *"But hang on… we did the right thing, we just did it once, and called it done."* **Test:** đọc riêng các dòng-neo từ trên xuống, phải tái hiện đúng chuỗi key tiếng Việt. Anh "văn" hơn Việt = SAI. TUYỆT ĐỐI KHÔNG em-dash (—).
+### Đúng — GIỮ:
+1. **Plan-trước honest order.** 2. **3 phần Plan/Execute/Evaluate.** 3. **Bài toán thật VaR/đệm** (research thật, số/fact thật); **bằng chứng = breach backtest**: cùng cỡ đệm, CỐ ĐỊNH 231 vỡ vs DỰ BÁO 200 (31 lần ít bị bắt hụt), dồn-cụm 24%→20%. 4. **Bản-án cắm TRƯỚC** kết quả (chống-snooping). 5. **Tự-kiểm cuối** (săn giả-định-còn-ẩn). 6. **Notebook = nguồn chân lý.** 7. Giọng plain, câu-neo đứng riêng, KHÔNG em-dash, ẩn dụ thuỷ thủ/thời tiết ở lớp trực giác.
 
-**B. CÙNG-KHÁM-PHÁ, KHÔNG BIẾT TRƯỚC.** Mỗi nước đi thúc bởi cái thấy trước mắt; để DATA bung bất ngờ. Kinh nghiệm-mang-theo (sẹo chương trước) ≠ biết-trước-bẫy-chương-này.
+## 3. DEEP-PLAN §4 — khung đang dựng (mục tiêu hiện tại)
+Plan §4 = **flow lý-luận SÂU** (nặng TẠI SAO/purpose), khách-quan-từ-kinh-nghiệm, dựng **từng mẩu**:
+- **0. Bài toán + KEY nó ép** (XONG — trong chat, chưa viết vào READ_ME): (a) target=độ lớn không hướng; (b) đầu ra=xác suất hiệu chuẩn; (c) "tốt"=honest không cao; (d) bền qua era + lỗi không dồn cụm; (e) dùng phòng thủ có biên. Mỗi cái nặng WHY. + bảng KEY→pipeline.
+- **1–7. Đi từng bước pipeline**, mỗi bước theo khuôn: **nhắc NHIỀU technique → chọn + TẠI SAO → cách làm CỤ THỂ** (vd. split không chỉ "past→future" mà **walk-forward = expanding window/rolling origin/N fold**) → **mô phỏng thực thi: đúng thì X, sai thì SỬA cụ thể (đây là KEY của plan)**. Các bước: Frame · Split · Scale · Kiến-trúc · Huấn-luyện · Regularization · Measure. **BUNG FULL DL DEPTH**: activation (ReLU/tanh/sigmoid/leaky), số layer, độ rộng, epoch (cố định/early-stop), loss (CE/MSE/focal), optimizer (GD/momentum/Adam/RMSprop), GD (batch/mini/stochastic), regularization (L2/dropout/early-stop). Đầu ra thường vẫn là **lựa chọn ĐƠN GIẢN có lí do** (cú lật: khoe biết hết đồ nghề + phán đoán chọn cái đơn giản honest).
+- **Đánh giá cuối:** lí thuyết (trần, hiệu chuẩn, winner's curse) + thực tế (breach), cân nhắc nhiều model.
+- **Tự-kiểm cuối:** săn giả-định-CÒN-ẩn. Sắc nhất: **target nhị phân busy/calm là SIMPLIFICATION** của cái đệm thật cần (phân vị/độ lớn thực) — bê từ §3 chưa hỏi. Khác: data sạch không, tín hiệu còn ở chế-độ-mới không, HÌNH cái đuôi (black swan không có trong mẫu), feature đủ không. Kết: **KHÔNG chứng minh được là hết giả định ẩn** — "đây là chỗ ta VẪN chưa chắc", không phải "đã bắt hết".
 
-**C. MỖI PHẦN: chốt KEY + PHẢN ỨNG KỲ VỌNG trước khi viết.** User lái bằng cảm xúc, nên trước mỗi phần phải nói rõ: *ý cốt lõi một câu* + *người đọc sẽ cảm/nghĩ gì*. Rồi mới viết phục vụ đúng câu neo đó. Số nhẹ tay — HÌNH gánh con số, prose gánh cảm xúc.
+## 4. Trạng thái file
+- `READ_ME.md`: §0–§3 xong; §3f = recap+bridge; **§4 = 3 phần a/b/c bản "pricing"** (sẽ viết lại theo deep-plan). §6/§7 cũ còn (stale, thành Hồi kết). References tới §4 (thêm Kingma&Ba, Sutskever, Guo). Appendix A/B/C(market)/D(code).
+- `notebooks/market_forecast.ipynb`: NGUỒN CHÂN LÝ §4, standalone, đã verify. Số: ceiling ~0.59–0.60 · arch 0.603/0.602/0.602 · opt GD/mom/Adam ~0.60 · search val~0.68 vs test 0.589 (là ERA không phải winner's curse, +0.004) · phân biệt 1.006% vs 0.532% (~2×) · ECE 0.014 (đã hiệu chuẩn) · **breach 231 vs 200 cùng đệm, dồn-cụm 24% vs 20%**. Hình m4_*: pipeline, ceiling, arch, convergence, search, discrimination, calibration, breach.
+- `notebooks/market.ipynb` (§3), `loan.ipynb` (§2) standalone. Phone/lab.ipynb đã xoá. `figures/m4_plan.svg` BỎ (không dùng), `market_signal/market_tree.svg` thừa (dọn sau).
 
-**D. ẨN DỤ ĐỜI THƯỜNG, CHẠY SUỐT, KHÔNG ĐỔI GIỮA CHỪNG.** Mỗi khái niệm khó = một ví dụ đời thường (Loan: bác sĩ lười; §3c: flashcard ôn-thi; §3d: ly cà phê/"ngưỡng bình thường cũ"; §3e: **học sinh/bài thi/bạn lười**). LỖI hay mắc: kể bằng ẩn dụ rồi nhảy về jargon (Frame/Station) → reader rớt mạch. Chữa: **bắc cầu** ("Frame = station một = ra đề"), giữ ẩn dụ chạy suốt.
-- *Đặc biệt: "lazy guesser" KHÔNG phải máy 50:50.* Nó **luôn nói lớp đông** → điểm nó TRÔI theo độ lệch → đó mới là engine của "cái vạch trôi". Phải nói thẳng "not a coin".
+## 5. NHIỆM VỤ NGAY
+Tiếp deep-plan §4 **từng mẩu, vừa-làm-vừa-bàn**: **Mẩu 1 — Frame** (nhiều cách đặt target: nhị phân trung vị / ngưỡng cố định / phân vị / hồi quy độ-lớn → chọn + tại sao → cụ thể → mô phỏng đúng/sai-sửa; thành thật nhị phân là simplification, nối Tự-kiểm). Rồi 2–7, Đánh giá, Tự-kiểm. Sau đó VIẾT LẠI prose §4 a/b/c theo deep-plan (giọng khách-quan-từ-kinh-nghiệm). Rồi: Hồi kết (đặt tên Snooping + workflow) · reconcile §1(dòng~65)/§2(dòng~92 "Section 5")/đánh-số(§4→§6 hụt §5)/Appendix D(thêm market_forecast.ipynb) · compliance (dẫn công thức base trong §1 + survey) · dọn SVG thừa · anonymity + Word-template.
 
-**E. DẪN BẰNG CHUỖI CÂU HỎI ở chỗ vỡ sâu nhất.** Đáy cảm xúc (§3e Part 3) đi THẬT CHẬM, mỗi bước một câu hỏi nghi vấn ("So how? Where did it come from? Did we not check that one? Why not?") → phát hiện thành CỦA người đọc, không phải tác giả bảo.
-
-**F. BẢN ĐỒ 3 NGHI CAN (device rất hiệu quả).** Sau khi ra số đẹp: *"nếu số này nói dối, nó chỉ trốn được ở mấy chỗ"* → liệt kê nghi can (khớp trạm pipeline) → soi từng cái → clear. Cú lật: cái tưởng đã clear (hoặc cái CHƯA BAO GIỜ lên danh sách) mới là thủ phạm. Hình: pipeline-với-chip (market_suspects), pipeline-mọc-nhánh-GUILTY (market_verdict/market_scale).
-
-**G. LƯỢT-HAI SOI GƯƠNG LƯỢT-MỘT (cho bẫy lớn nhất).** "Giờ hiểu rồi, làm lại cho đúng" = **lặp Y HỆT** động tác lập-plan (§Xa) + soi-nghi-can (§Xb), có thể lặp câu chữ — sự đối xứng CHÍNH LÀ cách thể hiện "có kinh nghiệm thì xử lý sao". Cú đau: danh sách nghi can DÀI RA theo kinh nghiệm (3→4) mà bẫy sâu nhất VẪN không lên danh sách, vì nó không giống một bước — nó là "cái đề". → *"a choice we never even saw as a choice."*
-
-**H. TÊN GIẢ ĐỊNH NẰM TRONG CÔNG THỨC, không phải cái núm bề mặt.** §3d không phải "percent vs points" (đọc thành "dùng %"); mà là **frozen mean/std = cược rằng thế giới đứng yên**; points chỉ là PHÉP THỬ phơi cược; percent CŨNG trôi (chỉ ít hơn), ta chưa bao giờ đo.
-
-**I. LUẬT LEO THANG.** Khi bẫy mới TRÔNG GIỐNG bài học cũ: narrator phải ĐÃ ÁP đúng bài cũ mà VẪN ngã (vì bài cũ tự nó có giả định ngầm). Nói THẲNG ra: *"that check was right, and it was still not enough."* (§3e: đã kiểm cân bằng §2 đúng, nhưng đếm-một-lần-cho-cả-lịch-sử nên vẫn thiếu.)
-
-**J. KHÔNG LỘ Ở TIÊU ĐỀ.** Tiêu đề đừng báo trước bẫy. Ở mục bẫy-lớn-nhất, tiêu đề phải RU NGỦ (hứa phần thưởng), vd. §3e "The process we can finally trust" (mỉa mai khi đọc lại). Đặt kỹ thuật mới phải có CONTEXT ("same honest test at 5 moments — no new trick"), không lôi chiêu lạ ra bất ngờ.
-
-**K. Cấu trúc §3 làm mẫu:** a Reading (config + neo niềm tin + level-up ở bước MEASURE canh vết-thương-§2) → b By the book (số đẹp + 3 nghi can, tin) → c So was it the shuffle? (traceback → near-twin) → d And what about the scaling? (frozen mean/std) → e The process we can finally trust (3 movement: rebuild+tin → result+lộ "no single number"+lazy guesser → biggest assumption Frame) → f hạ cánh. Câu chốt chương (deepen §2): *"Trust the process, not the score. But what if the frame and the goal are unclear? What is the cleanest process worth then?"*
-
-## 3. KỸ THUẬT
-- **Python:** `py -3.14` (3.14, có numpy/matplotlib/nbformat/nbconvert). `.venv` HỎNG — đừng dùng.
-- **Dựng notebook:** viết builder ở scratchpad (nbformat + `ExecutePreprocessor(kernel_name="python3")`, `resources={"metadata":{"path": NB_DIR}}`), construct hết cell rồi execute để lưu output THẬT. Chart inline: đầu cell `%matplotlib inline` + `%config InlineBackend.figure_format='svg'`; mỗi hình `fig.savefig(f"{FIG}/x.svg"); plt.show()`; `FIG = "figures" if os.path.isdir("figures") else "../figures"`. Warning zmq Proactor = vô hại.
-- **Soi hình:** browser pane render file:// KHÔNG tin cậy (snapshot cũ). Cách chắc: render matplotlib ra PNG bằng script Agg rồi Read PNG. SVG vẽ tay thì không auto-render được ở đây — nhờ user liếc.
-- **Palette:** accent `#3a6ea5`, muted `#b8c0cc`, đỏ `#c85a52`, grid `#eef1f4`; spine sạch. SVG vẽ tay: nền trắng `<rect fill="#ffffff">`, font Segoe UI.
-- **Config B (mẫu, dùng SHAPE tương tự chương khác trừ khi cần khác):** train/val/test 60/20/20 (val để dành, §3 không dùng), standardize fit-train-only, MLP feats→16 ReLU→2 softmax, cross-entropy, plain GD lr **0.3**, 300 epoch, seeds 0–4. Market cần chronological split + rolling scaler + walk-forward. **Market DÙNG CHUNG 60/20/20 như §2** (đừng đổi 80/20; "không val" đọc thành gài-hụt).
-- **USER SỬA TAY file:** user thường tự chỉnh READ_ME giữa chừng → **LUÔN Read lại vùng liên quan trước khi Edit** (đừng ghi đè sửa của user).
-
-## 4. Số canonical §3 (từ notebook — dùng để reconcile §6/§7)
-- Leak: shuffle **0.612**, chronological **0.587**, walk-forward **0.601**; direction control **0.540 / 0.539** (gap ~0); near-twin chung **4/5**.
-- Drift: percent+frozen **0.587**, points+frozen **0.509**, points+rolling **0.528**; frozen-normal percent 0.85%→0.75% (×0.9), points 10.6→37 (×3.5); test |z| percent 0.59/9.25, points **2.73/43.7**.
-- Eras (walk-forward): **0.519 / 0.602 / 0.651 / 0.654 / 0.582**; busy share trôi **0.374–0.541**; margin vs bar-của-era **+0.050** (biên −0.025 → +0.127) so với headline **+0.112**; swing ≈ 9× nhiễu mẫu.
-- Learning: chưa-train ~0.494 → settled ~0.630; test busy 45%/calm 55%, đúng 56% busy / 66% calm.
-
-## 5. NHIỆM VỤ NGAY: §3f
-Viết lại §3f ("What we can actually stand behind") cho khớp giọng plain/exam của §3e, và **hạ cánh vào câu chốt** *"...what if the frame and the goal are unclear? What is the cleanest process worth then?"*. Ý §3f: (1) cái GÌ sống sót (kỹ năng thật nhưng nhỏ, +5 điểm, thắng 4/5 era) — đừng bi quan giả; (2) cái CHẾT = câu ta muốn viết ("the model is 61% accurate") — không tồn tại một con số; (3) thay bằng một câu nhỏ đứng-sau-được (data + feature + split + scaling + biên độ); (4) nâng §2: process sạch vô nghĩa nếu frame/goal chưa vững. Theo Mode C: đề 2–3 phương án, USER QUYẾT, mẩu nhỏ, KHÔNG commit git.
-
-## 6. Nhắc cuối
-Luôn hỏi user trước mỗi lựa chọn logic (đề 2–3 phương án). Soi NORTH_STAR + memory mỗi mẩu. User cực chú trọng: **giọng NHẸ + TRỰC DIỆN (không văn vẻ) · cùng-khám-phá thật · số THẬT từ notebook · ẩn dụ đời thường chạy suốt · dẫn cảm xúc bằng câu hỏi · câu-neo đứng riêng · mỗi mục kết bằng câu hỏi · không em-dash.**
+## 6. Kỹ thuật
+`py -3.14` (numpy/matplotlib/nbformat/nbconvert; KHÔNG dùng `.venv` hỏng; cairosvg KHÔNG có → SVG tay nhờ user liếc). Notebook: builder nbformat + ExecutePreprocessor(path=NBDIR), chart inline svg. Palette: accent #3a6ea5, muted #b8c0cc, đỏ #c85a52, grid #eef1f4. **Mode C**: đề 2–3 phương án, USER QUYẾT, mẩu nhỏ, KHÔNG commit git, LUÔN Read lại trước khi Edit (user hay sửa tay).
