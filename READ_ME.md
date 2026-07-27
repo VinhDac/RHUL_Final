@@ -89,7 +89,7 @@ And how do we turn that into a number we can put in front of the bank? We run th
 ![The plan for the loan clients](figures/loan_pipeline.svg)
 
 1. **Frame** it as the yes-or-no question it already is.
-2. **Split** the thirty thousand clients once, into training (60%), validation (20%), and test (20%); the test part stays sealed until the end, and the validation part waits unused until Section 5.
+2. **Split** the thirty thousand clients once, into training (60%), validation (20%), and test (20%); the test part stays sealed until the end, and the validation part waits unused until Section 4.
 3. **Scale** the twenty-three features, subtracting the mean and dividing by the spread, with those statistics measured on the training part only.
 4. **Build and train**: from small random weights, run three hundred passes over the training clients, scoring the guess with cross-entropy, finding the downhill direction by the backprop of Section 1, and stepping every weight a little that way with plain gradient descent (a learning rate of 0.3).
 5. **Measure** how good it is by accuracy: the fraction of the sealed test clients it labels correctly.
@@ -463,33 +463,355 @@ So there is one thing left to try. We take the same problem back to the top, and
 
 ## 4. The market, put to use: a weather forecast for its roughness
 
-*Section 4 is being rebuilt around the weather-forecast model. The matured master goes back to the same market and, this time, turns the volatility signal Section 3 uncovered into an honest, calibrated forecast: a next-period read on how rough the market is likely to be, calm or normal or stormy, with a probability you can actually trust and a plain account of what it is for. For now the build, the figures, and the evaluation live in `notebooks/weather_regime_scratch.ipynb` (the pipeline) and `notebooks/weather_regime_dl.ipynb` (the deep-learning toolkit and the forecast in action). Prose to follow.*
+Section 3 left us with a number, and we almost walked away from it. A forecast of how rough tomorrow would be, right about six days in ten. Six in ten is not a number you brag about, and we felt let down. But we never asked the one question that would have saved it.
 
-*And whatever the number turns out to be, the real product was never the number. It was the discipline that earned the right to trust it, and it is nearly time to give that discipline a name.*
+**What is this number for?**
 
-## 6. So what is left?
+So we go back to the same market, wiser, and this time we do not rush to build. The tool we are about to pick up is deep learning, and it is worth being plain about it. It is powerful, and it is convenient. It is also very easy to fool. Hand it a messy problem and it will find a pattern that was never there, then hand back a confident number you cannot trust. That is the trap of the last two chapters, waiting to spring again.
 
-Let us count up the damage. Four problems, all handled by the book, and the book fell short on every one. On the loan clients the number measured the wrong thing: 0.819 accuracy, but only a third of the defaulters caught. On the market it came out too high, an edge of 0.618 that was really the future leaking backward, then too low, a working model dropped to a coin by a drifting feature. On the phone it read the thirty people instead of the task, a near-perfect 0.966 that was really 0.947 on a stranger. And on data with nothing to learn, our own searching still found an edge, 0.607 out of a truth of 0.5.
+> **So we do not try to tame the tool. We clean the problem instead.**
 
-Every safeguard we trusted failed somewhere, and none of them warned us. We were not careless. We did everything by the book, and the number lied anyway.
+A problem with no hidden leaks, no borrowed answers, and a known ceiling is one where even a powerful tool cannot lie to us. Get that right, and we can let deep learning off the leash later without fear.
 
-**So which number, exactly, are we still allowed to believe?** The score we set out to chase and report and trust cannot carry that trust, because a hidden assumption can quietly distort it, and our own searching can quietly inflate it, and from the outside a bad number looks exactly like a good one. We have run clean out of numbers to trust. If trust does not live in the number, then where does it live?
+But clean is not something we know in advance. We find it the only honest way. We make a guess, we test it, and when the test says the guess is wrong, we hunt down the hidden assumption that fooled us and fix it. Then we guess again. That loop, repeated until there is nothing left to catch, is the whole of this chapter.
 
-## 7. What we can trust
+### a. First, what are we even forecasting?
 
-Here is the answer, and it was hiding in plain sight the whole time. Look back at the honest fix at each step. Not one of them was a secret technique. The careful practitioner who got fooled and the honest one who did not use the very same five steps: both shuffle, both scale, both search, both measure. The only difference between them, the whole difference, is understanding.
+Section 3 built something and then could not use it. It forecast whether tomorrow would be busy or calm on the market, it was right about six days in ten, and it sat there useless, because we had never once asked what the number was for. A forecast with no job is just a number. So this chapter begins where Section 3 should have: not with what we can predict, but with what the prediction is for.
 
-![The same five steps, and the hidden assumption in each](figures/pipeline_traps.svg)
+The job we chose was a weather forecast for the market. Something you could read each morning the way you read the sky. And the moment you take that seriously, the shape of the thing changes.
 
-One person reached for shuffle because the book said shuffle. The other looked at the data first, saw that its rows came in time order, and chose a cut that respected time. Same step, opposite result, because one of them understood what the data was before deciding what to do to it. That is the lesson of every problem we walked. The trap was never in the step. It was in doing the step without asking what it quietly assumed, and whether the data in front of us could bear it.
+For one, it does not give a single answer. A real forecast does not say "it will rain," it says seventy percent chance of rain. So ours would not hand back a flat busy-or-calm; it would give the odds across the possible weathers, a probability for each. That is not decoration. Section 3's yes-or-no was a blunt thing that could not admit doubt, and here doubt is most of the truth. A probability can be honest about how unsure it is.
 
-Notice what this is not. It is not a counsel of despair, a warning to stop building or stop searching. We searched, and searching worked: on the loan clients, comparing a handful of architectures and optimisers honestly lifted the score we could actually keep from 0.644 to 0.650, a real gain, and one we could believe precisely because we sealed the test and never chose on it. The tool is powerful, and the goal, a good model on real data, is worth chasing. The discipline is simply how we chase it without fooling ourselves.
+For another, it is not about one market. Weather is something every market has. So we would read it across many at once, seventeen of them, from stock indices to currencies to gold and oil, building a history of weather for each and a picture of the whole.
 
-So state each assumption and check it against the data. Match the method to the structure in front of you. Search all you like, but search in the open, count your tries, and keep one test you open once and never select on. Do that, and the number at the end is one you have earned the right to believe, not because it is high, but because you can trace, step by honest step, why the way you made it could not have lied.
+And the weather itself had two readings. How rough the market is, calm or stormy. And how it behaves, whether it keeps pushing one way, keeps snapping back, or just wanders. Cross the two and you get six named kinds of weather.
 
-And we already have four of them. Look at what each honest procedure handed back: a balanced 0.644 on the loan defaulters, around 0.60 on the market with the leak stripped out, about 0.947 on a phone strapped to a stranger, and 0.650 on the loan again after searching a few models in the open. Not one is the flattering number we first saw, and not one is high for its own sake. They are simply what was left standing after every assumption was checked and the test was opened only once. That is why we can believe them.
+![The forecast we first dreamed of: a market weather bulletin with two readings, how rough the market is (calm or stormy) and how it behaves (trending, reverting, or patternless), laid out as six named kinds of weather, each with its own chance](figures/s4_draft_plan.svg)
 
-That is the whole of it. The recipe is a fine place to start and a dangerous place to stop. We cannot trust the goal for its own sake, the number chased and reported and hoped over. We can trust the understanding that earns it, and the number an honest procedure hands back is one worth keeping.
+We did not invent those six. A tool we had been handed already sorted every market into one of them, and it was a genuinely lovely picture, the kind you would want to open each morning.
+
+> **And if we are honest, that was the danger in it. A picture that lovely is one you want to be true, and wanting a result is already half the road to fooling yourself into one.**
+
+Now, how does an honest forecaster actually work? In two steps, and it is worth keeping them apart, because one is safe and one is not. First you DESCRIBE the weather that has already been. Looking back, with the whole stretch in front of you, saying "that was a stormy month, that was a calm one" is easy and honest. Then you FORECAST the change, the turn from one weather into the next, and that is the hard part. An honest forecaster stays humble there, because the turns are exactly where any forecast is weakest. Describing the past is not the same as forecasting the future, and we would never let the ease of the first fool us about the difficulty of the second.
+
+Before building a thing, we also named what was solid ground and what was quicksand, because Section 3 had already mapped it. Roughness is solid: Section 3 proved that rough and calm cluster, that there is real signal in the size of the moves. Behaviour, which way the market leans, is the quicksand: Section 3 proved that direction is very near a coin flip, and any forecast that dressed itself up as knowing which way the market will go would be betraying the hardest lesson of the last chapter. So we went in planning to lean our weight on roughness and keep behaviour on a very short leash.
+
+And here is the deepest reason we built it across seventeen markets and not one, the idea the rest of this chapter stands on. It was not to look impressive. It was a test, the same test this whole book is about. A real weather pattern shows up in market after market; a fluke shows up in one and vanishes the moment you carry it somewhere new. So the seventeen markets were never a bigger dataset to boast about. They were seventeen chances to catch ourselves believing a ghost. **A signal that survives being carried to a market it has never seen is real, and one that dies on the journey was never there.** Hold onto that, because it is the spine of everything that follows, and it went to work immediately, on the behaviour reading, which was the first thing it caught.
+
+We began, as Section 3 had taught us, by trying to fool ourselves on purpose. We took pure noise, random numbers with nothing in them, and sorted it into low, medium, and high behaviour exactly as we would the real thing. It came out a tidy 31, 38, 31, a neat three-way split from nothing at all. So the neat spread we saw on the real data proved nothing by itself; **a pretty picture is never the proof.** The only honest test is on the raw numbers, and the measure we used was the plainest one: the lag-one autocorrelation of the daily moves. If today's move tends to be followed by one the same way, it is positive, which is trending; if it tends to reverse, negative, which is reverting; near zero is random. We knew the textbook tool, the Hurst exponent, and we passed it over on purpose, because it is finicky and adds settings to argue about while saying the same thing. Know the fancy tool, reach for the simple one. We will make that exact choice again with the deep learning at the end.
+
+So we ran the test, against a null that assumes no signal and asks whether we could have seen this much by luck. At first it looked real, but only in places: the behaviour reading cleared the noise on the stock indices and failed on crypto and several currencies. Uneven like that is already the transfer test whispering a warning, because a real signal does not pick and choose its markets. And when we forced a proper audit rather than admire the result, the whole thing came apart, in two ways.
+
+First, the measure was fragile. The autocorrelation is not robust to a single wild day, and a handful of crisis days had manufactured almost the entire signal. The euro read a strong-looking minus 0.175, real mean-reversion by the look of it, and **almost all of it came from one afternoon, the 8th of December 2008**, when it moved sixteen percent in a single session. Pull that one day back toward the pack and the reading collapses to minus 0.037, essentially nothing. The yen told the same story, minus 0.124 down to minus 0.035. The S&P did not merely shrink, it flipped sign, from minus 0.019 to plus 0.023, on the strength of the 1987 crash alone.
+
+There is a particular sinking feeling in that, watching a signal you had already half written down as real dissolve into a handful of bad days.
+
+![EURUSD's daily moves are dwarfed by a single sixteen percent day in 2008, and its whole behaviour reading falls from about minus zero point one eight to near zero once that one day is tamed](figures/s4_outlier.svg)
+
+Second, **our own test was wrong.** Our first null shuffled the daily moves around freely, but shuffling freely also destroys the roughness clustering, the one thing that genuinely is there, and a null that empty makes any real data look significant beside it. Twelve of the seventeen markets came out "significant" against it, which flattered us badly. The right null keeps the roughness and destroys only the behaviour, which you do by flipping the sign of each move at random instead of scrambling their order. Against that honest null only nine of seventeen survived, and their sizes were 0.03 to 0.06, small enough to be worth nothing.
+
+> **That one was harder to sit with, because the fault was not in the market this time. It was in us.**
+
+And the few survivors were not a market memory at all. They were the stock indices, and they lined up in a telling order: the small-cap index strongest at plus 0.061, then the S&P at plus 0.034, then the big-tech and blue-chip indices near zero. Smallest first. That is the fingerprint of non-synchronous trading, the plain fact that the smaller stocks in an index trade a beat later than the big ones, so the index appears to follow itself. It is a quirk of how prices are recorded, not a pattern anyone could forecast. Set the two readings side by side across all seventeen markets and it is not close: roughness clusters at about plus 0.18, behaviour sits near minus 0.02, nine times weaker and pointing the wrong way for a signal. The full per-market table is in Appendix E.
+
+![On every one of the seventeen markets the roughness reading towers over the behaviour reading, and pure noise sorted into low, medium and high still makes a tidy spread, so a tidy spread proves nothing](figures/s4_direction_drop.svg)
+
+So the transfer test had done exactly the job we built it for. The behaviour reading was a ghost, alive in a few stock indices for a plumbing reason and dead everywhere else, and we dropped it. Six kinds of weather collapsed into one honest question. **How rough, not which way.** And it is worth being exact about why, because it is not the obvious reason. The data was not dirty; we had cleaned it. The market simply has almost no real behaviour signal to read, and saying that plainly is a scientific finding, not a failure.
+
+It is worth stopping on what that cost us. The lovely two-reading bulletin was down to a single reading. The livelier half, the part that told you how the market was moving, was gone, and only the quieter half remained. But the quieter half was the only one that had ever been real, and a forecast built on the real half beats a beautiful one built on noise.
+
+This was the station Section 3 never reached. Every earlier chapter interrogated how we split the data, how we scaled it, how we scored it. Not one of them ever put the question itself on the suspect list. Here we did, and the question was where the rot was. We checked it first, and it saved us from building the whole chapter on noise.
+
+And notice the shape of what just happened, because we will repeat it at every step from here. We made a guess. We tested it, and we tested it across every market, not just the one that flattered us. When the result looked too good, we grew suspicious instead of pleased. We hunted down the flaw, first in the data and then in our own test, and we dropped what could not survive. That loop is the whole method of the chapter.
+
+Because this part turned up more than one buried assumption, it is worth setting them all down in one place: what we nearly believed, what we did about it, and why it no longer bites.
+
+**Hidden assumptions:**
+
+| What we nearly believed | What we did about it | Why it no longer bites |
+| --- | --- | --- |
+| A tidy low, medium, high spread means a real signal | Ran the exact same sorting on pure noise, which also gave a tidy 31, 38, 31 | We judge the raw numbers against a null now, never the picture |
+| The autocorrelation is safe from one wild day | Traced the euro's whole reading to a single 2008 session, then cleaned and re-measured | Every reading is taken on cleaned data and re-tested afterwards |
+| A free shuffle makes a fair "no signal" world | Saw it destroyed the roughness too and flattered us, twelve of seventeen "significant" | The null keeps the roughness and destroys only the behaviour now, nine of seventeen, all tiny |
+| A signal that shows up anywhere is real | Carried it across all seventeen markets, where it lived only in the stock indices, as a recording quirk | Nothing counts unless it survives being carried to a market it has never seen |
+| The market has a behaviour we can forecast | Measured it against roughness: near zero, nine times weaker, and plumbing when it survived at all | We forecast only roughness, the one reading Section 3 proved is real |
+
+The reading we kept is measured on cleaned data, judged against the right null, and confirmed on every one of the seventeen markets. What survives all of that is real, not a ghost.
+
+### b. Making the problem clean
+
+We had our one honest reading now, roughness, and it would have been tempting to start building. We did not, because a real signal is not the same thing as a clean problem, and the tool we were about to pick up made the difference matter. Deep learning is powerful, and it is easy to fool. Hand it a problem with a hidden leak and it will find the leak, fit it, and hand back a confident number that means nothing. So we did not try to tame the tool. We spent everything from here on making the problem so clean that even a powerful tool could not lie to us.
+
+One rule governed all of it, the rule the behaviour reading had just beaten into us. Every choice we make here is a knob, and every knob is a chance to fool ourselves, so we would not guess which ones matter. We would test every one, and the few that turned out to matter we would pin by reason, in advance, before the model ever saw a number, so that we could never be caught later quietly turning a knob until the answer looked good.
+
+The first knob was the data itself. The market's history holds a few genuinely insane days, and we had just watched one of them fake a whole signal, the euro's sixteen percent afternoon in 2008. Left alone, a day like that dominates any average it falls into. So before measuring anything, we pulled the wildest days back toward the pack, gently, trimming only the most extreme half a percent at each end. The test that this was safe is the one that matters: the real crises had to survive it, and they did. The S&P's roughness in 2008 came down from 2.68 to 2.09 percent a day, in 2020 from 3.22 to 2.32, and both still stand a good seven times over a calm year. **We cleaned out the glitches without cleaning out the storms.**
+
+![EURUSD's few wild days are pulled back toward the pack while the ordinary days are left untouched, and the 1987, 2008 and 2020 crises still stand out clearly in the S&P's roughness](figures/s4_winsor.svg)
+
+Then the rule went to work on the smaller knobs. How hard should we trim? Which exact formula should turn a raw roughness number into low, medium, or high? These are the settings it is tempting to agonise over, so instead we tested them. We labelled the whole history one way, then the other, and counted how often the two disagreed. Trim at half a percent or at a tenth: the labels agreed 98 times in a hundred. Standardise the numbers one way or another: 93. Both were, in the language we were building, knobs that do not matter, so we took the simpler setting and moved on. A knob that does not change the answer is not worth an argument. Keep those two numbers, 98 and 93, in mind, because they are about to make a surprise land.
+
+Next came how often to take a reading and how far ahead to forecast, and this is where we were very nearly beaten. We started the obvious way, a reading every week and a one-week horizon, and ran the natural test: from this week's roughness, how much of next week's can we explain? The answer came back as an R-squared of 0.79. For a moment, we let ourselves believe it. Then sit with that number, because if it does not alarm you, you have not been paying attention. It says we could account for nearly four-fifths of next week's roughness from this week's alone. Section 3 fought for weeks to wring a few percent of edge out of this exact market, and here we were apparently nailing eighty percent of it. On a problem this hard, a result that good is never a gift. It is a symptom. So we did not celebrate, we went looking for the leak, and it did not hide for long.
+
+To measure one week's roughness we averaged the last twenty trading days. A week later we did it again, averaging the last twenty days again. But those two windows sit only five days apart, so they share fifteen of their twenty days. When we "forecast" next week from this week, **we were mostly comparing a number with itself.** Fifteen days out of twenty were the same days. That is not forecasting, it is measuring one thing twice and being impressed that the two agree.
+
+> **It is obvious once you see it, and that is the uncomfortable part. It was obvious, and we still walked straight in.**
+
+![Measured with overlapping weekly windows the forecast looked like about a thirty percent edge over guessing, but that was mostly the fifteen shared days; with non-overlapping windows the true weekly edge is only about three percent, and the honest signal lives at the monthly scale, about fourteen percent](figures/s4_overlap.svg)
+
+The fix is to keep the windows from touching. Take one reading a month, over twenty days that belong to that month alone, and forecast each month from the one before. Look at what happens to the edge over simply guessing the most common weather. Measured the overlapping way it was plus 30.6 percent, the mirage that had thrilled us. With the windows pulled apart at the weekly speed it fell to plus 3.4 percent, as faint as the behaviour reading we had just buried. Only when we stepped all the way back to a month did a real, modest edge appear, plus 14.2 percent better than guessing. So the eighty percent was never real. The honest signal was small, and it lived at the scale of a month, and that is the scale we would build on.
+
+Working in clean, separate months, the next job was to turn each one into a label, calm, normal, or stormy, and that hid two questions we again nearly got wrong. The first is what "normal" even means. A month is rough compared to normal, but the market's normal does not hold still. There are calm years and violent ones, and a move that is a storm in a quiet decade is an ordinary week in a turbulent one. So **normal could not be one fixed number for all of history**; it had to be a moving benchmark, the market's own recent past. And it had to be built only from that past. If we let months that have not happened yet help set what counts as normal today, we would have **slipped the future into the label**, the very leak that fooled us in Section 3.
+
+![Bitcoin's roughness against two benchmarks: one fixed all-time normal sits flat and would call the recent, calmer years ordinary, while a moving two-year normal comes down with the market and still reads the real relative weather](figures/s4_rolling.svg)
+
+So normal was a rolling window of the recent past. How long a window? Here we nearly slipped again, and it is worth admitting how. We assumed the length could not matter much and reached to just pick one. The rule stopped us: we would not guess, we would test. So we tested one year against two against three, and the answer was not what we assumed. The same month came out calm or stormy depending on the choice, and the three lengths agreed only about three times in four. Set that beside the knobs we had waved through, the 98 and the 93, and it stands out at once: **this one was load-bearing.** So we pinned it the careful way, in advance and by reason, at two years, long enough to be steady and short enough to keep up as the market changes.
+
+> **We had very nearly waved it through with the others. That is the one that stays with us, not the trap we saw coming, but the one we almost did not.**
+
+![Changing how hard we clean or which formula we normalise with leaves almost all the labels unchanged, but changing the length of the baseline window changes about a quarter of them, so that one knob is load-bearing and had to be pinned by principle](figures/s4_baseline_window.svg)
+
+One choice was left, how many bands and where to cut them. Three felt right, calm, normal, and stormy; five flickered, a month hopping between them on noise, and two were too blunt to be a forecast. Where to cut was load-bearing in its own right: draw the lines too wide and "normal" swallows almost everything, leaving nothing to warn about. So we set them where the three come out balanced, each holding a real share of the months, which is also what a probability forecast needs if anyone is going to trust it.
+
+With the months clean and labelled, we asked what the model should actually look at. The tempting answer was a long run-up, this month and several before it. But roughness moves slowly, so last month already carries almost everything the earlier months would add. We checked, and the numbers were plain: this month's roughness alone explains 27 percent of next month's, adding last month lifts that by barely a hundredth, and **adding the months before that adds nothing at all.** So the model is handed just two numbers, how rough this month was and how rough the month before, and nothing it does not need.
+
+Before letting deep learning anywhere near it, three last guards. The first was a placebo. We scrambled the answers until there was truly nothing left to learn, and checked that the model then scored no better than a blind guess. It did: **a real 54.8 percent fell to 34.5, which is pure chance.** Had it still found a pattern in nonsense, we would have known a leak survived. It found nothing, which is exactly what a clean problem gives.
+
+The second guard was the split, and it was the transfer test from before, now built into the bones of the problem. We held out the future, training on the older months and testing on newer ones the model had not seen. And we held out whole markets, training on thirteen and keeping four aside that it would never meet while it learned. A score that comes only from memorising cannot survive being shown a market it has never met. This is the same idea that killed the behaviour reading, turned now into a standing rule: nothing counts until it carries to somewhere new.
+
+The third guard was the ceiling, written down before we began. A plain rule on this data, just carrying last month's weather forward, reaches about 54 percent, and a simple linear model barely beats it. That is the ceiling the signal allows. So we fixed the alarm in advance: anything much above sixty percent would not be a triumph, it would be a leak we had failed to catch, and it would send us hunting rather than cheering.
+
+And one last honesty, written down before any result could soften it, about what this forecast will never do. It is a tilt, not a crystal ball. The signal is weak, so it will be wrong a good four times in ten. It reads roughness relative to each market's own recent past, not an absolute level of danger. It is blind to the true catastrophe, the once-in-a-generation crash, both because we cleaned those very days out and because the markets that died are not in our data. It speaks a month at a time, so a storm that flares and fades inside a month goes unseen. And it fails hardest at the turns, when a calm stretch tips into a rough one, which is exactly the moment a forecast would be wanted most. None of this makes it useless. It makes it honest, and a forecast you can place inside its limits is worth more than one that pretends it has none.
+
+That is the whole machine, and every stage of it was settled by the slow work above, not left for the model to sort out. One worked example, the latest month of the S&P, runs the length of it: the daily prices become cleaned daily moves, the last twenty days average to a roughness of 0.79 percent a day, that reads as plus 0.46 against the past two years, which lands in the normal band, the model is handed that 0.46 and last month's minus 0.43, and out comes a forecast of next month's weather.
+
+![The finished pipeline as a flow: daily prices, then cleaned daily moves, then this month's roughness, then that roughness measured against the recent normal, then a calm, normal or stormy label, then the two numbers the model sees, then the forecast for next month, shown with the S&P's latest month landing on a normal reading](figures/s4_pipeline.svg)
+
+Now the problem was clean. No borrowed future, no shared days, no single day writing the answer, and its limits named out loud. The cage was built, and it was honest.
+
+> **The same stock-taking is worth doing here, because the cleaning turned up a buried assumption at almost every step.**
+
+**Hidden assumptions:**
+
+| What we nearly believed | What we did about it | Why it no longer bites |
+| --- | --- | --- |
+| A handful of wild days will not sway an average | Trimmed the extreme half a percent, and checked the real crises survived, 2008 from 2.68 to 2.09 percent a day | The glitches are tamed while the storms still stand |
+| We can guess which settings matter | Tested each one: trimming agreed 98 percent of the time, the formula 93, but the baseline window only 76 | The one knob that moves the answer is pinned by reason, in advance |
+| Overlapping windows are fine to forecast across | Found that a twenty-day window on a weekly step shares fifteen of its twenty days | One reading a month, no shared days: the honest edge is 14.2 percent, not 30.6 |
+| "Normal" can be one fixed level for all time | Saw a fixed normal call recent, calmer years stormy, because volatility drifts era to era | Normal is a rolling two-year window of the recent past |
+| Normal can be set using the whole history | Realised that lets months which have not happened yet into today's label | Normal is built only from the past, never from the future |
+| More history helps the model | Measured it: this month explains 27 percent of next, last month adds a hundredth, older months nothing | The model is handed just two numbers, and nothing it does not need |
+| A high score means it learned something real | Scrambled the answers, and the model fell to chance, 54.8 down to 34.5 | The placebo passes, and the split holds out both the future and whole markets |
+
+Every leak is closed, every knob that moves the answer is pinned before the model sees a thing, and a ceiling and an alarm are fixed in advance. A high score from here can only be real, or an alarm we have promised to chase.
+
+So before we open the door, it is worth saying out loud, plainly, what we have settled and how we mean to judge it, because the discipline of the whole next part rests on this one page. The pipeline is locked, every station of it checked and clean.
+
+![The Section 4 recipe with every station settled and checked: frame the roughness alone as a probability, clean the wild days while the crises survive, normalise against a rolling two-year past-only normal, label into three balanced bands, split off both the future and whole unseen markets, and measure with a calibrated probability and an alarm fixed at sixty percent](figures/s4_locked.svg)
+
+What remains is the rule for judging the model, and we fix that now too, in advance, so that no result can ever tempt us to bend it. We split the data along two lines at once.
+
+![The evaluation split: the thirteen training markets are cut along time into a training stretch to learn on, a validation stretch where every choice is made, and a sealed test-time stretch that stands for the future; and four whole markets are held out from the start as a sealed test-symbol, the transfer test](figures/s4_split.svg)
+
+The first line is time. We take thirteen of the markets and cut their months into three. An early stretch to learn on, three thousand months of it. A middle stretch, six hundred and forty-two months, for validation: every choice we are about to make, every architecture, every setting, every search, is made here and nowhere else. And the most recent stretch, six hundred and thirty-five months, sealed away as the test. It stands for the future, and we open it exactly once, at the very end.
+
+The second line is the market itself. Four whole markets, one for each kind of weather, are set aside from the very start and never shown to the model while it learns: the small-cap index, a currency, a crypto, and an oil. This is the transfer test from Section 4a, now built into the shape of the data. A signal that is real carries to a market it has never seen; a fluke does not, and the four held-out markets are where a fluke goes to die.
+
+That is the whole plan, fixed before a single model runs. The pipeline decided, the split drawn along both lines, the ceiling written down at about five and a half in ten and the alarm set at six, so that a number climbing past it would send us hunting rather than cheering. Now, and only now, we open the door and let deep learning run.
+
+### c. Off the leash
+
+The door was open, and now we could finally do the thing this chapter had been holding back: reach for the whole of deep learning, every architecture and optimiser and trick, and throw it at the problem. But not yet at the problem. First at a wall.
+
+Before letting a single network try, we drew the ceiling, because you cannot tell a good score from a suspicious one until you know how high honest can even reach. We drew it with three baselines, dumbest first.
+
+The dumbest is to ignore the data entirely and always guess the commonest weather. On the sealed test that is right 42 percent of the time, which is just the base rate, the coin of this problem. The next is barely cleverer: guess that next month will be like this month. That reaches 54 percent. The third is a simple linear model, the plainest thing that actually looks at the numbers, and it gets 56.
+
+![The three baselines on the sealed data: always guessing the commonest weather reaches about 42 percent, repeating last month reaches 54, and a simple linear model 56; a dashed alarm line sits at 60, above which any score would be a leak rather than a win, and the honest ceiling is the band around 54 to 56](figures/s4_ceiling.svg)
+
+Stop on those two numbers, 54 and 56, because they are the whole story of what is coming. **A rule a child could apply, repeat last month, already reaches 54.** A model with no hidden layers, no depth, nothing to tune, reaches 56. That is the ceiling. That is as far as the signal in this problem can carry anyone, and we knew it before the deep learning ran a single step.
+
+Which throws the alarm we set in the last part into sharp relief. We had written it down in advance: anything much above 60 is not a triumph, it is a leak we failed to catch. Look at the gap now. The honest ceiling is 54 to 56, and the alarm is 60. There is almost no room between them. If a deep network comes back at 58, we do not cheer, we get suspicious. If it comes back at 65, we do not publish, we go hunting.
+
+And one quiet thing was already true, before any network learned anything: the baselines score about the same on markets they have never seen as on the future they have never seen. Repeating last month gets 54 on the future and 55 on the four held-out markets. The transfer test is already passing for the dumb rules, which is exactly what should happen when the signal underneath is real.
+
+So this is the strange place we start from, and it is worth feeling how unusual it is. We are about to unleash the most powerful pattern-fitter ever built, and we already suspect it cannot do much better than repeating last month. Everything from here is really one question: with all that machinery, can we honestly beat 56? And if we cannot, that is not a failure. That is the answer.
+
+The first and most obvious reach is for more brain. If a small network gets us to the ceiling, surely a bigger one gets us past it. So we tried. Beside the small network, two numbers in and one little hidden layer, we set a deeper one, and a rich one fed a whole year of history instead of just this month and last.
+
+On the sealed test, all three landed in the same place. The small one, 56. The deep one, 56. The rich one, 54. **More capacity, and the ceiling did not move an inch.**
+
+![On the sealed test the small, the deep, and the rich-input networks all land at about 54 to 56 percent, the same ceiling, while their training scores climb with capacity from 58 to 62; and regularising the most overfit network with strong L2, dropout or early stopping closes the train-test gap but never lifts the test above the same 56 percent ceiling](figures/s4_arch.svg)
+
+But the training scores tell the other half of the story, and it is the important half. As the networks grew, the scores they got on the data they had already seen climbed steadily, from 58 to 59 to 62. The rich network scored 62 on its training months and 54 on the sealed test. That gap, eight points of it, is the oldest tell in the book. The extra capacity was not finding more signal, because there is no more signal to find. It was memorising noise, and noise does not carry to the test.
+
+So we reached for the standard cure, the tools built for exactly this: L2, dropout, early stopping, applied to the most overfit network to stop it fitting the noise. And they worked, in the precise sense you would hope and no more. Strong L2 pulled the training-to-test gap from fourteen points down to two, and the test score climbed back from 52 to 56.
+
+But look where it climbed back to. **56. The ceiling.** Regularising did not lift the model above the honest number; it simply stopped it throwing the honest number away. There was never any hidden skill under the overfit for it to rescue, only the same 56 we had already reached with a network a fraction of the size.
+
+So the first lever turned out not to be a lever at all. Capacity does not buy skill on a problem like this. A bigger brain does not find a pattern that is not there; it invents one, scores well on it in private, and gets caught the moment it meets the sealed test. There is something almost funny in it, watching us hand the model more and more power and get the same number back each time. But it is exactly what the plan predicted, and exactly what an honest ceiling means.
+
+The next reach is for a cleverer way down. If more brain does not help, perhaps a smarter descent does. So we tried three ways of rolling the network downhill toward a lower loss. The plainest is gradient descent: find which way is downhill and take a small step, `W ← W − η g`. Momentum adds a running velocity, so steps build up speed on a steady slope, `v ← μ v − η g` then `W ← W + v`. And Adam scales each weight's step by its own recent gradient, `W ← W − η m / (√v + ε)`, so flat directions get a bigger push and steep ones a smaller. Three different ideas, and we ran all three and watched the loss fall.
+
+![Gradient descent, momentum and Adam each roll the loss downhill by a different path, momentum overshooting and bouncing and Adam gliding, but all three settle at the same floor near 0.885, so the optimiser changes the speed of the descent and not where it lands](figures/s4_convergence.svg)
+
+They take different paths down. Gradient descent slides straight in, momentum overshoots and bounces before it settles, Adam glides. But look where the three lines end. 0.888, 0.887, 0.885. **The same floor, to the third decimal.** The optimiser changed how we got there, and nothing at all about where we landed.
+
+The story repeated for every other knob of the training. The batch size, whether we corrected the network on all the data at once or a handful of examples at a time, changed how noisy the descent was and nothing else; the noisiest, one example at a time, jittered its way down to the same place. The activation, the little bend inside each unit, was the same: ReLU, its leaky cousin, tanh, and the old sigmoid all reached the ceiling, with sigmoid a touch slower off the mark, exactly as its known weakness predicts. Every one of these is **a knob of how fast and how smoothly, never how high.**
+
+Now a fair worry, and the one place in this chapter where we owe the reader some real mathematics. We wrote this network by hand, in plain numpy, the forward pass and the backward pass both. How do we know the backward pass, the part that works out which way is downhill, is even correct? A bug there would send the whole thing confidently in the wrong direction and we might never notice.
+
+There is a small marvel that makes it checkable. When you score the guesses with cross-entropy and squash them through a softmax, all the tangled calculus of the two collapses into something absurdly clean. The gradient of the loss at the output is just `p − y`, the predicted probabilities minus the truth. The correction each step makes is exactly, and only, how far off the guess was. From that one clean line the chain rule carries the error back through the network, and the full working of all four moves, the forward pass, this loss gradient, the backprop, and the optimiser update, is written out in Appendix A.
+
+Then we did the thing that turns a derivation into a proof. We nudged each weight by a hair and measured how the loss actually moved, a brute-force numerical gradient, and set it beside the analytic one our backprop computes. If our maths were right, the two would agree. **They agreed to a relative error of four parts in ten billion.** The machinery is correct, and every number it hands us from here can be trusted to be its honest opinion, bug and all removed.
+
+We could have reached for far heavier machinery. A convolutional network for images, a recurrent one or a transformer for sequences: the famous names, and all wrong for this. There is nothing spatial here to convolve and almost nothing to carry across time, just two numbers and a modest map to a band. A tiny network is not a compromise on this problem. It is the honest match to a small one, and the short survey of what we chose not to use, and why, sits beside the derivation.
+
+So there is the whole training toolkit, every optimiser and batch size and activation, and the verified backprop running under all of them, and not one of them moved the ceiling. They are the tools that carry you to the honest number faster and more surely. Not one of them is a tool for making the honest number bigger.
+
+The last tool in the box is the most dangerous one, and we knew it before we touched it. Instead of choosing the settings by hand, you try many combinations and keep the best. And keeping the best of many tries is not a neutral act. It is, precisely and exactly, how a number inflates by luck. It is the winner's curse, the thing this entire book has been circling since the first page.
+
+So we put it on the tightest leash we had. We declared the budget in advance, a fixed number of configurations, with no adding more once we had seen the scores. We chose the winner on the validation months alone, never on the test. And we left the test sealed.
+
+We ran a careful grid first, thirty-six configurations. The typical one scored 51.5 on validation. The best scored 53.7. That small gap, a couple of points, is the winner's curse in miniature: the best of thirty-six is a little inflated above the ordinary, not because it is better but because it is the luckiest of thirty-six draws.
+
+Then we searched harder, to watch the effect grow. A hundred and twenty configurations this time, a wide sweep over every knob at once. And watch what the best score did.
+
+![Across a careful grid of 36 configurations and then a wider search of 120, the typical configuration scores about 51 percent on validation while the best of the search creeps up from 53.7 to 54.8, climbing above the honest ceiling of about 54, so searching harder inflates the best score by luck rather than by finding real skill](figures/s4_search.svg)
+
+The typical configuration did not move; it sat at 50.9, right where the honest signal lives. But the best of the search crept upward, from 53.7 over thirty-six configurations to 54.8 over a hundred and twenty, climbing clean over the honest ceiling. That climb is the whole lesson in a single line. We did not build a better model between the two searches. We just took more draws, and the luckiest of more draws is higher. **The number went up and the truth did not move an inch.**
+
+The one thing that kept us safe through all of it was the thing we had promised in advance: we never opened the sealed test. Not once, through capacity and optimisers and activations and this whole search. The validation score is where the curse lives, and we used it only to choose, never to believe. The truth was waiting, untouched, behind the one door we had not yet opened.
+
+One honest wrinkle is worth owning, because it cuts the other way. In the disciplined grid, the winning configuration scored 53.7 on validation but 55.0 when we finally checked it, higher on the test than on the validation it was chosen by. That is not the winner's curse, which would have flattered the validation number, not the test. It is the era, exactly the trap Section 3 named: the validation months happened to fall on a harder stretch of market, while the test years were kinder. So we do not read that gap as selection. We read it as the world drifting under our feet, which is the one thing we had been told to expect.
+
+Before we open the door, here is the whole toolkit on a single page: every tool we unleashed, and exactly what each one bought.
+
+**The toolkit, scored:**
+
+| The tool we unleashed | What the numbers said | The verdict |
+| --- | --- | --- |
+| Baselines, to draw the ceiling | majority 42, repeat-last-month 54, a plain linear model 56 | The ceiling is 54 to 56, and a dumb rule already reaches it |
+| More capacity, deeper and richer | all land at 54 to 56 on the test; the rich one trains at 62 and tests at 54 | Capacity is not a lever; the extra brain only fits noise |
+| Regularisation: L2, dropout, early-stop | the train-to-test gap closes from +14 to +2; the test stays at 56 | It stops the overfit throwing skill away; it cannot add skill that was never there |
+| Optimisers: gradient descent, momentum, Adam | all settle at the same loss floor, 0.885, by different paths | The optimiser changes the speed of the descent, never its floor |
+| Batch size and activation function | batch changes only the noise; ReLU, tanh and sigmoid all reach the ceiling | Knobs of how fast and how smoothly, never how high |
+| The backprop under all of it | the analytic and numerical gradients agree to four parts in ten billion | The maths is correct; every number it hands us is its honest opinion |
+| Disciplined search, 36 then 120 configs | the best validation score creeps from 53.7 to 54.8; the typical stays at 51 | Searching harder inflates the best by luck, not skill: the winner's curse |
+
+Every tool changed the speed of the descent, or the steadiness of it, or the honesty of the maths, or the illusion of a higher number. Not one of them moved the honest ceiling.
+
+And so we are left holding one tempting number, the validation winner at 54.8, sitting just above the ceiling, whispering that maybe, this time, the machinery found something real. There is exactly one honest way to find out whether it did. It is the thing we have been saving since the start. We open the sealed test.
+
+### d. The one honest verdict
+
+Everything came down to this. One test, sealed since before the first model ran, opened now, once, with all five candidates laid side by side: the two dumb rules, the simple network, the deeper one the careful grid had picked, and the 3011-parameter monster that had won the big search.
+
+We looked at the accuracy first. The simple models landed together, logistic and the simple network and the deeper one, all at 56.4 percent on the future. And the big-search winner, the largest and most expensive model in the room, the one that had scored highest of all on the validation months? 54.2. The worst of the trained models. There it was in the open at last, the winner's curse we had watched creep up on the validation set, paid in full on the one test that could not be gamed. The model that looked best where we could see it was the worst where it counted.
+
+But accuracy was never going to be the whole verdict, because this is a weather forecast, and a forecast's real job is an honest probability. So we asked the question the whole design had been built around: when the model says seventy percent, does it happen about seventy percent of the time? That is calibration, and one number measures it, the gap between the percentages promised and the weather delivered. Lower is better.
+
+Here the verdict turned from close to unarguable. The simple network scored a calibration error of 0.012, the best of every candidate; when it says a number, you can very nearly believe the number. Persistence, the hard rule that had managed a respectable 54 percent, scored 0.461, forty times worse, because it never offers a probability at all, only a flat "it will be exactly this", so its numbers are useless the moment you need a chance instead of a certainty. And the big-search winner came in at 0.069, over-confident, the worst-calibrated of the trained models, losing on trust exactly as it had lost on accuracy.
+
+![Every candidate on one plot, accuracy running across and trustworthiness up, with each dot sized by its number of parameters: the simple fifty-one-parameter network sits alone in the best corner, most accurate at 56 percent and best-calibrated, while persistence is accurate but its probabilities are worthless, and the three-thousand-parameter big-search winner is worst on both accuracy and trust](figures/s4_reality.svg)
+
+Put every candidate on one plot, accuracy running across and trustworthiness up, and the size of each dot the number of parameters it carries, and the answer needs no words. The smallest trained model in the room, fifty-one parameters, sits alone in the best corner, most accurate and most trustworthy at once. The largest, three thousand and eleven parameters, the one that cost the most and won the search, sits worst on both. **The cheapest model won.**
+
+So here is the verdict, and it is the numbers' verdict, not ours: the simple network is the useful one, and complexity plus search did not buy a little. **It bought less than nothing.** We spent the entire toolkit of modern deep learning, and the honest, useful forecaster left standing at the end of it was a network so small you could almost write its weights on the back of a hand.
+
+This is the whole book, arrived at on a single line of a table. A modest number you can trust, 56 percent with honest odds beneath it, beats a higher number you cannot, and the higher number is exactly what the machinery hands you when you let it off the leash and believe what it says about itself. The only reason we could see the difference at all is that we had sealed one test and opened it once. Without that, the validation winner at 54.8 would have walked out of here calling itself the best.
+
+And the alarm we set never made a sound. Nothing came back above 60, or anywhere near it. There was no leak to hunt and no number too good to be true, because the problem had been cleaned until there was nothing left to fool us, and the ceiling held exactly where the baselines had drawn it. The honest number turned out to be honest, which, after Section 2 and Section 3, felt like something close to a relief.
+
+### e. Does it earn its keep?
+
+A number on a sealed test is not the same thing as a tool. The whole reason we built this was to use it, so the last question is the only one that ever really mattered: put in front of a person, on a market it has never seen, is this forecast any good to them?
+
+Start with what using it looks like. Each month, on the S&P, the forecast issues its odds, a chance of calm, a chance of normal, a chance of stormy, and you read it the way you read the sky before you leave the house.
+
+![Three views of the forecast in use, all on markets it never trained on: on the S&P the monthly odds of calm, normal and stormy track the roughness that actually arrives, with the stormy band swelling around the 2020 crash; a calibration curve sits almost on the diagonal, so a stated chance of a storm comes true about that often; and a bar chart shows a stormy month arrives 27 percent of the time overall but 63 percent of the months it warned and only 17 percent of the months it called quiet](figures/s4_usage.svg)
+
+The coloured bands in the top panel are those odds, month by month, across the recent years; the black line is the roughness that actually arrived. Watch them move together. When the market tore itself apart in early 2020, the black line spiking off the top of the chart, the stormy band had already swelled to fill most of the forecast. Through the long calm that followed, the green sits fat at the bottom. It is not perfect, and it never pretended to be, but it is plainly reading the same weather you are.
+
+But "it looks like it tracks" is the oldest trap in this book, and we did not come this far to fall for it now. The real question is whether the number itself can be trusted, and there is a clean way to ask it. When the forecast says a forty percent chance of a stormy month, does a storm actually come about forty percent of the time? We checked exactly that, and we checked it on the four markets the model had never once trained on.
+
+The answer is the bottom-left panel, and it is the most important picture in this section. When the forecast said eleven percent, storms came eleven percent of the time. When it said twenty-six, they came twenty-seven. Forty-two, forty-three. Sixty-nine, sixty-five. The points sit almost exactly on the diagonal, which is to say the percentage means precisely what it claims to. **This is the thing Section 3 said you could almost never have. You can trust the number.**
+
+And trusting it pays. The bottom-right panel is the plainest test of all: does acting on the warning actually help? On those unseen markets, a stormy month arrives about twenty-seven percent of the time, taken across the board. But on the months the forecast had flagged, the ones where it put the chance of a storm at better than even, storms actually came sixty-three percent of the time, more than double. And on the months it called quiet, only seventeen percent turned rough. Lighten your exposure when it warns, and you are caught out far less often than a coin would leave you.
+
+And it discriminates, which is the same trust seen from the other side. Pooled across those unseen markets, the months it had called stormy really did turn out rougher, averaging about one and a half times the daily roughness of the months it called calm. The label is not just a word; it lines up with what actually arrives.
+
+But a calibration curve is a summary, and a summary hides what using this actually feels like. So here is the least flattering view we can offer: the forecast run on one market it never trained on, Ethereum, month by month across the most recent stretch, every call kept in, the misses printed right beside the hits.
+
+| Month | It said | Chance of a storm | What came | The verdict |
+| --- | --- | --- | --- | --- |
+| Nov 2025 | stormy | 51% | normal | false alarm |
+| Dec 2025 | normal | 35% | calm | quiet |
+| Jan 2026 | calm | 12% | stormy | caught out |
+| Feb 2026 | stormy | 62% | stormy | good call |
+| Mar 2026 | stormy | 47% | calm | false alarm |
+| Apr 2026 | calm | 17% | calm | quiet |
+| May 2026 | calm | 5% | normal | quiet |
+| Jun 2026 | calm | 11% | calm | quiet |
+
+Read down the last column and there is the honest truth of the thing. One clean good call, the February storm seen coming a month out. One month caught badly out, a quiet-looking January that turned rough. Two false alarms, storms cried that never came. And a run of quiet months read correctly. That is what a weak but honest signal looks like from close up: right more often than not, wrong often enough to keep you humble, and never once a certainty. It is not a crystal ball, and the diary is the proof that we are not selling one. The worth was never in any single month. It is that, taken month after month, the odds sit tilted your way.
+
+And this, finally, is the forecast simply in use, four real markets read as of this writing, the plain bulletin a person would actually open of a morning:
+
+| Market | calm | normal | stormy |
+| --- | --- | --- | --- |
+| S&P 500 | 37% | 41% | 22% |
+| Ethereum | 64% | 25% | 11% |
+| Gold | 35% | 47% | 18% |
+| Euro | 75% | 19% | 6% |
+
+Not a fortune and not a promise, just an honest set of odds for the month ahead, each percentage carrying exactly the trust the calibration earned it.
+
+And that, in the end, is the whole of what Section 4 set out to build. Not a number to brag about, because there is no bragging number to be had here, and pretending otherwise is exactly the lie Section 3 taught us to fear. Something quieter and much harder to come by: a modest forecast whose every percentage is honest, that carries to a market it has never seen, and that genuinely helps the person who reads it. Section 3 left us unable to trust a high number. **Here, at last, is a low one we can.**
+
+### f. What we actually built
+
+Step back from all of it, and something quietly surprising comes into focus. Look at everything the deep learning did in this chapter. The architectures, the optimisers, the activations, the searches: page after page of the most powerful machinery in the field, and every last piece of it landed on the same modest number the plainest baseline had already reached. The deep learning, the thing the chapter was ostensibly about, **changed almost nothing.**
+
+Which means the real work was somewhere else entirely, and we had done it before the first network ran. It was in the cleaning. The dropped axis that turned out to be a ghost, the leak hiding in overlapping windows, the normal that had to be built from the past alone, the load-bearing knob we nearly waved through: that slow, unglamorous work of making the problem honest was the whole of it. We spent our effort on the problem and not the model, and that is precisely why the model could not fool us. **A powerful tool turned loose in a clean cage has nowhere to hide.**
+
+And here is the honest shape of how it felt, because it was not the serene confidence of someone who had it all worked out. We were wrong, repeatedly. We nearly kept a fake signal, twice. We nearly waved through the one setting that mattered. What made the difference was never being right the first time. It was having a loop we trusted to catch us: guess, test, grow suspicious of anything too good, hunt down the flaw, and let go of whatever could not survive. The relief at the end of this chapter, the thing that felt so unlike the flailing of the loan clients and the market, was not that we had finally become clever. It was that we had stopped needing to be. **We could be wrong and know we would catch it.**
+
+So the real product was never the forecast. The little calibrated weather report is a genuine and useful thing, but it is not what we made. **What we made was the loop.** And the strange part is that it was never new. It is the same loop that got ambushed at every station of Section 2 and left Section 3 empty-handed, only run this time on purpose, with our eyes open, from the very start. The novice and the master walked the exact same five steps. The only thing that changed was that the master knew to distrust each one.
+
+Here is the whole chapter on a single page, that one loop run eleven times over.
+
+![The whole of Section 4 drawn as a single decision tree: eleven decisions run down a clean spine, each a guess put to the test and kept, while the tempting wrong guesses branch off and are pruned, from dropping the direction axis and catching the overlap leak, through unleashing the toolkit onto the ceiling, to opening the sealed test where the smallest model wins](figures/s4_tree.svg)
+
+That loop has been the real subject of this whole book, running quietly under the loan clients and the market and now the weather, and we have not once given it a name. **It is time we did.**
+
+## 5. The thing worth keeping
+
+So here we are at the end, and it is worth sitting still for a moment and asking what the whole journey was really for.
+
+We started, right at the beginning, doing the most natural thing in the world. We had a model, we wanted to know if it was any good, so we hid some data from it, let it guess, counted how often it was right, and read off a number. High was good. And we were ready to believe it.
+
+Then we watched that belief break, again and again. On the loan clients the number was high, 0.819, and it was quietly lying, because it had waved through most of the very people who went on to default, the only people the bank had asked us about. On the market a promising edge turned out to be tomorrow's answer leaking backward into today, and the moment we sealed that leak, a working model fell apart into a coin flip, undone by a single setting that had assumed the world never changes. By the end of that chapter the thing had beaten us outright, and we walked away with no number at all, only a suspicion. And then, in the last chapter, we went back to the very same market, watching for it this time, and it did not catch us once.
+
+Look back over all of it, and it was always the same enemy. Every single time, it wore the face of a number that looked exactly like a good one.
+
+That enemy has a name. The books call it data snooping, and if you go and look it up you will find a fairly narrow definition: that you try a great many models, or a great many trading rules, and keep the one that happened to score best, and it scored best only by luck. The winner's curse. That is real, and we met it head on in the last chapter, when searching harder kept handing us a higher number that meant nothing at all.
+
+But here is the thing the journey taught us that the definition leaves out. That is only one corner of it. Almost nothing that actually fooled us along the way was "trying too many models". The leak on the market was not a search, it was a quiet assumption about how to cut the data. The lie on the loan clients was not a search, it was the wrong ruler held up to lopsided classes. The ghost in the last chapter came from a single wild day and a badly built comparison, not from trying too many things. If we had only ever guarded against the textbook's version, we would have walked straight into nearly every trap that got us.
+
+![Snooping drawn as one big idea with six faces, all met in this book: the future leaking into the split, accuracy hiding the people who mattered, one wild day faking a signal, a test that destroyed the real thing too, windows that secretly overlapped, and the luckiest of many tries, with only that last corner being what a textbook calls data snooping](figures/s5_snooping.svg)
+
+So this is the definition we would give you instead, the one we actually earned. Snooping is not some special technique that you occasionally misuse. It is the plain, everyday result of trusting a number without checking what each step of making it quietly took for granted. It is not the exception. **It is the default.** The textbook names one corner of the room; **what we found was the whole room.** A number can be bent by a leak, by the wrong measure, by one bad day, by a broken test, by data that secretly overlaps, or, yes, by too much searching, and in every one of those cases it comes out looking exactly like an honest number. That is the whole of the danger. From the outside, you cannot tell them apart.
+
+Which is why the thing worth keeping from all of this was never a result. It was a way of working, and it is much simpler than it sounds.
+
+Before you run any step, say out loud what it is quietly assuming, and then ask the data in front of you, not the textbook, whether that assumption is actually true here. Clean the problem before you reach for the powerful tool, because a powerful tool let loose on a messy problem will find the mess and proudly call it a discovery. Try your idea on ground it has never seen, because a real pattern travels to a new place and a fake one dies on the road. Lock one test away, open it exactly once at the very end, and never let it help you choose. And work out beforehand roughly how good an honest answer could even be, so that a number sailing far past that makes you suspicious instead of pleased.
+
+And underneath all of it sits the quietest lesson of the whole book, the one that took us three chapters to feel. Do not try to be right the first time. You will not be, and you do not need to be. What you can do is build yourself a loop that catches you when you are wrong, and then trust the loop instead of trusting yourself. That, in the end, was where the calm came from. Not from being clever, but from having a way of working we could lean on even as we kept getting things wrong.
+
+We set out to find a number we could trust. We came back with something better, and much harder to lose: a way of making numbers we can trust. **The trust was never in the number**, and it never could be, because a good number and a lie look the same from where you stand. It is in the method that earned it, the one you can walk back through, one honest step at a time, until you can see for yourself that it had no room left anywhere to fool you.
+
+That is the whole of it. **And it is worth far more than any answer it will ever give you.**
 
 ---
 
@@ -647,3 +969,23 @@ Honest limits: one index along one path through history. We read its numbers as 
 | `notebooks/market.ipynb` | Section 3, Market | the price-to-size transform traced day by day, the shuffle-versus-honest leak with its near-twins, the drift under a frozen scaler, and the era-by-era spread |
 
 *From the command line, run either with `jupyter nbconvert --to notebook --execute notebooks/<file>.ipynb`. Later chapters get their own notebook as they are built.*
+
+---
+
+## Appendix E: The market weather, and why we dropped direction
+
+*Outside the page limit, and here so Section 4a can be read on its own while the full working stays available. This is the behaviour reading, from the first hopeful measurement to the correction that retired it. Every number below is printed by `notebooks/weather_regime_scratch.ipynb`.*
+
+**The two readings, and how they were measured.** Roughness was the average size of the daily moves over a window, the same measure Section 3 used. Behaviour was the lag-one autocorrelation of the daily returns: positive when a market keeps trending, negative when it keeps snapping back, near zero when it is patternless. We chose these on purpose over the fancier options. For behaviour we could have reached for the Hurst exponent, the classic tool, but it is finicky, needs a long window, and carries its own extra choices; the plain autocorrelation says the same thing more simply. For roughness we could have used EWMA or a GARCH model; both add knobs and assumptions the problem did not need.
+
+**Why behaviour is the hard reading.** A memory reading taken from a handful of days is almost pure noise. The typical error of an autocorrelation measured on n points is about one over the square root of n: roughly 0.45 from a week's five days, 0.22 from twenty days, and only 0.06 from a full year. The real autocorrelation of daily returns is tiny, around 0.03. So a weekly reading is like calling a coin biased after five tosses. Behaviour is only readable over long, slow windows, which is why it acts like a near-fixed trait of each market rather than something that changes week to week.
+
+**A tidy spread proves nothing.** Sorting any series into low, medium, and high produces a tidy-looking spread even when the series is pure noise: banded noise comes out around 31 / 38 / 31. Sorting by rank forces an even 33 / 33 / 33, which is worse, an artifact of the method; a plain standardisation gives an honest 31 / 50 / 19, with extremes genuinely rare. The spread is a property of the sorting, not evidence of a signal. The only test that means anything is on the raw numbers, against a proper null.
+
+**The single days that faked it.** Autocorrelation is not robust to outliers, and a few crisis days were manufacturing most of the apparent signal. EURUSD read -0.175, a strong-looking snap-back, almost all of it from one session, 8 December 2008, that moved sixteen percent; taming that one day leaves -0.037. USDJPY went from -0.124 to -0.035 the same way. US500's reading flipped sign, from -0.019 to +0.023, on the strength of the 1987 crash alone. Clean the crisis prints first, and the behaviour signal mostly disappears.
+
+**The flawed test, and its fix.** Our first null shuffled the returns freely. That destroys the volatility clustering along with the direction, which makes the null too tight and flatters the result: twelve of seventeen markets came out "significant". The correct null keeps the roughness and destroys only the direction, by flipping the sign of each return at random. Under that test only nine of seventeen survive, with sizes of 0.03 to 0.06, small enough to be worth nothing in practice.
+
+**What was left was plumbing, not memory.** The survivors were the stock indices, and they lined up smallest market first: US2000 (+0.061), then US500 (+0.034), then the larger US100 and US30 near zero. That ordering is the fingerprint of non-synchronous trading, the fact that the smaller names in an index trade a little later, so the index appears to follow itself. It is a recording quirk, not a pattern a forecast could act on. Across all seventeen markets, roughness clustered at about +0.18 while direction sat near -0.02, about nine times weaker.
+
+**The conclusion.** The behaviour reading was dropped, not because the data was dirty, it was clean, but because the market has almost no real direction signal to read. That is an honest scientific finding, and it is Section 4a's first and largest cut.

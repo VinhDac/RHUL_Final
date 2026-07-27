@@ -18,6 +18,14 @@ The reader must FEEL the payoff of cleaning at the a+b -> c seam: once the cage 
 
 ## 1. Voice & how we talk to the reader
 
+> ### RULE #1, above everything else: ALWAYS the simplest, easiest-to-understand version. Never try to sound clever or sophisticated (khong "to ra nguy hiem" / do not show off).
+> This is not just style, it **IS the thesis**: §4's whole point is that simple things done carefully beat complexity, so writing it in a fancy way would contradict the message. The medium must match the message. Concretely:
+> - **Plain words first.** If a technical term is unavoidable (calibration, the null, winsorize, autocorrelation), explain it in one everyday phrase the moment it appears, or drop it for the plain idea.
+> - **One idea per sentence. Short sentences.** Lead with the intuition (weather, an umbrella, a room getting noisy), and put any number in plain terms ("right about 6 days in 10", not only "56.4%").
+> - **Do not parade the DL toolkit** to look impressive. Each tool earns its line from the story; when the simple thing wins, say so plainly and move on.
+> - **If a sentence needs a second read to parse, it is wrong.** Cut it down.
+> - Test for every paragraph: *would a smart friend who is not a specialist get it on the first read?* If not, simplify.
+
 - Plain, honest, first-person "we". Short **anchor sentences that stand alone** (the §2/§3 device). **NO em-dash.**
 - §4's voice = a **COMPOSED master, not an omniscient one.** We still guess wrong (Direction, the overlap leak); the growth from §2/§3 is that we catch it fast and calmly, and we EXPECT to.
 - **Co-discovery / no foreknowledge (VOICE LOCK):** the narrator does not know the verdict before the lab. The DATA springs each surprise, not the narrator. Experience carried forward is not foreknowledge.
