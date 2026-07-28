@@ -6,6 +6,30 @@
 
 ---
 
+## Abstract
+
+We start out doing the most natural thing in the world. We have a model, we want to know if it is any good, so we hide some data, let it guess, count the hits, and read off a number. High is good. And we are ready to believe it.
+
+Then we watch that belief break, again and again. On a bank's loan customers the number came out high and was quietly lying, waving through most of the people who went on to default. On the stock market a promising edge turned out to be tomorrow's answer leaking back into today, and the moment we sealed the leak a working model fell apart into a coin flip. By the end of that chapter the market had beaten us outright, and we walked away with no number at all, only a suspicion. So we went back to the very same market, watching for it this time, and with the full deep learning toolkit, and it did not catch us once.
+
+Look back over all of it and the enemy was always the same: a number that looked exactly like a good one. The books have a narrow name for one corner of this, data snooping; the one we came away with is wider, not just the reuse of held-out data but any good-looking number that comes out of an assumption nobody checked. And what we keep at the end is better than any result: a plain way of working that a good number can no longer fool. Name what each step is quietly assuming and test it against the data, clean the problem before you unleash the tool, try every finding on ground it has never seen, and when a check still catches you, trust the loop and not yourself. Because in the end the trust was never in the number. It was in the way we made it.
+
+## Aims and objectives
+
+What we set out to do was this: to understand, honestly and from the inside, why a model's number can lie to us, and to come away with a way of working that gives us numbers we can trust.
+
+To get there we set ourselves a few concrete jobs. Build the networks by hand, in numpy, on real credit and market data, following the standard recipe step by step. At each step, stop and ask what that step is quietly taking for granted, then test that assumption against the data instead of taking it on faith. Once the problem is honest, let the full deep learning toolkit off the leash (several architectures and optimisers, regularisation, a proper hyperparameter search, and the four core formulae worked out by hand and checked against the numbers) and measure honestly what all that machinery actually buys. And finally, turn the whole thing into a short workflow that someone else could pick up and follow.
+
+One more thing, and it is personal. Judging a model honestly is a skill every machine learning practitioner needs, and almost nobody is taught to name it. Working through it this slowly has left me with a habit I expect to lean on in any job where I build something other people are asked to trust. That felt worth more to me than another model that scores well.
+
+## Background and related work
+
+The tools here are standard. The network we train by hand is the ordinary feed-forward one, taught to learn by backpropagation (Rumelhart, Hinton and Williams, 1986), and where it needs an optimiser we reach for Adam (Kingma and Ba, 2015). When we want to know whether to believe the probabilities it prints, we lean on calibration (Guo et al., 2017), which just asks whether the things it calls seventy percent likely happen about seventy percent of the time. The data is all public: a set of credit-card customers from a bank (Yeh and Lien, 2009), and daily prices from Yahoo Finance, whose direction is famously about as predictable as a coin (Malkiel, 1973) even though the size of its moves clusters together and can be forecast (Engle, 1982).
+
+The trap at the heart of the book is old and has many names. Statisticians call it data dredging. In finance, White (2000) pinned down one sharp version of it, searching over a great many trading rules and keeping the luckiest, and called it the data snooping bias. That work, and most of what is written about the problem, points at the searching. One small thing we try to add here, from worked examples rather than theory, is the argument that the danger is much bigger than searching alone. It is really the ordinary, default state of any pipeline whose assumptions nobody stopped to check.
+
+---
+
 ## 0. The number we are about to trust
 
 We have a model. Is it any good? How would we even know?
@@ -62,7 +86,7 @@ By the end we will know the answer, and what it takes to walk away with a number
 
 ---
 
-We have three real problems to carry it to, and we take the friendliest first. We start with a bank's loan clients, the ordinary, clean kind of data the recipe was built for. Then the stock market, one long column of daily prices. Then thirty people carrying a phone through a handful of everyday activities. Each is its own journey, with its own dead ends and its own moment of doubt, and the pipeline stays the map that keeps us oriented across all three. We are not here to collect three tidy results, we are walking three roads to the same place.
+We carry it to two real problems, and we take the friendlier first. We start with a bank's loan clients, the ordinary, clean kind of data the recipe was built for. Then the stock market, one long column of daily prices, a tougher animal, and one we end up facing not once but twice. The first time, it beats us outright, and teaches us the hard way everything the recipe was quietly taking for granted. The second time we come back to that very same market wiser, with the full deep learning toolkit in hand, to see whether we can finally do it right. Each pass is its own journey, with its own dead ends and its own moment of doubt, and the pipeline stays the map that keeps us oriented across all of them. We are not here to collect tidy results. We are walking one long climb, to the place where a number can finally be trusted.
 
 Let us meet the first one.
 
@@ -110,7 +134,7 @@ One careful thought before we celebrate. Is that 82% real, or a fluke of the par
 
 ![Every way of splitting lands in the same place](figures/loan_stability.svg)
 
-It does not move. Every cut lands between 0.81 and 0.82, the whole spread no wider than a few thousandths. The score is no accident of one lucky split; it is rock-steady, which is just what a trustworthy result looks like. So there it is: a clean, standard model, trained by the book, scoring 82% on clients it has never seen, and holding that score no matter how we slice the data. Everything points the same way. Trust this number.
+It does not move. The five random cuts sit between 0.813 and 0.820, a few thousandths apart, and even a stratified draw and a cut by raw file order stay close, at 0.815 and 0.808. The score is no accident of one lucky split; it is rock-steady, which is just what a trustworthy result looks like. So there it is: a clean, standard model, trained by the book, scoring 82% on clients it has never seen, and holding that score no matter how we slice the data. Everything points the same way. Trust this number.
 
 **But** wait. That 82%, how much of it is really ours?
 
@@ -501,23 +525,23 @@ And here is the deepest reason we built it across seventeen markets and not one,
 
 We began, as Section 3 had taught us, by trying to fool ourselves on purpose. We took pure noise, random numbers with nothing in them, and sorted it into low, medium, and high behaviour exactly as we would the real thing. It came out a tidy 31, 38, 31, a neat three-way split from nothing at all. So the neat spread we saw on the real data proved nothing by itself; **a pretty picture is never the proof.** The only honest test is on the raw numbers, and the measure we used was the plainest one: the lag-one autocorrelation of the daily moves. If today's move tends to be followed by one the same way, it is positive, which is trending; if it tends to reverse, negative, which is reverting; near zero is random. We knew the textbook tool, the Hurst exponent, and we passed it over on purpose, because it is finicky and adds settings to argue about while saying the same thing. Know the fancy tool, reach for the simple one. We will make that exact choice again with the deep learning at the end.
 
-So we ran the test, against a null that assumes no signal and asks whether we could have seen this much by luck. At first it looked real, but only in places: the behaviour reading cleared the noise on the stock indices and failed on crypto and several currencies. Uneven like that is already the transfer test whispering a warning, because a real signal does not pick and choose its markets. And when we forced a proper audit rather than admire the result, the whole thing came apart, in two ways.
+So we ran the test, against a null that assumes no signal and asks whether we could have seen this much by luck. At first it looked real, but only in places: the behaviour reading cleared the noise on a scattered handful of markets, a few currencies, the metals, one or two of the indices, and stayed dark on crypto and much of the rest. Uneven like that is already the transfer test whispering a warning, because a real signal does not pick and choose its markets so arbitrarily. And when we forced a proper audit rather than admire the result, the whole thing came apart, in two ways.
 
-First, the measure was fragile. The autocorrelation is not robust to a single wild day, and a handful of crisis days had manufactured almost the entire signal. The euro read a strong-looking minus 0.175, real mean-reversion by the look of it, and **almost all of it came from one afternoon, the 8th of December 2008**, when it moved sixteen percent in a single session. Pull that one day back toward the pack and the reading collapses to minus 0.037, essentially nothing. The yen told the same story, minus 0.124 down to minus 0.035. The S&P did not merely shrink, it flipped sign, from minus 0.019 to plus 0.023, on the strength of the 1987 crash alone.
+First, the measure was fragile. The autocorrelation is not robust to a single wild day, and a handful of crisis days had manufactured almost the entire signal. The euro read a strong-looking minus 0.175, real mean-reversion by the look of it, and **almost all of it came from one afternoon, the 8th of December 2008**, when it moved sixteen percent in a single session. Pull that one day back toward the pack and the reading collapses to minus 0.038, essentially nothing. The yen told the same story, minus 0.124 down to minus 0.036. The S&P did not merely shrink, it flipped sign, from minus 0.019 to just above zero, plus 0.015, on the strength of the 1987 crash alone.
 
 There is a particular sinking feeling in that, watching a signal you had already half written down as real dissolve into a handful of bad days.
 
 ![EURUSD's daily moves are dwarfed by a single sixteen percent day in 2008, and its whole behaviour reading falls from about minus zero point one eight to near zero once that one day is tamed](figures/s4_outlier.svg)
 
-Second, **our own test was wrong.** Our first null shuffled the daily moves around freely, but shuffling freely also destroys the roughness clustering, the one thing that genuinely is there, and a null that empty makes any real data look significant beside it. Twelve of the seventeen markets came out "significant" against it, which flattered us badly. The right null keeps the roughness and destroys only the behaviour, which you do by flipping the sign of each move at random instead of scrambling their order. Against that honest null only nine of seventeen survived, and their sizes were 0.03 to 0.06, small enough to be worth nothing.
+Second, **our own test was wrong.** Our first null shuffled the daily moves around freely, but shuffling freely also destroys the roughness clustering, the one thing that genuinely is there, and a null that empty makes any real data look significant beside it. Eight of the seventeen markets came out "significant" against it, which flattered us badly. The right null keeps the roughness and destroys only the behaviour, which you do by flipping the sign of each move at random instead of scrambling their order. Against that honest null only five of seventeen survived, and even those sat around 0.04, small enough to be worth nothing.
 
 > **That one was harder to sit with, because the fault was not in the market this time. It was in us.**
 
-And the few survivors were not a market memory at all. They were the stock indices, and they lined up in a telling order: the small-cap index strongest at plus 0.061, then the S&P at plus 0.034, then the big-tech and blue-chip indices near zero. Smallest first. That is the fingerprint of non-synchronous trading, the plain fact that the smaller stocks in an index trade a beat later than the big ones, so the index appears to follow itself. It is a quirk of how prices are recorded, not a pattern anyone could forecast. Set the two readings side by side across all seventeen markets and it is not close: roughness clusters at about plus 0.18, behaviour sits near minus 0.02, nine times weaker and pointing the wrong way for a signal. The full per-market table is in Appendix E.
+And the five survivors were not a market memory at all. Look at which five, and the last of the case falls apart: three currencies, one metal, and a single stock index, with nothing tying them together, every one of them a mere whiff of mean reversion near minus 0.04. No shared family, no common cause, just five names scattered across unrelated corners of the market. That is not what a real pattern looks like. A real one shows up in market after market, the same way each time; this showed up in five of seventeen with no thread between them, which is exactly the picture noise paints. And they scraped past the bar at all only because the series are so long that a hair of autocorrelation registers as "significant" while being worth nothing to anyone actually trying to forecast. Set the two readings side by side across all seventeen markets and it is not close: roughness clusters at about plus 0.18, behaviour sits near minus 0.02, nine times weaker and pointing the wrong way for a signal. The full per-market table is in Appendix E.
 
 ![On every one of the seventeen markets the roughness reading towers over the behaviour reading, and pure noise sorted into low, medium and high still makes a tidy spread, so a tidy spread proves nothing](figures/s4_direction_drop.svg)
 
-So the transfer test had done exactly the job we built it for. The behaviour reading was a ghost, alive in a few stock indices for a plumbing reason and dead everywhere else, and we dropped it. Six kinds of weather collapsed into one honest question. **How rough, not which way.** And it is worth being exact about why, because it is not the obvious reason. The data was not dirty; we had cleaned it. The market simply has almost no real behaviour signal to read, and saying that plainly is a scientific finding, not a failure.
+So the transfer test had done exactly the job we built it for. The behaviour reading was a ghost, scraping past in a scattered five for no reason that held together and dead everywhere else, and we dropped it. Six kinds of weather collapsed into one honest question. **How rough, not which way.** And it is worth being exact about why, because it is not the obvious reason. The data was not dirty; we had cleaned it. The market simply has almost no real behaviour signal to read, and saying that plainly is a scientific finding, not a failure.
 
 It is worth stopping on what that cost us. The lovely two-reading bulletin was down to a single reading. The livelier half, the part that told you how the market was moving, was gone, and only the quieter half remained. But the quieter half was the only one that had ever been real, and a forecast built on the real half beats a beautiful one built on noise.
 
@@ -533,9 +557,9 @@ Because this part turned up more than one buried assumption, it is worth setting
 | --- | --- | --- |
 | A tidy low, medium, high spread means a real signal | Ran the exact same sorting on pure noise, which also gave a tidy 31, 38, 31 | We judge the raw numbers against a null now, never the picture |
 | The autocorrelation is safe from one wild day | Traced the euro's whole reading to a single 2008 session, then cleaned and re-measured | Every reading is taken on cleaned data and re-tested afterwards |
-| A free shuffle makes a fair "no signal" world | Saw it destroyed the roughness too and flattered us, twelve of seventeen "significant" | The null keeps the roughness and destroys only the behaviour now, nine of seventeen, all tiny |
-| A signal that shows up anywhere is real | Carried it across all seventeen markets, where it lived only in the stock indices, as a recording quirk | Nothing counts unless it survives being carried to a market it has never seen |
-| The market has a behaviour we can forecast | Measured it against roughness: near zero, nine times weaker, and plumbing when it survived at all | We forecast only roughness, the one reading Section 3 proved is real |
+| A free shuffle makes a fair "no signal" world | Saw it destroyed the roughness too and flattered us, eight of seventeen "significant" | The null keeps the roughness and destroys only the behaviour now, five of seventeen, all tiny |
+| A signal that shows up anywhere is real | Carried it across all seventeen markets, where it clung to a scattered five with no thread between them | Nothing counts unless it survives being carried to a market it has never seen |
+| The market has a behaviour we can forecast | Measured it against roughness: near zero, nine times weaker, and scattered noise when it survived at all | We forecast only roughness, the one reading Section 3 proved is real |
 
 The reading we kept is measured on cleaned data, judged against the right null, and confirmed on every one of the seventeen markets. What survives all of that is real, not a ghost.
 
@@ -545,13 +569,13 @@ We had our one honest reading now, roughness, and it would have been tempting to
 
 One rule governed all of it, the rule the behaviour reading had just beaten into us. Every choice we make here is a knob, and every knob is a chance to fool ourselves, so we would not guess which ones matter. We would test every one, and the few that turned out to matter we would pin by reason, in advance, before the model ever saw a number, so that we could never be caught later quietly turning a knob until the answer looked good.
 
-The first knob was the data itself. The market's history holds a few genuinely insane days, and we had just watched one of them fake a whole signal, the euro's sixteen percent afternoon in 2008. Left alone, a day like that dominates any average it falls into. So before measuring anything, we pulled the wildest days back toward the pack, gently, trimming only the most extreme half a percent at each end. The test that this was safe is the one that matters: the real crises had to survive it, and they did. The S&P's roughness in 2008 came down from 2.68 to 2.09 percent a day, in 2020 from 3.22 to 2.32, and both still stand a good seven times over a calm year. **We cleaned out the glitches without cleaning out the storms.**
+The first knob was the data itself. The market's history holds a few genuinely insane days, and we had just watched one of them fake a whole signal, the euro's sixteen percent afternoon in 2008. Left alone, a day like that dominates any average it falls into. So before measuring anything, we pulled the wildest days back toward the pack, gently, trimming only the most extreme half a percent at each end. The test that this was safe is the one that matters: the real crises had to survive it, and they did. The S&P's roughness in 2008 came down from 1.74 to 1.45 percent a day, in 2020 from 1.35 to 1.16, and both still stand four to five times over a calm year's 0.30 percent. **We cleaned out the glitches without cleaning out the storms.**
 
 ![EURUSD's few wild days are pulled back toward the pack while the ordinary days are left untouched, and the 1987, 2008 and 2020 crises still stand out clearly in the S&P's roughness](figures/s4_winsor.svg)
 
 Then the rule went to work on the smaller knobs. How hard should we trim? Which exact formula should turn a raw roughness number into low, medium, or high? These are the settings it is tempting to agonise over, so instead we tested them. We labelled the whole history one way, then the other, and counted how often the two disagreed. Trim at half a percent or at a tenth: the labels agreed 98 times in a hundred. Standardise the numbers one way or another: 93. Both were, in the language we were building, knobs that do not matter, so we took the simpler setting and moved on. A knob that does not change the answer is not worth an argument. Keep those two numbers, 98 and 93, in mind, because they are about to make a surprise land.
 
-Next came how often to take a reading and how far ahead to forecast, and this is where we were very nearly beaten. We started the obvious way, a reading every week and a one-week horizon, and ran the natural test: from this week's roughness, how much of next week's can we explain? The answer came back as an R-squared of 0.79. For a moment, we let ourselves believe it. Then sit with that number, because if it does not alarm you, you have not been paying attention. It says we could account for nearly four-fifths of next week's roughness from this week's alone. Section 3 fought for weeks to wring a few percent of edge out of this exact market, and here we were apparently nailing eighty percent of it. On a problem this hard, a result that good is never a gift. It is a symptom. So we did not celebrate, we went looking for the leak, and it did not hide for long.
+Next came how often to take a reading and how far ahead to forecast, and this is where we were very nearly beaten. We started the obvious way, a reading every week and a one-week horizon, and ran the natural test: from this week's roughness, how much of next week's can we explain? The answer came back as an R-squared of 0.70. For a moment, we let ourselves believe it. Then sit with that number, because if it does not alarm you, you have not been paying attention. It says we could account for fully seven-tenths of next week's roughness from this week's alone. Section 3 fought for weeks to wring a few percent of edge out of this exact market, and here we were apparently nailing seventy percent of it. On a problem this hard, a result that good is never a gift. It is a symptom. So we did not celebrate, we went looking for the leak, and it did not hide for long.
 
 To measure one week's roughness we averaged the last twenty trading days. A week later we did it again, averaging the last twenty days again. But those two windows sit only five days apart, so they share fifteen of their twenty days. When we "forecast" next week from this week, **we were mostly comparing a number with itself.** Fifteen days out of twenty were the same days. That is not forecasting, it is measuring one thing twice and being impressed that the two agree.
 
@@ -559,7 +583,7 @@ To measure one week's roughness we averaged the last twenty trading days. A week
 
 ![Measured with overlapping weekly windows the forecast looked like about a thirty percent edge over guessing, but that was mostly the fifteen shared days; with non-overlapping windows the true weekly edge is only about three percent, and the honest signal lives at the monthly scale, about fourteen percent](figures/s4_overlap.svg)
 
-The fix is to keep the windows from touching. Take one reading a month, over twenty days that belong to that month alone, and forecast each month from the one before. Look at what happens to the edge over simply guessing the most common weather. Measured the overlapping way it was plus 30.6 percent, the mirage that had thrilled us. With the windows pulled apart at the weekly speed it fell to plus 3.4 percent, as faint as the behaviour reading we had just buried. Only when we stepped all the way back to a month did a real, modest edge appear, plus 14.2 percent better than guessing. So the eighty percent was never real. The honest signal was small, and it lived at the scale of a month, and that is the scale we would build on.
+The fix is to keep the windows from touching. Take one reading a month, over twenty days that belong to that month alone, and forecast each month from the one before. Look at what happens to the edge over simply guessing the most common weather. Measured the overlapping way it was plus 30.6 percent, the mirage that had thrilled us. With the windows pulled apart at the weekly speed it fell to plus 3.4 percent, as faint as the behaviour reading we had just buried. Only when we stepped all the way back to a month did a real, modest edge appear, plus 14.2 percent better than guessing. So the seventy percent was never real. The honest signal was small, and it lived at the scale of a month, and that is the scale we would build on.
 
 Working in clean, separate months, the next job was to turn each one into a label, calm, normal, or stormy, and that hid two questions we again nearly got wrong. The first is what "normal" even means. A month is rough compared to normal, but the market's normal does not hold still. There are calm years and violent ones, and a move that is a storm in a quiet decade is an ordinary week in a turbulent one. So **normal could not be one fixed number for all of history**; it had to be a moving benchmark, the market's own recent past. And it had to be built only from that past. If we let months that have not happened yet help set what counts as normal today, we would have **slipped the future into the label**, the very leak that fooled us in Section 3.
 
@@ -595,7 +619,7 @@ Now the problem was clean. No borrowed future, no shared days, no single day wri
 
 | What we nearly believed | What we did about it | Why it no longer bites |
 | --- | --- | --- |
-| A handful of wild days will not sway an average | Trimmed the extreme half a percent, and checked the real crises survived, 2008 from 2.68 to 2.09 percent a day | The glitches are tamed while the storms still stand |
+| A handful of wild days will not sway an average | Trimmed the extreme half a percent, and checked the real crises survived, 2008 from 1.74 to 1.45 percent a day | The glitches are tamed while the storms still stand |
 | We can guess which settings matter | Tested each one: trimming agreed 98 percent of the time, the formula 93, but the baseline window only 76 | The one knob that moves the answer is pinned by reason, in advance |
 | Overlapping windows are fine to forecast across | Found that a twenty-day window on a weekly step shares fifteen of its twenty days | One reading a month, no shared days: the honest edge is 14.2 percent, not 30.6 |
 | "Normal" can be one fixed level for all time | Saw a fixed normal call recent, calmer years stormy, because volatility drifts era to era | Normal is a rolling two-year window of the recent past |
@@ -655,7 +679,7 @@ The next reach is for a cleverer way down. If more brain does not help, perhaps 
 
 ![Gradient descent, momentum and Adam each roll the loss downhill by a different path, momentum overshooting and bouncing and Adam gliding, but all three settle at the same floor near 0.885, so the optimiser changes the speed of the descent and not where it lands](figures/s4_convergence.svg)
 
-They take different paths down. Gradient descent slides straight in, momentum overshoots and bounces before it settles, Adam glides. But look where the three lines end. 0.888, 0.887, 0.885. **The same floor, to the third decimal.** The optimiser changed how we got there, and nothing at all about where we landed.
+They take different paths down. Gradient descent slides straight in, momentum overshoots and bounces before it settles, Adam glides. But look where the three lines end. 0.886, 0.884, 0.885. **Effectively the same floor.** The optimiser changed how we got there, and almost nothing about where we landed.
 
 The story repeated for every other knob of the training. The batch size, whether we corrected the network on all the data at once or a handful of examples at a time, changed how noisy the descent was and nothing else; the noisiest, one example at a time, jittered its way down to the same place. The activation, the little bend inside each unit, was the same: ReLU, its leaky cousin, tanh, and the old sigmoid all reached the ceiling, with sigmoid a touch slower off the mark, exactly as its known weakness predicts. Every one of these is **a knob of how fast and how smoothly, never how high.**
 
@@ -729,15 +753,15 @@ A number on a sealed test is not the same thing as a tool. The whole reason we b
 
 Start with what using it looks like. Each month, on the S&P, the forecast issues its odds, a chance of calm, a chance of normal, a chance of stormy, and you read it the way you read the sky before you leave the house.
 
-![Three views of the forecast in use, all on markets it never trained on: on the S&P the monthly odds of calm, normal and stormy track the roughness that actually arrives, with the stormy band swelling around the 2020 crash; a calibration curve sits almost on the diagonal, so a stated chance of a storm comes true about that often; and a bar chart shows a stormy month arrives 27 percent of the time overall but 63 percent of the months it warned and only 17 percent of the months it called quiet](figures/s4_usage.svg)
+![Three views of the forecast in use, all on markets it never trained on: on the S&P the monthly odds of calm, normal and stormy track the roughness that actually arrives, with the stormy band swelling around the 2020 crash; a calibration curve sits almost on the diagonal, so a stated chance of a storm comes true about that often; and a bar chart shows a stormy month arrives 27 percent of the time overall but 60 percent of the months it warned and only 17 percent of the months it called quiet](figures/s4_usage.svg)
 
 The coloured bands in the top panel are those odds, month by month, across the recent years; the black line is the roughness that actually arrived. Watch them move together. When the market tore itself apart in early 2020, the black line spiking off the top of the chart, the stormy band had already swelled to fill most of the forecast. Through the long calm that followed, the green sits fat at the bottom. It is not perfect, and it never pretended to be, but it is plainly reading the same weather you are.
 
 But "it looks like it tracks" is the oldest trap in this book, and we did not come this far to fall for it now. The real question is whether the number itself can be trusted, and there is a clean way to ask it. When the forecast says a forty percent chance of a stormy month, does a storm actually come about forty percent of the time? We checked exactly that, and we checked it on the four markets the model had never once trained on.
 
-The answer is the bottom-left panel, and it is the most important picture in this section. When the forecast said eleven percent, storms came eleven percent of the time. When it said twenty-six, they came twenty-seven. Forty-two, forty-three. Sixty-nine, sixty-five. The points sit almost exactly on the diagonal, which is to say the percentage means precisely what it claims to. **This is the thing Section 3 said you could almost never have. You can trust the number.**
+The answer is the bottom-left panel, and it is the most important picture in this section. When the forecast said eleven percent, storms came ten percent of the time. When it said twenty-six, they came twenty-eight. Forty-three, thirty-eight. Sixty-eight, sixty-four. The points sit close to the diagonal, which is to say the percentage means very nearly what it claims to. **This is the thing Section 3 said you could almost never have. You can trust the number.**
 
-And trusting it pays. The bottom-right panel is the plainest test of all: does acting on the warning actually help? On those unseen markets, a stormy month arrives about twenty-seven percent of the time, taken across the board. But on the months the forecast had flagged, the ones where it put the chance of a storm at better than even, storms actually came sixty-three percent of the time, more than double. And on the months it called quiet, only seventeen percent turned rough. Lighten your exposure when it warns, and you are caught out far less often than a coin would leave you.
+And trusting it pays. The bottom-right panel is the plainest test of all: does acting on the warning actually help? On those unseen markets, a stormy month arrives about twenty-seven percent of the time, taken across the board. But on the months the forecast had flagged, the ones where it put the chance of a storm at better than even, storms actually came sixty percent of the time, more than double. And on the months it called quiet, only seventeen percent turned rough. Lighten your exposure when it warns, and you are caught out far less often than a coin would leave you.
 
 And it discriminates, which is the same trust seen from the other side. Pooled across those unseen markets, the months it had called stormy really did turn out rougher, averaging about one and a half times the daily roughness of the months it called calm. The label is not just a word; it lines up with what actually arrives.
 
@@ -745,14 +769,14 @@ But a calibration curve is a summary, and a summary hides what using this actual
 
 | Month | It said | Chance of a storm | What came | The verdict |
 | --- | --- | --- | --- | --- |
-| Nov 2025 | stormy | 51% | normal | false alarm |
+| Nov 2025 | stormy | 50% | normal | false alarm |
 | Dec 2025 | normal | 35% | calm | quiet |
-| Jan 2026 | calm | 12% | stormy | caught out |
-| Feb 2026 | stormy | 62% | stormy | good call |
-| Mar 2026 | stormy | 47% | calm | false alarm |
-| Apr 2026 | calm | 17% | calm | quiet |
-| May 2026 | calm | 5% | normal | quiet |
-| Jun 2026 | calm | 11% | calm | quiet |
+| Jan 2026 | calm | 8% | stormy | caught out |
+| Feb 2026 | stormy | 50% | stormy | good call |
+| Mar 2026 | stormy | 51% | calm | false alarm |
+| Apr 2026 | calm | 13% | calm | quiet |
+| May 2026 | calm | 3% | normal | quiet |
+| Jun 2026 | calm | 9% | calm | quiet |
 
 Read down the last column and there is the honest truth of the thing. One clean good call, the February storm seen coming a month out. One month caught badly out, a quiet-looking January that turned rough. Two false alarms, storms cried that never came. And a run of quiet months read correctly. That is what a weak but honest signal looks like from close up: right more often than not, wrong often enough to keep you humble, and never once a certainty. It is not a crystal ball, and the diary is the proof that we are not selling one. The worth was never in any single month. It is that, taken month after month, the odds sit tilted your way.
 
@@ -760,10 +784,10 @@ And this, finally, is the forecast simply in use, four real markets read as of t
 
 | Market | calm | normal | stormy |
 | --- | --- | --- | --- |
-| S&P 500 | 37% | 41% | 22% |
-| Ethereum | 64% | 25% | 11% |
-| Gold | 35% | 47% | 18% |
-| Euro | 75% | 19% | 6% |
+| S&P 500 | 28% | 44% | 28% |
+| Ethereum | 67% | 25% | 8% |
+| Gold | 12% | 31% | 56% |
+| Euro | 64% | 27% | 9% |
 
 Not a fortune and not a promise, just an honest set of odds for the month ahead, each percentage carrying exactly the trust the calibration earned it.
 
@@ -815,12 +839,25 @@ That is the whole of it. **And it is worth far more than any answer it will ever
 
 ---
 
+## 6. Self-assessment
+
+The thing that surprised me most was how little of this project turned out to be about the models. I came in expecting to spend my nights on architectures and training tricks, the parts that feel like deep learning. What actually happened was that it kept stalling on the same kind of question, whether the data was even honest, and somewhere along the way it stopped being a modelling project and became a project about method. Almost all of the real work happened before any model was allowed to look at the data, in the slow, unglamorous business of cleaning the problem and asking, over and over, whether each step was actually allowed to do what it did. Once the problem was honest, the modelling was the easy part. That reversal is the biggest thing I am taking away, and the spine of the whole report.
+
+The parts I am proud of are the quiet ones. Building the network by hand in numpy, and watching my gradients agree with a finite-difference check to about four parts in ten billion, gave me a kind of confidence I could not have bought by importing a library: I understood every line, so I could trust it. And the stubborn habit of testing each assumption against the data instead of the textbook is what actually saved me, again and again. It is what caught the overlapping windows faking an R-squared of 0.70, the future leaking into a scaler, the single wild day pretending to be a signal. Every one of those looked completely fine until I tried to break it.
+
+What I got wrong, I got wrong the same way every time. My instinct was always to run the code before I had really thought, and more than once that nearly cost me a false result I would have been glad to believe: a direction signal that was really one outlier and some noise, an early number that a proper test later demolished. The fix was never cleverness. It was slowing down and putting one honest check between the guess and the belief. If there is one thing I would do differently from the start, it is to write down what a step assumes before I open the notebook, not after it has already fooled me.
+
+And that, in the end, is where the calm came from. I stopped needing to be right the first time. I am not. Almost nobody is. And it turns out you do not have to be, not if you build a loop that catches you when you are wrong, and learn to trust the loop instead of yourself. If I carried this further I would put the market work to a real out-of-sample test with trading costs, which I deliberately stopped short of here, and turn the same discipline loose on a bigger, messier dataset to find where it strains. But the habit itself is the thing I am keeping, and I suspect I will lean on it for a long time.
+
+---
+
 ## References
 
 *The sources behind Sections 0 to 4, the sections built so far; this list will grow with the report. Formatting to be brought to the handbook style at the end.*
 
 **Deep learning, the standard method (Section 1).**
 
+- Rumelhart, D. E., Hinton, G. E. and Williams, R. J. (1986). Learning representations by back-propagating errors. *Nature*, 323. (Backpropagation, the training rule derived by hand and gradient-checked in Section 4.)
 - Goodfellow, I., Bengio, Y. and Courville, A. (2016). *Deep Learning*. MIT Press.
 - Chollet, F. (2018). *Deep Learning with Python*. Manning.
 
@@ -847,6 +884,10 @@ That is the whole of it. **And it is worth far more than any answer it will ever
 - Kingma, D. P. and Ba, J. (2015). Adam: a method for stochastic optimization. *ICLR*. (The adaptive optimiser compared in Section 4.)
 - Sutskever, I., Martens, J., Dahl, G. and Hinton, G. (2013). On the importance of initialization and momentum in deep learning. *ICML*. (Momentum, the second optimiser compared.)
 - Guo, C., Pleiss, G., Sun, Y. and Weinberger, K. Q. (2017). On calibration of modern neural networks. *ICML*. (Reliability, expected calibration error, and temperature scaling, the calibration check in Section 4.)
+
+**The danger itself: data snooping (Sections 4 and 5).**
+
+- White, H. (2000). A reality check for data snooping. *Econometrica*, 68(5). (The formal statement of the search, or winner's-curse, face of data snooping, the narrow textbook definition Section 5 argues is only one corner of the problem.)
 
 ---
 
@@ -959,16 +1000,30 @@ Honest limits: one index along one path through history. We read its numbers as 
 
 ---
 
-## Appendix D: The code
+## Appendix D: How to use my project
 
-*Outside the page limit, and the answer to "how do I run this?" Every number and figure in Sections 2 and 3 is produced by one self-contained notebook per chapter, under `notebooks/`. Each one loads the raw data, trains the model, prints every count the chapter quotes, and plots every chart, and each reads as a standalone walk-through: open it and Run All (it needs only numpy and matplotlib), or read it top to bottom without running a thing.*
+*Outside the page limit, and the answer to "how do I run this?" Every number in the report, and every figure that plots real data, is produced by the notebooks under `notebooks/`. Each one loads the raw data, builds and trains the model by hand, prints every count the chapter quotes, and plots its charts, and each reads as a standalone walk-through: open it and Run All, or read it top to bottom without running a thing. The remaining figures are hand-drawn schematics (the pipeline flows, the decision trees, and the conceptual sketches), diagrams of the argument rather than plots of the data.*
 
-| Notebook | Chapter | What it produces |
+**What you need.** Python 3, with only `numpy` and `matplotlib` installed (`pip install numpy matplotlib`), plus `jupyter` if you want to run the notebooks rather than just read them. Every network is written from scratch, so there is no deep learning framework to install. The data is committed alongside the code, so nothing is fetched from the internet at run time.
+
+**The notebooks.**
+
+| Notebook | Section | What it produces |
 | --- | --- | --- |
 | `notebooks/loan.ipynb` | Section 2, Loan | one client read top to bottom, the split checks, the confusion counts, and balanced accuracy |
 | `notebooks/market.ipynb` | Section 3, Market | the price-to-size transform traced day by day, the shuffle-versus-honest leak with its near-twins, the drift under a frozen scaler, and the era-by-era spread |
+| `notebooks/weather_regime_scratch.ipynb` | Section 4a and 4b | the panel cleaned, the direction axis measured and retired, and the roughness problem made honest: winsorising, monthly non-overlapping blocks, the past-only rolling baseline, and the balanced bands |
+| `notebooks/weather_regime_dl.ipynb` | Sections 4c to 4e | the full toolkit on the clean problem: the architectures and optimisers, the four formulae with the gradient check, the disciplined and the oversized searches, the sealed-test verdict, and the calibration and umbrella figures |
 
-*From the command line, run either with `jupyter nbconvert --to notebook --execute notebooks/<file>.ipynb`. Later chapters get their own notebook as they are built.*
+**Where the data lives.** `data/loan_uci350.csv` is the loan set (Section 2). `data/gspc_2026-07-03.csv` is the S&P daily series (Section 3). `data/panel/*.csv` is the seventeen-symbol daily panel used in Section 4, frozen on 2026-07-26; `data/fetch_panel.py` is the script that pulled it from Yahoo Finance, kept for provenance but not needed to run anything.
+
+**To run.** Open any notebook in Jupyter and choose Run All, or from the command line run
+
+```
+jupyter nbconvert --to notebook --execute notebooks/<file>.ipynb
+```
+
+Read them in section order (loan, market, weather_regime_scratch, weather_regime_dl) and they retrace the report's journey exactly.
 
 ---
 
@@ -980,12 +1035,12 @@ Honest limits: one index along one path through history. We read its numbers as 
 
 **Why behaviour is the hard reading.** A memory reading taken from a handful of days is almost pure noise. The typical error of an autocorrelation measured on n points is about one over the square root of n: roughly 0.45 from a week's five days, 0.22 from twenty days, and only 0.06 from a full year. The real autocorrelation of daily returns is tiny, around 0.03. So a weekly reading is like calling a coin biased after five tosses. Behaviour is only readable over long, slow windows, which is why it acts like a near-fixed trait of each market rather than something that changes week to week.
 
-**A tidy spread proves nothing.** Sorting any series into low, medium, and high produces a tidy-looking spread even when the series is pure noise: banded noise comes out around 31 / 38 / 31. Sorting by rank forces an even 33 / 33 / 33, which is worse, an artifact of the method; a plain standardisation gives an honest 31 / 50 / 19, with extremes genuinely rare. The spread is a property of the sorting, not evidence of a signal. The only test that means anything is on the raw numbers, against a proper null.
+**A tidy spread proves nothing.** Sorting any series into low, medium, and high produces a tidy-looking spread even when the series is pure noise: banded noise comes out around 31 / 38 / 31. Sorting by rank forces an even 33 / 33 / 33, which is worse, an artifact of the method; a plain standardisation gives about 33 / 37 / 30, still a tidy three-way split from nothing. The spread is a property of the sorting, not evidence of a signal. The only test that means anything is on the raw numbers, against a proper null.
 
-**The single days that faked it.** Autocorrelation is not robust to outliers, and a few crisis days were manufacturing most of the apparent signal. EURUSD read -0.175, a strong-looking snap-back, almost all of it from one session, 8 December 2008, that moved sixteen percent; taming that one day leaves -0.037. USDJPY went from -0.124 to -0.035 the same way. US500's reading flipped sign, from -0.019 to +0.023, on the strength of the 1987 crash alone. Clean the crisis prints first, and the behaviour signal mostly disappears.
+**The single days that faked it.** Autocorrelation is not robust to outliers, and a few crisis days were manufacturing most of the apparent signal. EURUSD read -0.175, a strong-looking snap-back, almost all of it from one session, 8 December 2008, that moved sixteen percent; taming that one day leaves -0.038. USDJPY went from -0.124 to -0.036 the same way. US500's reading flipped sign, from -0.019 to +0.015, on the strength of the 1987 crash alone. Clean the crisis prints first, and the behaviour signal mostly disappears.
 
-**The flawed test, and its fix.** Our first null shuffled the returns freely. That destroys the volatility clustering along with the direction, which makes the null too tight and flatters the result: twelve of seventeen markets came out "significant". The correct null keeps the roughness and destroys only the direction, by flipping the sign of each return at random. Under that test only nine of seventeen survive, with sizes of 0.03 to 0.06, small enough to be worth nothing in practice.
+**The flawed test, and its fix.** Our first null shuffled the returns freely. That destroys the volatility clustering along with the direction, which makes the null too tight and flatters the result: eight of seventeen markets came out "significant". The correct null keeps the roughness and destroys only the direction, by flipping the sign of each return at random. Under that test only five of seventeen survive, with sizes around 0.04, small enough to be worth nothing in practice.
 
-**What was left was plumbing, not memory.** The survivors were the stock indices, and they lined up smallest market first: US2000 (+0.061), then US500 (+0.034), then the larger US100 and US30 near zero. That ordering is the fingerprint of non-synchronous trading, the fact that the smaller names in an index trade a little later, so the index appears to follow itself. It is a recording quirk, not a pattern a forecast could act on. Across all seventeen markets, roughness clustered at about +0.18 while direction sat near -0.02, about nine times weaker.
+**What was left was scattered noise, not memory.** The five survivors were AUDUSD, EURUSD, USDJPY, XAGUSD and US30: three currencies, a metal, and one stock index, with nothing linking them, every one a tiny negative near -0.04. They cleared the bar only because the series run to thousands of days, long enough that a hair of autocorrelation counts as "significant" while being worth nothing to a forecaster, and most likely nothing but the faint residue that noise and microstructure leave in any recorded price series. Across all seventeen markets, roughness clustered at about +0.18 while direction sat near -0.02, about nine times weaker.
 
 **The conclusion.** The behaviour reading was dropped, not because the data was dirty, it was clean, but because the market has almost no real direction signal to read. That is an honest scientific finding, and it is Section 4a's first and largest cut.
