@@ -1,4 +1,4 @@
-# Data Snooping in Deep Learning: dissertation (working draft)
+# Data Snooping in Deep Learning: dissertation 
 
 ## Abstract
 
