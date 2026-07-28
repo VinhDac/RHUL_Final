@@ -1,11 +1,5 @@
 # Data Snooping in Deep Learning: dissertation (working draft)
 
-*Working draft, written as a journey rather than a proof: we start from the ordinary, by-the-book way of judging a model by its number, and follow honestly where it leads. Reasoning first; the code behind every number is in the appendices. Compass in `NORTH_STAR.md`; the underlying argument in `KEY_CORE.html`.*
-
-*Constraint (handbook): final submission ≤ 50 pages, including bibliography, tables and figures, excluding appendices.*
-
----
-
 ## Abstract
 
 We start out doing the most natural thing in the world. We have a model, we want to know if it is any good, so we hide some data, let it guess, count the hits, and read off a number. High is good. And we are ready to believe it.
