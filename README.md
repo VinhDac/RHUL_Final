@@ -12,7 +12,7 @@ Look back over all of it and the enemy was always the same: a number that looked
 
 What we set out to do was this: to understand, honestly and from the inside, why a model's number can lie to us, and to come away with a way of working that gives us numbers we can trust.
 
-To get there we set ourselves a few concrete jobs. Build the networks by hand, in numpy, on real credit and market data, following the standard recipe step by step. At each step, stop and ask what that step is quietly taking for granted, then test that assumption against the data instead of taking it on faith. Once the problem is honest, let the full deep learning toolkit off the leash (several architectures and optimisers, regularisation, a proper hyperparameter search, and the four core formulae worked out by hand and checked against the numbers) and measure honestly what all that machinery actually buys. And finally, turn the whole thing into a short workflow that someone else could pick up and follow.
+To get there we set ourselves a few concrete jobs. Build the networks by hand, in numpy, on real credit and market data, following the standard recipe step by step. At each step, stop and ask what that step is quietly taking for granted, then test that assumption against the data instead of taking it on faith. Once the problem is honest, let the full deep learning toolkit off the leash (several architectures and optimisers, regularisation, a proper hyperparameter search, and the four core formulae worked out by hand and checked against the numbers) and measure honestly what all that machinery actually buys. And finally, turn the whole thing into a short workflow that someone else could pick up and follow. Every model here is written from scratch in numpy; the notebooks that produce every number, and how to run them, are listed in Appendix D.
 
 One more thing, and it is personal. Judging a model honestly is a skill every machine learning practitioner needs, and almost nobody is taught to name it. Working through it this slowly has left me with a habit I expect to lean on in any job where I build something other people are asked to trust. That felt worth more to me than another model that scores well.
 
@@ -66,7 +66,7 @@ And there is the catch. If it can fit almost any pattern, then **it can also fit
 
 So the training score can look flawless and prove nothing, which leaves a nagging question: *if the model can fit anything, even nonsense, how do we know it learned something real, and not just the noise?* We cannot tell from the training score, it does well either way. The only way to know is to try the model on data it has never seen: keep some data back, judge it there, and never let it look while it learns.
 
-Which brings us to the plan. To turn a network into a number we can show anyone, we follow a recipe, the same one printed in every course:
+Which brings us to the plan. To turn a network into a number we can show anyone, we follow a recipe, the same one printed in every course (Goodfellow, Bengio and Courville, 2016; Chollet, 2018):
 
 ![The normal way to build a model](figures/pipeline.svg)
 
@@ -98,7 +98,7 @@ So who are these people? Let us look at one, top to bottom.
 
 We can almost picture them: twenty-four, a small limit, a modest bill, nothing paid back last month, and a yes at the end. They defaulted. So one row is one person: twenty-three plain numbers about them, and the answer we want to predict. There are thirty thousand of them, and about one in five default.
 
-What exactly is the job? From those twenty-three numbers, for a client we have never seen, say yes or no: will they default? A plain two-way guess, and nothing about it is exotic.
+What exactly is the job? From those twenty-three numbers, for a client we have never seen, say yes or no: will they default? A plain two-way guess, and nothing about it is exotic. We use the file as it arrives, nothing dropped and nothing engineered; its full column-by-column layout is in Appendix B.
 
 What do we build? The small network from Section 1. Twenty-three numbers go in, pass through one hidden layer of sixteen units with a ReLU, and come out as two scores that softmax turns into a probability for "yes" and "no"; we keep whichever is larger.
 
@@ -178,7 +178,7 @@ That is what makes the four points so slippery. The number was never measuring t
 
 So how do we judge this model without being fooled? We stop handing the whole verdict to one blended number, and we measure in a way that gives the rare, costly cases their due.
 
-The fix is small. Instead of asking "how many clients did we get right," a question the majority always wins, we score the two groups apart and then average them. How well did we do on the people who default? How well on the people who pay? Average those two, and each group counts the same, however many are in it. That is balanced accuracy.
+The fix is small. Instead of asking "how many clients did we get right," a question the majority always wins (Provost, Fawcett and Kohavi, 1998), we score the two groups apart and then average them. How well did we do on the people who default? How well on the people who pay? Average those two, and each group counts the same, however many are in it. That is balanced accuracy (Brodersen et al., 2010).
 
 Now judge our model and the "always no" answer both ways at once:
 
@@ -204,7 +204,7 @@ If a clean, honest process is the only thing worth trusting, then at the next pr
 
 We come to the second problem already a little wary. The last one taught us that a number can look clean, steady, and high, and still be lying, so this time we make ourselves a promise: we will not trust a score just because it looks good.
 
-And then we open the problem, and there is almost nothing there to trust. No neat rows of features like the loan clients. Just one long column of numbers: the closing price of the S&P 500 at the end of each day, 6,664 days in a row. A single price that wanders across the years, from a low near 677 to a high near 7,610.
+And then we open the problem, and there is almost nothing there to trust. No neat rows of features like the loan clients. Just one long column of numbers: the closing price of the S&P 500 at the end of each day, 6,664 days in a row. A single price that wanders across the years, from a low near 677 to a high near 7,610. The data close-up, and how that one column becomes the busy-or-calm task, is in Appendix C.
 
 ![All we were handed: one drifting column of prices, and what we choose to look at instead](figures/market_data.svg)
 
@@ -225,7 +225,7 @@ And we run it through the very same recipe as the loan clients, step for careful
 ![The plan for the market days](figures/market_pipeline.svg)
 
 1. **Frame** it as the plain busy-or-calm question we just built.
-2. **Split** the days once into the same three parts as before: training (60%), validation (20%), and test (20%), dealt out by a random shuffle, exactly as we did for the loans. The test stays sealed until the end, so we only grade ourselves on days the model has never seen. We keep the validation slice too, following the recipe exactly, though this chapter only measures one model rather than searching for the best, so it waits untouched.
+2. **Split** the days once into the same three parts as before: training (60%), validation (20%), and test (20%), the standard hold-out (Hastie, Tibshirani and Friedman, 2009), dealt out by a random shuffle, exactly as we did for the loans. The test stays sealed until the end, so we only grade ourselves on days the model has never seen. We keep the validation slice too, following the recipe exactly, though this chapter only measures one model rather than searching for the best, so it waits untouched.
 3. **Scale** the five inputs the standard way, `(x - mean) / std`: measure the average and the spread once, on the training years, and then use those same two numbers to level every day that follows.
 4. **Build and train** exactly as before: small random weights, three hundred passes over the training days, each scored by cross-entropy, every weight nudged downhill by plain gradient descent at a learning rate of 0.3.
 5. **Measure** by accuracy, the plain fraction of the sealed test days it calls right, against the coin's 0.5.
@@ -302,7 +302,7 @@ So we stop looking at scores and look at the data. Two rows, side by side.
 
 They are almost the same row. Four of their five numbers are identical.
 
-Then we see why. Row one is days one to five. Row two is days two to six. The window slides along one day at a time, so **every row overlaps the next by four days.** We had built thousands of near-copies, and never once looked at them.
+Then we see why. Row one is days one to five. Row two is days two to six. The window slides along one day at a time, so **every row overlaps the next by four days.** We had built thousands of near-copies, and never once looked at them, a textbook data leak (Kaufman, Rosset and Perlich, 2012).
 
 Now put near-copies like that through a shuffle.
 
@@ -341,7 +341,7 @@ Which steps have we actually put to the test? The split, twice over now. The bui
 
 **Scaling**, for instance. We measured the average and the spread on the training years, froze those two numbers, and used them on every day afterwards. **Why? Because that is what you do. We never asked what has to be true for it to be sensible, and if someone had stopped us and asked, we are not sure we could have answered.**
 
-So we ask the question now. What does that formula, `(x - mean) / std`, actually need in order to be sensible? It needs those two frozen numbers, the mean and the spread, to keep describing the world. **That is the bet sitting quietly inside the arithmetic: that a normal day, and the spread of days, will stay what they were back on the training years.** We never said it out loud, and we never checked it.
+So we ask the question now. What does that formula, `(x - mean) / std`, actually need in order to be sensible? It needs those two frozen numbers, the mean and the spread, to keep describing the world. **That is the bet sitting quietly inside the arithmetic: that a normal day, and the spread of days, will stay what they were back on the training years.** The statisticians have a name for it, covariate shift (Shimodaira, 2000). We never said it out loud, and we never checked it.
 
 How would we even see a bet like that? Only by watching it lose. So we hand the frozen scaler a feature whose normal really does drift, the simplest one there is to build: the size of each move in raw points, the plain change in the index, instead of in percent. Same day, same market, same information. We run it.
 
@@ -379,7 +379,7 @@ So the recipe is not the thing we took it for. It is not a list of instructions 
 
 That is what changes now. We do not patch the two holes and rerun. We build the plan again from the top, and this time, at every step, we stop and ask the question we kept skipping: **what does this quietly assume, and is it true here?**
 
-First the plan, the way we laid it out in part a. The same five stations, in the same order, only now we walk them with our eyes open. **Frame** the question, busy or calm. **Split** the days, no longer by a shuffle but past to future, so no near-twin can cross into the exam. **Scale** the sizes in percent, whose normal barely moves, so the frozen mean and spread still fit the world. **Build** the same little network. **Measure** against the coin. The recipe, corrected.
+First the plan, the way we laid it out in part a. The same five stations, in the same order, only now we walk them with our eyes open. **Frame** the question, busy or calm. **Split** the days, no longer by a shuffle but past to future, a time-respecting split (Tashman, 2000; Bergmeir and Benitez, 2012), so no near-twin can cross into the exam. **Scale** the sizes in percent, whose normal barely moves, so the frozen mean and spread still fit the world. **Build** the same little network. **Measure** against the coin. The recipe, corrected.
 
 Then the trial, the way we ran it in part b. Back then we asked the question that saved us: if this number is lying, where could it be hiding? We named three suspects. This time we are wiser by one, because the market taught us to distrust the scaling too, so we make the list again, longer now, and go down it.
 
@@ -421,7 +421,7 @@ And then it gets worse, because the exams were not equally hard, and we never ch
 
 To be worth anything, the model has to beat a classmate who never studies. Not one who flips a coin, though. This one is craftier: he notices which answer has been coming up most often lately, and then writes that same answer down for every single question. He understands nothing, and still, on a lopsided exam where most days are one kind, that alone scores high. On an even exam it manages only about half. This is the lazy guesser, the same idle trick as the lazy doctor on the loan clients.
 
-And here is the catch. **How well you can do by not trying changes from one exam to the next.**
+And here is the catch. **How well you can do by not trying changes from one exam to the next**, the base rate drifting era to era (Gama et al., 2014).
 
 ![The same model, era by era, against what the lazy guesser scores](figures/market_eras.svg)
 
@@ -517,7 +517,7 @@ Before building a thing, we also named what was solid ground and what was quicks
 
 And here is the deepest reason we built it across seventeen markets and not one, the idea the rest of this chapter stands on. It was not to look impressive. It was a test, the same test this whole book is about. A real weather pattern shows up in market after market; a fluke shows up in one and vanishes the moment you carry it somewhere new. So the seventeen markets were never a bigger dataset to boast about. They were seventeen chances to catch ourselves believing a ghost. **A signal that survives being carried to a market it has never seen is real, and one that dies on the journey was never there.** Hold onto that, because it is the spine of everything that follows, and it went to work immediately, on the behaviour reading, which was the first thing it caught.
 
-We began, as Section 3 had taught us, by trying to fool ourselves on purpose. We took pure noise, random numbers with nothing in them, and sorted it into low, medium, and high behaviour exactly as we would the real thing. It came out a tidy 31, 38, 31, a neat three-way split from nothing at all. So the neat spread we saw on the real data proved nothing by itself; **a pretty picture is never the proof.** The only honest test is on the raw numbers, and the measure we used was the plainest one: the lag-one autocorrelation of the daily moves. If today's move tends to be followed by one the same way, it is positive, which is trending; if it tends to reverse, negative, which is reverting; near zero is random. We knew the textbook tool, the Hurst exponent, and we passed it over on purpose, because it is finicky and adds settings to argue about while saying the same thing. Know the fancy tool, reach for the simple one. We will make that exact choice again with the deep learning at the end.
+We began, as Section 3 had taught us, by trying to fool ourselves on purpose. We took pure noise, random numbers with nothing in them, and sorted it into low, medium, and high behaviour exactly as we would the real thing. It came out a tidy 31, 38, 31, a neat three-way split from nothing at all. So the neat spread we saw on the real data proved nothing by itself; **a pretty picture is never the proof.** The only honest test is on the raw numbers, and the measure we used was the plainest one: the lag-one autocorrelation of the daily moves. If today's move tends to be followed by one the same way, it is positive, which is trending; if it tends to reverse, negative, which is reverting; near zero is random. We knew the textbook tool, the Hurst exponent (Lo, 1991), and we passed it over on purpose, because it is finicky and adds settings to argue about while saying the same thing. Know the fancy tool, reach for the simple one. We will make that exact choice again with the deep learning at the end.
 
 So we ran the test, against a null that assumes no signal and asks whether we could have seen this much by luck. At first it looked real, but only in places: the behaviour reading cleared the noise on a scattered handful of markets, a few currencies, the metals, one or two of the indices, and stayed dark on crypto and much of the rest. Uneven like that is already the transfer test whispering a warning, because a real signal does not pick and choose its markets so arbitrarily. And when we forced a proper audit rather than admire the result, the whole thing came apart, in two ways.
 
@@ -591,7 +591,7 @@ So normal was a rolling window of the recent past. How long a window? Here we ne
 
 One choice was left, how many bands and where to cut them. Three felt right, calm, normal, and stormy; five flickered, a month hopping between them on noise, and two were too blunt to be a forecast. Where to cut was load-bearing in its own right: draw the lines too wide and "normal" swallows almost everything, leaving nothing to warn about. So we set them where the three come out balanced, each holding a real share of the months, which is also what a probability forecast needs if anyone is going to trust it.
 
-With the months clean and labelled, we asked what the model should actually look at. The tempting answer was a long run-up, this month and several before it. But roughness moves slowly, so last month already carries almost everything the earlier months would add. We checked, and the numbers were plain: this month's roughness alone explains 27 percent of next month's, adding last month lifts that by barely a hundredth, and **adding the months before that adds nothing at all.** So the model is handed just two numbers, how rough this month was and how rough the month before, and nothing it does not need.
+With the months clean and labelled, we asked what the model should actually look at. The tempting answer was a long run-up, this month and several before it. But roughness moves slowly, so last month already carries almost everything the earlier months would add. We checked, and the numbers were plain: this month's roughness alone explains 27 percent of next month's, adding last month lifts that by barely a hundredth, and **adding the months before that adds nothing at all** (the incremental figures are in Appendix F). So the model is handed just two numbers, how rough this month was and how rough the month before, and nothing it does not need.
 
 Before letting deep learning anywhere near it, three last guards. The first was a placebo. We scrambled the answers until there was truly nothing left to learn, and checked that the model then scored no better than a blind guess. It did: **a real 54.8 percent fell to 34.5, which is pure chance.** Had it still found a pattern in nonsense, we would have known a leak survived. It found nothing, which is exactly what a clean problem gives.
 
@@ -631,7 +631,7 @@ What remains is the rule for judging the model, and we fix that now too, in adva
 
 ![The evaluation split: the thirteen training markets are cut along time into a training stretch to learn on, a validation stretch where every choice is made, and a sealed test-time stretch that stands for the future; and four whole markets are held out from the start as a sealed test-symbol, the transfer test](figures/s4_split.svg)
 
-The first line is time. We take thirteen of the markets and cut their months into three. An early stretch to learn on, three thousand months of it. A middle stretch, six hundred and forty-two months, for validation: every choice we are about to make, every architecture, every setting, every search, is made here and nowhere else. And the most recent stretch, six hundred and thirty-five months, sealed away as the test. It stands for the future, and we open it exactly once, at the very end.
+The first line is time. We take thirteen of the markets and cut their months into three. An early stretch to learn on, three thousand months of it. A middle stretch, six hundred and forty-two months, for validation: every choice we are about to make, every architecture, every setting, every search, is made here and nowhere else (selection on a held-out validation set; Kohavi, 1995). And the most recent stretch, six hundred and thirty-five months, sealed away as the test. It stands for the future, and we open it exactly once, at the very end.
 
 The second line is the market itself. Four whole markets, one for each kind of weather, are set aside from the very start and never shown to the model while it learns: the small-cap index, a currency, a crypto, and an oil. This is the transfer test from Section 4a, now built into the shape of the data. A signal that is real carries to a market it has never seen; a fluke does not, and the four held-out markets are where a fluke goes to die.
 
@@ -669,7 +669,7 @@ But look where it climbed back to. **56. The ceiling.** Regularising did not lif
 
 So the first lever turned out not to be a lever at all. Capacity does not buy skill on a problem like this. A bigger brain does not find a pattern that is not there; it invents one, scores well on it in private, and gets caught the moment it meets the sealed test. There is something almost funny in it, watching us hand the model more and more power and get the same number back each time. But it is exactly what the plan predicted, and exactly what an honest ceiling means.
 
-The next reach is for a cleverer way down. If more brain does not help, perhaps a smarter descent does. So we tried three ways of rolling the network downhill toward a lower loss. The plainest is gradient descent: find which way is downhill and take a small step, `W ← W − η g`. Momentum adds a running velocity, so steps build up speed on a steady slope, `v ← μ v − η g` then `W ← W + v`. And Adam scales each weight's step by its own recent gradient, `W ← W − η m / (√v + ε)`, so flat directions get a bigger push and steep ones a smaller. Three different ideas, and we ran all three and watched the loss fall.
+The next reach is for a cleverer way down. If more brain does not help, perhaps a smarter descent does. So we tried three ways of rolling the network downhill toward a lower loss. The plainest is gradient descent: find which way is downhill and take a small step, `W ← W − η g`. Momentum adds a running velocity, so steps build up speed on a steady slope, `v ← μ v − η g` then `W ← W + v` (Sutskever et al., 2013). And Adam scales each weight's step by its own recent gradient (Kingma and Ba, 2015), `W ← W − η m / (√v + ε)`, so flat directions get a bigger push and steep ones a smaller. Three different ideas, and we ran all three and watched the loss fall.
 
 ![Gradient descent, momentum and Adam each roll the loss downhill by a different path, momentum overshooting and bouncing and Adam gliding, but all three settle at the same floor near 0.885, so the optimiser changes the speed of the descent and not where it lands](figures/s4_convergence.svg)
 
@@ -727,9 +727,9 @@ Everything came down to this. One test, sealed since before the first model ran,
 
 We looked at the accuracy first. The simple models landed together, logistic and the simple network and the deeper one, all at 56.4 percent on the future. And the big-search winner, the largest and most expensive model in the room, the one that had scored highest of all on the validation months? 54.2. The worst of the trained models. There it was in the open at last, the winner's curse we had watched creep up on the validation set, paid in full on the one test that could not be gamed. The model that looked best where we could see it was the worst where it counted.
 
-But accuracy was never going to be the whole verdict, because this is a weather forecast, and a forecast's real job is an honest probability. So we asked the question the whole design had been built around: when the model says seventy percent, does it happen about seventy percent of the time? That is calibration, and one number measures it, the gap between the percentages promised and the weather delivered. Lower is better.
+But accuracy was never going to be the whole verdict, because this is a weather forecast, and a forecast's real job is an honest probability. So we asked the question the whole design had been built around: when the model says seventy percent, does it happen about seventy percent of the time? That is calibration (Guo et al., 2017), and one number measures it, the gap between the percentages promised and the weather delivered. Lower is better.
 
-Here the verdict turned from close to unarguable. The simple network scored a calibration error of 0.012, the best of every candidate; when it says a number, you can very nearly believe the number. Persistence, the hard rule that had managed a respectable 54 percent, scored 0.461, forty times worse, because it never offers a probability at all, only a flat "it will be exactly this", so its numbers are useless the moment you need a chance instead of a certainty. And the big-search winner came in at 0.069, over-confident, the worst-calibrated of the trained models, losing on trust exactly as it had lost on accuracy.
+Here the verdict turned from close to unarguable. The simple network scored a calibration error of 0.012, the best of every candidate; when it says a number, you can very nearly believe the number. Persistence, the hard rule that had managed a respectable 54 percent, scored 0.461, forty times worse, because it never offers a probability at all, only a flat "it will be exactly this", so its numbers are useless the moment you need a chance instead of a certainty. And the big-search winner came in at 0.069, over-confident, the worst-calibrated of the trained models, losing on trust exactly as it had lost on accuracy. The full five-candidate scoreboard, accuracy and calibration side by side, is in Appendix F.
 
 ![Every candidate on one plot, accuracy running across and trustworthiness up, with each dot sized by its number of parameters: the simple fifty-one-parameter network sits alone in the best corner, most accurate at 56 percent and best-calibrated, while persistence is accurate but its probabilities are worthless, and the three-thousand-parameter big-search winner is worst on both accuracy and trust](figures/s4_reality.svg)
 
@@ -847,41 +847,26 @@ And that, in the end, is where the calm came from. I stopped needing to be right
 
 ## References
 
-*The sources behind Sections 0 to 4, the sections built so far; this list will grow with the report. Formatting to be brought to the handbook style at the end.*
-
-**Deep learning, the standard method (Section 1).**
-
-- Rumelhart, D. E., Hinton, G. E. and Williams, R. J. (1986). Learning representations by back-propagating errors. *Nature*, 323. (Backpropagation, the training rule derived by hand and gradient-checked in Section 4.)
+- Bergmeir, C. and Benitez, J. M. (2012). On the use of cross-validation for time series predictor evaluation. *Information Sciences*, 191.
+- Brodersen, K. H., Ong, C. S., Stephan, K. E. and Buhmann, J. M. (2010). The balanced accuracy and its posterior distribution. In *Proceedings of the 20th International Conference on Pattern Recognition (ICPR)*.
+- Chollet, F. (2018). *Deep Learning with Python*. Manning Publications.
+- Engle, R. F. (1982). Autoregressive conditional heteroscedasticity with estimates of the variance of United Kingdom inflation. *Econometrica*, 50(4).
+- Gama, J., Zliobaite, I., Bifet, A., Pechenizkiy, M. and Bouchachia, A. (2014). A survey on concept drift adaptation. *ACM Computing Surveys*, 46(4).
 - Goodfellow, I., Bengio, Y. and Courville, A. (2016). *Deep Learning*. MIT Press.
-- Chollet, F. (2018). *Deep Learning with Python*. Manning.
-
-**The loan data, and why accuracy misleads (Section 2).**
-
-- Yeh, I.-C. and Lien, C.-H. (2009). The comparisons of data mining techniques for the predictive accuracy of probability of default of credit card clients. *Expert Systems with Applications*, 36(2). (The UCI credit-card default dataset used here.)
-- Provost, F., Fawcett, T. and Kohavi, R. (1998). The case against accuracy estimation for comparing induction algorithms. *ICML*. (Why plain accuracy is the wrong yardstick when the classes are imbalanced.)
-- Brodersen, K. H., Ong, C. S., Stephan, K. E. and Buhmann, J. M. (2010). The balanced accuracy and its posterior distribution. *ICPR*. (Balanced accuracy, the honest metric used in Section 2.)
-
-**The market: unpredictable in direction, learnable in size, and the traps in between (Section 3).**
-
-- Malkiel, B. G. (1973). *A Random Walk Down Wall Street*. Norton. (Why the direction of the next move is effectively unpredictable, so the task predicts the size of the move instead.)
-- Engle, R. F. (1982). Autoregressive conditional heteroscedasticity with estimates of the variance of United Kingdom inflation. *Econometrica*, 50(4). (Volatility clustering: wild days sit near wild days, the real signal the task learns and the very thing a shuffle leaks.)
-- Hastie, T., Tibshirani, R. and Friedman, J. (2009). *The Elements of Statistical Learning*, 2nd ed., ch. 7. Springer. (The random hold-out and cross-validation the recipe leans on.)
-- Kohavi, R. (1995). A study of cross-validation and bootstrap for accuracy estimation and model selection. *IJCAI*. (Cross-validation and model selection, the standard practice we put on trial.)
-- Kaufman, S., Rosset, S. and Perlich, C. (2012). Leakage in data mining: formulation, detection, and avoidance. *ACM Transactions on Knowledge Discovery from Data*, 6(4). (The shuffle leak: information from the future crossing into the training set.)
-- Tashman, L. J. (2000). Out-of-sample tests of forecasting accuracy: an analysis and review. *International Journal of Forecasting*, 16(4). (Rolling-origin evaluation, the academic name for the walk-forward test used in Section 3.)
-- Bergmeir, C. and Benitez, J. M. (2012). On the use of cross-validation for time series predictor evaluation. *Information Sciences*, 191. (Why a time series needs a time-respecting split rather than a random one.)
-- Shimodaira, H. (2000). Improving predictive inference under covariate shift by weighting the log-likelihood function. *Journal of Statistical Planning and Inference*, 90(2). (Covariate shift: the feature drifting out from under a frozen scaler.)
-- Gama, J., Zliobaite, I., Bifet, A., Pechenizkiy, M. and Bouchachia, A. (2014). A survey on concept drift adaptation. *ACM Computing Surveys*, 46(4). (How a learned relationship drifts as time passes.)
-
-**The deep-learning toolkit: architectures, optimisers, calibration (Section 4).**
-
-- Kingma, D. P. and Ba, J. (2015). Adam: a method for stochastic optimization. *ICLR*. (The adaptive optimiser compared in Section 4.)
-- Sutskever, I., Martens, J., Dahl, G. and Hinton, G. (2013). On the importance of initialization and momentum in deep learning. *ICML*. (Momentum, the second optimiser compared.)
-- Guo, C., Pleiss, G., Sun, Y. and Weinberger, K. Q. (2017). On calibration of modern neural networks. *ICML*. (Reliability, expected calibration error, and temperature scaling, the calibration check in Section 4.)
-
-**The danger itself: data snooping (Sections 4 and 5).**
-
-- White, H. (2000). A reality check for data snooping. *Econometrica*, 68(5). (The formal statement of the search, or winner's-curse, face of data snooping, the narrow textbook definition Section 5 argues is only one corner of the problem.)
+- Guo, C., Pleiss, G., Sun, Y. and Weinberger, K. Q. (2017). On calibration of modern neural networks. In *Proceedings of the 34th International Conference on Machine Learning (ICML)*.
+- Hastie, T., Tibshirani, R. and Friedman, J. (2009). *The Elements of Statistical Learning: Data Mining, Inference, and Prediction*, 2nd ed. Springer.
+- Kaufman, S., Rosset, S. and Perlich, C. (2012). Leakage in data mining: formulation, detection, and avoidance. *ACM Transactions on Knowledge Discovery from Data*, 6(4).
+- Kingma, D. P. and Ba, J. (2015). Adam: a method for stochastic optimization. In *Proceedings of the 3rd International Conference on Learning Representations (ICLR)*.
+- Kohavi, R. (1995). A study of cross-validation and bootstrap for accuracy estimation and model selection. In *Proceedings of the 14th International Joint Conference on Artificial Intelligence (IJCAI)*.
+- Lo, A. W. (1991). Long-term memory in stock market prices. *Econometrica*, 59(5).
+- Malkiel, B. G. (1973). *A Random Walk Down Wall Street*. W. W. Norton.
+- Provost, F., Fawcett, T. and Kohavi, R. (1998). The case against accuracy estimation for comparing induction algorithms. In *Proceedings of the 15th International Conference on Machine Learning (ICML)*.
+- Rumelhart, D. E., Hinton, G. E. and Williams, R. J. (1986). Learning representations by back-propagating errors. *Nature*, 323(6088).
+- Shimodaira, H. (2000). Improving predictive inference under covariate shift by weighting the log-likelihood function. *Journal of Statistical Planning and Inference*, 90(2).
+- Sutskever, I., Martens, J., Dahl, G. and Hinton, G. (2013). On the importance of initialization and momentum in deep learning. In *Proceedings of the 30th International Conference on Machine Learning (ICML)*.
+- Tashman, L. J. (2000). Out-of-sample tests of forecasting accuracy: an analysis and review. *International Journal of Forecasting*, 16(4).
+- White, H. (2000). A reality check for data snooping. *Econometrica*, 68(5).
+- Yeh, I.-C. and Lien, C.-H. (2009). The comparisons of data mining techniques for the predictive accuracy of probability of default of credit card clients. *Expert Systems with Applications*, 36(2).
 
 ---
 
@@ -930,7 +915,7 @@ and the first layer gets its gradient the same way, `∂L/∂W1 = (∂L/∂a) x�
 
 > W ← W − η ∂L/∂W.
 
-That is one round. Do it a few thousand times and the guesses sharpen. The same forward and backward pass, in code, runs in the notebook of Appendix C.
+That is one round. Do it a few thousand times and the guesses sharpen. The same forward and backward pass, in code, runs by hand in the notebooks listed in Appendix D, where the gradients above are checked against finite differences.
 
 ---
 
@@ -958,7 +943,9 @@ The rest of the file in numbers: 22.1% of clients default (6 636 of 30 000), whi
 
 Why Section 2c can rule the data out as the source of the trap: with no identifier and no date there is nothing to order the rows by, and the file is a single cross-section, every client watched over the same six months. The thirty-five duplicates are about one in a thousand, far too few to move any split; with features this coarse, two different people can simply land on the same values. So a random split cannot leak, and every way of cutting the data agrees, exactly as we saw.
 
-Honest limits: one bank, one country, one six-month window (Taiwan, 2005). That is a caution about carrying the model elsewhere, but it cannot manufacture a trap; it is why the loan set serves as the clean control.
+Where the numbers come from, and why the counts are one split. The four counts Section 2 leans on, 472 defaulters caught of 1,353 and 4,445 payers cleared of 4,647, are from a single random split (seed 0). On that split, balanced accuracy is the average of the two group rates, (472/1353 + 4445/4647)/2 = (0.349 + 0.957)/2 = 0.653, and plain accuracy is (472+4445)/6,000 = 0.8195. Section 2 quotes the slightly steadier figures averaged over five random splits, balanced 0.646 and accuracy 0.817; the small gap between 0.653 and 0.646 is exactly the split-to-split wobble the section warns about. Either way the reading is the same: balanced accuracy sits far below plain accuracy because the model catches only about a third of the defaulters.
+
+Honest limits: one bank, one country, one six-month window, a Taiwanese credit-card portfolio observed over the first half of 2005 (Yeh and Lien, 2009). That is a caution about carrying the model elsewhere, but it cannot manufacture a trap; it is why the loan set serves as the clean control.
 
 ---
 
@@ -988,7 +975,29 @@ Look at what that table shows on its own. `X[1]` is `X[0]` shifted one step to t
 
 Two more numbers are the structure. The **drift**: the index climbs from 1,455 to 7,483 over the years, about five times larger, so the same one-percent day is worth roughly five times the points at the end that it was at the start, which is why a scaler frozen on the early years cannot describe the later ones. The **lag-1 autocorrelation of abs(r) is +0.287**: the size of today's move really does predict the size of tomorrow's. That is volatility clustering (Engle, 1982), the real signal the task learns, and also precisely what a shuffle leaks, because it is what makes neighbouring days alike.
 
+How far does that drift push the later days out from under a frozen scaler? Fit the scaler on the training years and the size-in-points feature has a mean of 10.57 and a spread of 10.61; by the test period the average day has drifted out to 37.07 points. Measured in the frozen scaler's own units, the test days land **2.73 standard deviations out on average, and 43.71 at the very worst**, which is why the model handed that frozen feature falls apart into a coin.
+
+| the frozen scaler on the size-in-points feature | value |
+| --- | --- |
+| mean, training years | 10.57 points |
+| spread, training years | 10.61 points |
+| test-period mean, drifted to | 37.07 points |
+| test days, average distance out | 2.73 std |
+| test days, worst distance out | 43.71 std |
+
 After five lags are used up, 6,658 days remain, and because the threshold is the median the two classes are balanced at 0.500, so a blind guess scores 0.5 and no majority-class trick is available.
+
+The chapter's climax marks the model era by era against the lazy guesser on that same slice, and this is the table behind it. On one era the lazy classmate beats the model outright:
+
+| walk-forward era | model accuracy | lazy base-rate | margin |
+| --- | --- | --- | --- |
+| 1 | 0.519 | 0.544 | -0.025 |
+| 2 | 0.602 | 0.541 | +0.061 |
+| 3 | 0.651 | 0.626 | +0.026 |
+| 4 | 0.654 | 0.528 | +0.127 |
+| 5 | 0.582 | 0.522 | +0.060 |
+
+Averaged over the five eras the model's lead over each era's own base-rate is +0.050, against the +0.112 the headline suggested when every grade was marked against a single flat 0.5. That collapse, and the negative margin on era 1, are the whole of Section 3's ending.
 
 Honest limits: one index along one path through history. We read its numbers as directional, not to the third decimal.
 
@@ -1037,4 +1046,58 @@ Read them in section order (loan, market, weather_regime_scratch, weather_regime
 
 **What was left was scattered noise, not memory.** The five survivors were AUDUSD, EURUSD, USDJPY, XAGUSD and US30: three currencies, a metal, and one stock index, with nothing linking them, every one a tiny negative near -0.04. They cleared the bar only because the series run to thousands of days, long enough that a hair of autocorrelation counts as "significant" while being worth nothing to a forecaster, and most likely nothing but the faint residue that noise and microstructure leave in any recorded price series. Across all seventeen markets, roughness clustered at about +0.18 while direction sat near -0.02, about nine times weaker.
 
+Here is that reading across all seventeen markets: the roughness clustering that is strong and universal, the direction autocorrelation that is tiny and scattered, and which markets clear the honest sign-shuffle null.
+
+| market | roughness autocorr | direction autocorr | survives the null? |
+| --- | --- | --- | --- |
+| AUDUSD | +0.175 | -0.038 | yes |
+| EURUSD | +0.161 | -0.038 | yes |
+| US30 | +0.237 | -0.045 | yes |
+| USDJPY | +0.157 | -0.036 | yes |
+| XAGUSD | +0.189 | -0.037 | yes |
+| BTCUSD | +0.154 | -0.003 | no |
+| ETHUSD | +0.129 | -0.018 | no |
+| GBPUSD | +0.121 | -0.000 | no |
+| NZDUSD | +0.148 | -0.007 | no |
+| UKOIL | +0.237 | -0.030 | no |
+| US100 | +0.256 | -0.023 | no |
+| US2000 | +0.286 | -0.006 | no |
+| US500 | +0.200 | +0.015 | no |
+| USDCAD | +0.180 | -0.023 | no |
+| USDCHF | +0.144 | -0.020 | no |
+| USOIL | +0.215 | -0.021 | no |
+| XAUUSD | +0.083 | -0.027 | no |
+| **panel mean** | **+0.181** | **-0.021** | |
+
+The five survivors are scattered across unrelated asset classes, all tiny and negative; nothing links them, and roughness towers over direction on every single row.
+
 **The conclusion.** The behaviour reading was dropped, not because the data was dirty, it was clean, but because the market has almost no real direction signal to read. That is an honest scientific finding, and it is Section 4a's first and largest cut.
+
+---
+
+## Appendix F: The weather model, in numbers
+
+*Outside the page limit, and here so the model of Sections 4b to 4e can be checked candidate by candidate. Every number below is printed by the two weather notebooks.*
+
+**Why two features.** The model is handed just this month's roughness and last month's, and no more, because more lags add almost nothing. Fitting next month's roughness on progressively deeper histories:
+
+| features | R-squared | gain |
+| --- | --- | --- |
+| this month only | 0.271 | |
+| + last month | 0.282 | +0.011 |
+| + two months back | 0.282 | +0.001 |
+| + three months back | 0.283 | +0.000 |
+
+The first lag adds a single percent; everything after it is noise. Roughness is slow, so this month already carries almost all there is to know.
+
+**The candidates, scored.** The reality check of Section 4d, five models on the same sealed test, one slice held out in time and one held out by whole markets, with the calibration error alongside:
+
+| candidate | parameters | validation | test (held-out time) | test (held-out market) | calibration error |
+| --- | --- | --- | --- | --- | --- |
+| persistence rule | 0 | 52.3% | 53.9% | 54.7% | 0.461 |
+| logistic | 9 | 51.2% | 56.4% | 53.8% | 0.028 |
+| MLP [2, 8, 3] | 51 | 51.1% | 56.4% | 53.7% | 0.012 |
+| MLP [2, 32, 16, 3] | 675 | 53.1% | 56.4% | 53.9% | 0.026 |
+| big-search winner | 3,011 | 54.8% | 54.2% | 52.8% | 0.069 |
+
+Read the last three columns together and the winner's curse is plain. The big-search winner has the highest validation accuracy of all five, yet the worst sealed-test accuracy of every trained model and the worst calibration. Every one of the smaller models beats it on the sealed test, and the fifty-one-parameter MLP is the best calibrated by far. Complexity and search bought nothing here, and cost trust.
